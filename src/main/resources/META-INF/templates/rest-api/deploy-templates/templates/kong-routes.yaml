@@ -1,0 +1,27 @@
+{{- range $path := (((.Values.exposeSearchConditions).external).paths) }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/preserve-host: 'false'
+    konghq.com/protocols: 'http,https'
+    konghq.com/strip-path: 'true'
+    konghq.com/methods: 'GET'
+  labels:
+  {{- include "external-system-api.metaLabels" $ | nindent 4 }}
+  name: {{ printf "ext-system-api-%s" (trimPrefix "/" $path) | trunc 63 | trimSuffix "-" }}
+spec:
+  ingressClassName: kong
+  rules:
+    - host: {{ template "external-system-api.hostname" $ }}
+      http:
+        paths:
+          - path: {{ print $.Values.kong.route.rootPath $path }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ printf "ext-system-api-%s" (trimPrefix "/" $path) | trunc 63 | trimSuffix "-" }}
+                port:
+                  number: {{ $.Values.service.port }}
+{{- end }}

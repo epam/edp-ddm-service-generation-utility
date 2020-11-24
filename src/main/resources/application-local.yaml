@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/registry
+    username: postgres
+    password: qwerty
+    
+schema-crawler:
+  schema: public
+
+PLATFORM_VALUES_PATH: src/test/resources/registryConfigurationValues.yaml

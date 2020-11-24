@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-api-properties
+data:
+  config.yaml: |-
+    data-platform:
+      datasource:
+        url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}
+        connection-timeout: {{.Values.db.connectionTimeout}}
+      kafka:
+        bootstrap: {{ .Values.kafka.service }}
+        ssl:
+          enabled: {{ .Values.kafka.sslEnabled }}
+          keystore-type: {{ .Values.kafka.sslCertType }}
+          truststore-type: {{ .Values.kafka.sslCertType }}
+          keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
+          keystore-key: {{ .Values.kafka.sslUserKey }}
+          truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
+        consumer:
+          custom-config: {{ .Values.kafka.consumerConfigs | toYaml | nindent 12 }}
+        producer:
+          custom-config: {{ .Values.kafka.producerConfigs | toYaml | nindent 12 }}
+      kafka-request:
+        validation:
+          enabled: true
+      jwt:
+        validation:
+          enabled: true
+
+    dso:
+      url: {{ .Values.dso.url }}
+
+    ceph:
+      http-endpoint: {{ .Values.datafactoryceph.httpEndpoint }}
+      bucketName: {{ .Values.datafactoryceph.bucketName }}
+    datafactory-response-ceph:
+      http-endpoint: {{ .Values.datafactoryResponseCeph.httpEndpoint }}
+      bucketName: {{ .Values.datafactoryResponseCeph.bucketName }}
+
+    s3:
+      config:
+        client: {{ .Values.s3.config.client | toYaml | nindent 10 }}
+        options: {{ .Values.s3.config.options | toYaml | nindent 10 }}
+
+    keycloak:
+      url: {{ .Values.keycloak.url }}
+      realms:
+        - {{ .Values.ciProject }}-officer-portal
+        - {{ .Values.ciProject }}-citizen-portal
+        - {{ .Values.ciProject }}-external-system
+
+    audit:
+      kafka:
+        bootstrap: {{ .Values.kafka.service }}
+        topic: {{ .Values.audit.kafka.topic }}
+        schema-registry-url: {{ .Values.audit.kafka.schemaRegistryUrl }}
+        ssl:
+          enabled: {{ .Values.kafka.sslEnabled }}
+          keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
+          keystore-key: {{ .Values.kafka.sslUserKey }}
+          truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
+
+    logging:
+      level:
+        org.jooq.tools.LoggerListener: TRACE

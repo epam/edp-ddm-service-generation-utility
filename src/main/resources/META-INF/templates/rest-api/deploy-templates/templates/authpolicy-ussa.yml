@@ -1,0 +1,32 @@
+{{- if .Values.keycloak.rulesEnabled }}
+kind: RequestAuthentication
+apiVersion: security.istio.io/v1beta1
+metadata:
+  name: {{ .Values.name }}-request-auth
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  jwtRules:
+    - forwardOriginalToken: true
+      fromHeaders:
+          - name: X-Access-Token
+      issuer: {{ template "issuer.admin" . }}
+      jwksUri: {{ template "jwksUri.admin" . }}
+    - forwardOriginalToken: true
+      fromHeaders:
+        - name: X-Access-Token
+      issuer: {{ template "issuer.officer" . }}
+      jwksUri: {{ template "jwksUri.officer" . }}
+    - forwardOriginalToken: true
+      fromHeaders:
+        - name: X-Access-Token
+      issuer: {{ template "issuer.citizen" . }}
+      jwksUri: {{ template "jwksUri.citizen" . }}
+    - forwardOriginalToken: true
+      fromHeaders:
+        - name: X-Access-Token
+      issuer: {{ template "issuer.external" . }}
+      jwksUri: {{ template "jwksUri.external" . }}
+{{end}}

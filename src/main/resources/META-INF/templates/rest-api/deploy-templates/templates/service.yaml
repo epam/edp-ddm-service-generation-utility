@@ -1,0 +1,26 @@
+{{- range $serviceName := compact (list .Values.name ((.Values.externalService).name)) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $serviceName }}
+  labels:
+    app: {{ $serviceName }}
+    version: {{ $.Values.version | squote }}
+spec:
+  {{- if $.Values.service.clusterIP }}
+  clusterIP: {{ $.Values.service.clusterIP }}
+  {{- end }}
+  ports:
+    - name: api
+      {{- if $.Values.service.type }}
+      {{- if eq $.Values.service.type "NodePort" }}
+      nodePort: {{ $.Values.service.nodePort }}
+      {{- end }}
+      {{- end }}
+      port: {{ $.Values.service.port }}
+      targetPort: {{ default $.Values.service.port $.Values.service.targetPort }}
+  selector:
+    app: {{ $serviceName }}
+  type: {{ default "ClusterIP" ($.Values.service.type | quote) }}
+---
+{{- end }}

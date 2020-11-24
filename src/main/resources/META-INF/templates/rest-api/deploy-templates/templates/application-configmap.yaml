@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rest-api-properties
+data:
+  config.yaml: |-
+    data-platform:
+      datasource:
+        url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}
+        connection-timeout: {{.Values.db.connectionTimeout}}
+      kafka:
+        bootstrap: {{ .Values.kafka.service }}
+        ssl:
+          enabled: {{ .Values.kafka.sslEnabled }}
+          keystore-type: {{ .Values.kafka.sslCertType }}
+          truststore-type: {{ .Values.kafka.sslCertType }}
+          keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
+          keystore-key: {{ .Values.kafka.sslUserKey }}
+          truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
+        topic-properties:
+          creation:
+            num-partitions: {{ .Values.kafka.numPartitions }}
+            replication-factor: {{ .Values.kafka.replicationFactor }}
+        consumer:
+          custom-config: {{ .Values.kafka.consumerConfigs | toYaml | nindent 12 }}
+        producer:
+          custom-config: {{ .Values.kafka.producerConfigs | toYaml | nindent 12 }}
+      signature:
+        validation:
+          enabled: true
+      kafka-request:
+        signing:
+          enabled: true
+      files:
+        processing:
+          enabled: true
+      jwt:
+        validation:
+          enabled: true
+
+    server:
+      max-http-header-size: 32KB
+
+    dso:
+      url: {{ .Values.dso.url }}
+
+    ceph:
+      http-endpoint: {{ .Values.ceph.httpEndpoint }}
+      bucketName: {{ .Values.ceph.bucketName }}
+    lowcode-file-ceph:
+      http-endpoint: {{ .Values.lowcodeFileCeph.httpEndpoint }}
+      bucketName: {{ .Values.lowcodeFileCeph.bucketName }}
+    datafactoryceph:
+      http-endpoint: {{ .Values.datafactoryceph.httpEndpoint }}
+      bucketName: {{ .Values.datafactoryceph.bucketName }}
+    datafactory-response-ceph:
+      http-endpoint: {{ .Values.datafactoryResponseCeph.httpEndpoint }}
+      bucketName: {{ .Values.datafactoryResponseCeph.bucketName }}
+    datafactory-file-ceph:
+      http-endpoint: {{ .Values.datafactoryFileCeph.httpEndpoint }}
+      bucketName: {{ .Values.datafactoryFileCeph.bucketName }}
+
+    s3:
+      config:
+        client: {{ .Values.s3.config.client | toYaml | nindent 10 }}
+        options: {{ .Values.s3.config.options | toYaml | nindent 10 }}
+
+    keycloak:
+      url: {{ .Values.keycloak.url }}
+      realms:
+        - {{ .Values.ciProject }}-officer-portal
+        - {{ .Values.ciProject }}-citizen-portal
+        - {{ .Values.ciProject }}-external-system
+
+    audit:
+      kafka:
+        bootstrap: {{ .Values.kafka.service }}
+        topic: {{ .Values.audit.kafka.topic }}
+        schema-registry-url: {{ .Values.audit.kafka.schemaRegistryUrl }}
+        ssl:
+          enabled: {{ .Values.kafka.sslEnabled }}
+          keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
+          keystore-key: {{ .Values.kafka.sslUserKey }}
+          truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
+      
+    storage:
+      lowcode-form-form-data-storage:
+        type: ceph
+        backend:
+          ceph:
+            http-endpoint: ${ceph.http-endpoint}
+            access-key: ${ceph.access-key}
+            secret-key: ${ceph.secret-key}
+            bucket: ${ceph.bucket}
+      lowcode-file-storage:
+        type: ceph
+        backend:
+          ceph:
+            http-endpoint: ${lowcode-file-ceph.http-endpoint}
+            access-key: ${lowcode-file-ceph.access-key}
+            secret-key: ${lowcode-file-ceph.secret-key}
+            bucket: ${lowcode-file-ceph.bucket}
+      datafactory-form-data-storage:
+        type: ceph
+        backend:
+          ceph:
+            http-endpoint: ${datafactoryceph.http-endpoint}
+            access-key: ${datafactoryceph.access-key}
+            secret-key: ${datafactoryceph.secret-key}
+            bucket: ${datafactoryceph.bucket}
+      datafactory-file-storage:
+        type: ceph
+        backend:
+          ceph:
+            http-endpoint: ${datafactory-file-ceph.http-endpoint}
+            access-key: ${datafactory-file-ceph.access-key}
+            secret-key: ${datafactory-file-ceph.secret-key}
+            bucket: ${datafactory-file-ceph.bucket}

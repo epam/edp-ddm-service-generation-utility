@@ -1,0 +1,242 @@
+{{- range $serviceName := compact (list .Values.name ((.Values.externalService).name)) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $serviceName }}-deployment
+  labels:
+    app: {{ $serviceName }}
+    version: {{ $.Values.version | squote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $serviceName }}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: '5432,6379'
+      labels:
+        app: {{ $serviceName }}
+        version: {{ $.Values.version | squote }}
+    spec:
+      serviceAccountName: {{ $.Values.name }}
+      imagePullSecrets:
+        - name: {{ $.Values.nexusPullSecret }}
+      containers:
+        - name: {{ $.Values.name }}
+          image: "{{ $.Values.image.name }}:{{ $.Values.image.version }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ $.Values.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: {{ $.Values.probes.liveness.path }}
+              port: {{ $.Values.port }}
+            failureThreshold: 1
+            initialDelaySeconds: 180
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: {{ $.Values.probes.readiness.path }}
+              port: {{ $.Values.port }}
+            failureThreshold: 5
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 5
+          {{- if not $.Values.global.disableRequestsLimits }}
+          resources:
+            limits:
+              cpu: 400m
+              memory: 900Mi
+            requests:
+              cpu: 400m
+              memory: 900Mi
+          {{- end }}
+          volumeMounts:
+            - mountPath: /app/config/config.yaml
+              name: config
+              readOnly: true
+              subPath: config.yaml
+            - mountPath: /app/secrets
+              name: db-credentials
+              readOnly: true
+            - mountPath: /app/secrets/ceph
+              name: {{ $.Values.name }}-ceph-bucket-credentials
+              readOnly: true
+            - mountPath: /app/secrets/lowcodefileceph
+              name: {{ $.Values.name }}-lowcode-file-ceph-bucket-credentials
+              readOnly: true
+            - mountPath: /app/secrets/datafactoryceph
+              name: {{ $.Values.name }}-datafactory-ceph-bucket-credentials
+              readOnly: true
+            - mountPath: /app/secrets/datafactoryresponseceph
+              name: {{ $.Values.name }}-datafactory-response-ceph-bucket-credentials
+              readOnly: true
+            - mountPath: /app/secrets/datafactoryfileceph
+              name: {{ $.Values.name }}-datafactory-file-ceph-bucket-credentials
+              readOnly: true
+          env:
+            - name: JAVA_OPTS
+              value: {{ $.Values.java.javaOpts }}
+            - name: DB_URL
+              value: {{ $.Values.db.url }}
+            - name: DB_NAME
+              value: {{ $.Values.db.name }}
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.db.secret }}
+                  key: appRoleName
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.db.secret }}
+                  key: appRolePass
+            - name: CEPH_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $.Values.ceph.bucketName }}
+                  key: BUCKET_NAME
+            - name: CEPH_BUCKET_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $.Values.ceph.bucketName }}
+                  key: BUCKET_HOST
+            - name: LOWCODE_FILE_CEPH_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $.Values.lowcodeFileCeph.bucketName }}
+                  key: BUCKET_NAME
+            - name: LOWCODE_FILE_CEPH_BUCKET_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $.Values.lowcodeFileCeph.bucketName }}
+                  key: BUCKET_HOST
+            - name: DATAFACTORY_CEPH_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $.Values.datafactoryceph.bucketName }}
+                  key: BUCKET_NAME
+            - name: DATAFACTORY_CEPH_BUCKET_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $.Values.datafactoryceph.bucketName }}
+                  key: BUCKET_HOST
+            - name: DATAFACTORY_RESPONSE_CEPH_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $.Values.datafactoryResponseCeph.bucketName }}
+                  key: BUCKET_NAME
+            - name: DATAFACTORY_RESPONSE_CEPH_BUCKET_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $.Values.datafactoryResponseCeph.bucketName }}
+                  key: BUCKET_HOST
+            - name: DATAFACTORY_FILE_CEPH_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $.Values.datafactoryFileCeph.bucketName }}
+                  key: BUCKET_NAME
+            - name: DATAFACTORY_FILE_CEPH_BUCKET_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $.Values.datafactoryFileCeph.bucketName }}
+                  key: BUCKET_HOST
+            - name: KAFKA_USER_KEYSTORE_CERTIFICATE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.kafka.user }}
+                  key: user.crt
+            - name: KAFKA_USER_KEYSTORE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.kafka.user }}
+                  key: user.key
+            - name: KAFKA_CLUSTER_TRUSTSTORE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.kafka.clusterName }}-cluster-ca-cert
+                  key: ca.crt
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      initContainers:
+        - name: init
+          image: {{ template "imageRegistry" $ -}} busybox
+          command: ["sh", "-c", "while ! nc -w 1 {{ $.Values.db.url }} {{ $.Values.db.port }} </dev/null; do echo waiting for {{ $.Values.db.url }}; sleep 10; done;"]
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.db.secret }}
+                  key: appRoleName
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.db.secret }}
+                  key: appRolePass
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: config
+          configMap:
+            name: rest-api-properties
+        - name: db-credentials
+          secret:
+            secretName: {{ $.Values.db.secret }}
+            items:
+              - key: appRolePass
+                path: data-platform.datasource.password
+              - key: appRoleName
+                path: data-platform.datasource.username
+        - name: {{ $.Values.name }}-ceph-bucket-credentials
+          secret:
+            secretName: {{ $.Values.ceph.bucketName }}
+            items:
+              - key: AWS_ACCESS_KEY_ID
+                path: ceph.access-key
+              - key: AWS_SECRET_ACCESS_KEY
+                path: ceph.secret-key
+        - name: {{ $.Values.name }}-lowcode-file-ceph-bucket-credentials
+          secret:
+            secretName: {{ $.Values.lowcodeFileCeph.bucketName }}
+            items:
+              - key: AWS_ACCESS_KEY_ID
+                path: lowcode-file-ceph.access-key
+              - key: AWS_SECRET_ACCESS_KEY
+                path: lowcode-file-ceph.secret-key
+        - name: {{ $.Values.name }}-datafactory-ceph-bucket-credentials
+          secret:
+            secretName: {{ $.Values.datafactoryceph.bucketName }}
+            items:
+              - key: AWS_ACCESS_KEY_ID
+                path: datafactoryceph.access-key
+              - key: AWS_SECRET_ACCESS_KEY
+                path: datafactoryceph.secret-key
+        - name: {{ $.Values.name }}-datafactory-response-ceph-bucket-credentials
+          secret:
+            secretName: {{ $.Values.datafactoryResponseCeph.bucketName }}
+            items:
+              - key: AWS_ACCESS_KEY_ID
+                path: datafactory-response-ceph.access-key
+              - key: AWS_SECRET_ACCESS_KEY
+                path: datafactory-response-ceph.secret-key
+        - name: {{ $.Values.name }}-datafactory-file-ceph-bucket-credentials
+          secret:
+            secretName: {{ $.Values.datafactoryFileCeph.bucketName }}
+            items:
+              - key: AWS_ACCESS_KEY_ID
+                path: datafactory-file-ceph.access-key
+              - key: AWS_SECRET_ACCESS_KEY
+                path: datafactory-file-ceph.secret-key
+---
+{{- end }}

@@ -1,0 +1,3 @@
+**** xref:generator:summary.adoc[Сервіс генератор]
+***** xref:generator:building-blocks.adoc[Структура компонента]
+***** xref:generator:runtime-view.adoc[Сценарії використання]
