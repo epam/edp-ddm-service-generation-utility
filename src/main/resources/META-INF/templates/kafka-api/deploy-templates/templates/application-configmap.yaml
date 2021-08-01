@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-api-properties
+data:
+  config.yaml: |-
+    data-platform:
+      datasource:
+        url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}
+        connection-timeout: {{.Values.db.connectionTimeout}}
+      kafka:
+        bootstrap: {{ .Values.kafka.service }}
+
+    dso:
+      url: {{ .Values.dso.url }}
+    ceph:
+      http-endpoint: {{ .Values.datafactoryceph.httpEndpoint }}
+      bucketName: {{ .Values.datafactoryceph.bucketName }}
+    datafactory-response-ceph:
+      http-endpoint: {{ .Values.datafactoryResponseCeph.httpEndpoint }}
+      bucketName: {{ .Values.datafactoryResponseCeph.bucketName }}
+    datafactory-file-ceph:
+      http-endpoint: {{ .Values.datafactoryFileCeph.httpEndpoint }}
+      bucketName: {{ .Values.datafactoryFileCeph.bucketName }}
+
+    keycloak:
+      url: {{ .Values.keycloak.url }}
+      realms:
+        - {{ .Values.ciProject }}-officer-portal
+        - {{ .Values.ciProject }}-external-system
+
+    audit:
+      kafka:
+        bootstrap: {{ .Values.kafka.service }}
+        topic: {{ .Values.audit.kafka.topic }}
+        schema-registry-url: {{ .Values.audit.kafka.schemaRegistryUrl }}

@@ -1,0 +1,156 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}-deployment
+  labels:
+    app: {{.Values.name}}
+    version: {{ .Values.version | squote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Values.name}}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{.Values.name}}
+        version: {{ .Values.version | squote }}
+    spec:
+      serviceAccountName: {{.Values.name }}
+      containers:
+        - name: {{.Values.name }}
+          image: "{{ .Values.image.name }}:{{ .Values.image.version }}"
+          ports:
+            - containerPort: {{ .Values.port }}
+              protocol: TCP
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 500Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path }}
+              port: {{ .Values.port }}
+            failureThreshold: 1
+            initialDelaySeconds: 180
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: {{ .Values.port }}
+            failureThreshold: 5
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /app/config/config.yaml
+              name: config
+              readOnly: true
+              subPath: config.yaml
+            - mountPath: /app/secrets
+              name: db-credentials
+              readOnly: true
+            - mountPath: /app/secrets/datafactoryceph
+              name: {{ .Values.name }}-datafactory-ceph-bucket-credentials
+              readOnly: true
+            - mountPath: /app/secrets/datafactoryresponseceph
+              name: {{ .Values.name }}-datafactory-response-ceph-bucket-credentials
+              readOnly: true
+            - mountPath: /app/secrets/datafactoryfileceph
+              name: {{ .Chart.Name }}-datafactory-file-ceph-bucket-credentials
+              readOnly: true
+          env:
+            - name: KAFKA_BROKER
+              value: {{ .Values.kafka.service }}
+            - name: DB_URL
+              value: {{ .Values.db.url }}
+            - name: DB_NAME
+              value: {{ .Values.db.name }}
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secret }}
+                  key: appRoleName
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secret }}
+                  key: appRolePass
+            - name: DATAFACTORY_CEPH_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.datafactoryceph.bucketName }}
+                  key: BUCKET_NAME
+            - name: DATAFACTORY_RESPONSE_CEPH_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.datafactoryResponseCeph.bucketName }}
+                  key: BUCKET_NAME
+            - name: DATAFACTORY_FILE_CEPH_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.datafactoryFileCeph.bucketName }}
+                  key: BUCKET_NAME
+      initContainers:
+        - name: init
+          image: {{ .Values.dockerProxyRegistry }}/busybox
+          command: ["sh", "-c", "while ! nc -w 1 {{ .Values.db.url }} {{ .Values.db.port }} </dev/null; do echo waiting for {{ .Values.db.url }}; sleep 10; done;"]
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secret }}
+                  key: appRoleName
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secret }}
+                  key: appRolePass
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: config
+          configMap:
+            name: kafka-api-properties
+        - name: db-credentials
+          secret:
+            secretName: {{ .Values.db.secret }}
+            items:
+              - key: appRolePass
+                path: data-platform.datasource.password
+              - key: appRoleName
+                path: data-platform.datasource.username
+        - name: {{ .Values.name }}-datafactory-ceph-bucket-credentials
+          secret:
+            secretName: {{ .Values.datafactoryceph.bucketName }}
+            items:
+              - key: AWS_ACCESS_KEY_ID
+                path: ceph.access-key
+              - key: AWS_SECRET_ACCESS_KEY
+                path: ceph.secret-key
+        - name: {{ .Values.name }}-datafactory-response-ceph-bucket-credentials
+          secret:
+            secretName: {{ .Values.datafactoryResponseCeph.bucketName }}
+            items:
+              - key: AWS_ACCESS_KEY_ID
+                path: datafactory-response-ceph.access-key
+              - key: AWS_SECRET_ACCESS_KEY
+                path: datafactory-response-ceph.secret-key
+        - name: {{ .Chart.Name }}-datafactory-file-ceph-bucket-credentials
+          secret:
+            secretName: {{ .Values.datafactoryFileCeph.bucketName }}
+            items:
+              - key: AWS_ACCESS_KEY_ID
+                path: datafactory-file-ceph.access-key
+              - key: AWS_SECRET_ACCESS_KEY
+                path: datafactory-file-ceph.secret-key

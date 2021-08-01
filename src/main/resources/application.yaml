@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_URL}:${DB_PORT:5432}/${DB_NAME}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+app:
+  templates: META-INF/templates
+
+schema-crawler:
+  schema: public
+  exclude-tables:
+    - public.databasechangelog
+    - public.databasechangeloglock
+  exclude-table-prefixes: ddm,test
+  exclude-field-prefixes: ddm,dcm

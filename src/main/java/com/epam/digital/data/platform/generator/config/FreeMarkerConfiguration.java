@@ -1,0 +1,44 @@
+package com.epam.digital.data.platform.generator.config;
+
+import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.TemplateModelException;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import com.epam.digital.data.platform.generator.model.Blueprint;
+
+@Configuration
+public class FreeMarkerConfiguration {
+
+  @Bean
+  public freemarker.template.Configuration getConfig(Blueprint blueprint)
+      throws TemplateModelException {
+    freemarker.template.Configuration configuration = new freemarker.template.Configuration(
+        freemarker.template.Configuration.VERSION_2_3_29);
+    configuration.setDefaultEncoding("UTF-8");
+    configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+    configuration.setLogTemplateExceptions(false);
+    configuration.setWrapUncheckedExceptions(true);
+    configuration.setFallbackOnNullLoopVariable(false);
+    configuration.setLocalizedLookup(false);
+    configuration.setSharedVariable("basePackage",
+        blueprint.getSettings().getGeneral().getBasePackageName());
+    configuration.setSharedVariable("register",
+        blueprint.getSettings().getGeneral().getRegister());
+    configuration.setTemplateLoader(new SimpleClasspathLoader());
+
+    var version = blueprint.getSettings().getGeneral().getVersion();
+    configuration.setSharedVariable("fullVersion", version);
+    var majorVersion = extractMajorVersion(version);
+    configuration.setSharedVariable("serviceVersion", majorVersion);
+
+    return configuration;
+  }
+
+  private String extractMajorVersion(String version) {
+    String[] splitted = version.split("\\.");
+    if (splitted.length < 2) {
+      throw new IllegalArgumentException("Can not extract major version from: " + version);
+    }
+    return splitted[0] + "." + splitted[1];
+  }
+}
