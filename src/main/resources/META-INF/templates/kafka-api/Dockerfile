@@ -1,4 +1,4 @@
-FROM mdtu-ddm-edp-cicd/kafka-api-core-base-image-master:1.3.0-SNAPSHOT.6 AS builder
+FROM mdtu-ddm-edp-cicd/kafka-api-core-base-image-master:1.4.0-SNAPSHOT.2 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild

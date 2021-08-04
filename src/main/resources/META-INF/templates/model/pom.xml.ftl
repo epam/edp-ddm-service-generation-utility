@@ -13,7 +13,7 @@
       <description>Common domain models and DTO for Kafka API and REST API</description>
 
       <properties>
-        <model.core.version>1.3.0-SNAPSHOT</model.core.version>
+        <model.core.version>1.4.0-SNAPSHOT</model.core.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
