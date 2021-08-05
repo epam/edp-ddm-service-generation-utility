@@ -26,6 +26,12 @@
                     <id>maven-releases</id>
                     <url>${artifactory.baseUrl}/repository/${artifactory.releasesPath}</url>
                     <name>Maven repository for release artefacts</name>
+                    <releases>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <updatePolicy>never</updatePolicy>
+                    </snapshots>
                 </repository>
             </repositories>
         </profile>
