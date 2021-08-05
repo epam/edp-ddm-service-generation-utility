@@ -1,5 +1,7 @@
 package ${basePackage}.kafkaapi.listener;
 
+import com.epam.digital.data.platform.kafkaapi.core.annotation.KafkaAudit;
+import com.epam.digital.data.platform.kafkaapi.core.util.Operation;
 import com.epam.digital.data.platform.kafkaapi.core.listener.GenericQueryListener;
 import com.epam.digital.data.platform.model.core.kafka.Request;
 import com.epam.digital.data.platform.model.core.kafka.Response;
@@ -23,6 +25,7 @@ public class ${className} extends
     }
 
 <#list listeners as listener>
+  @KafkaAudit(Operation.${listener.operation?upper_case})
   @Override
   @KafkaListener(topics = "\u0023{kafkaProperties.topics['${listener.operation}-${listener.rootOfTopicName}']}",
     groupId = "\u0023{kafkaProperties.groupId}",

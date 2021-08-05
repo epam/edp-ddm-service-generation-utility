@@ -1,5 +1,7 @@
 package ${basePackage}.kafkaapi.listener.search;
 
+import com.epam.digital.data.platform.kafkaapi.core.annotation.KafkaAudit;
+import com.epam.digital.data.platform.kafkaapi.core.util.Operation;
 import com.epam.digital.data.platform.kafkaapi.core.listener.GenericSearchListener;
 import com.epam.digital.data.platform.model.core.kafka.Request;
 import com.epam.digital.data.platform.model.core.kafka.Response;
@@ -22,6 +24,7 @@ public class ${schemaName}Listener extends
     super(searchHandler);
   }
 
+  @KafkaAudit(Operation.SEARCH)
   @Override
   @KafkaListener(topics = "\u0023{kafkaProperties.topics['search-${listeners[0].rootOfTopicName}']}",
       groupId = "\u0023{kafkaProperties.groupId}",
