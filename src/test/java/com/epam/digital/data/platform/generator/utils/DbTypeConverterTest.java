@@ -47,7 +47,7 @@ class DbTypeConverterTest {
 
   @Test
   void shouldFindCustomComplexTypes() {
-    assertThat(DbTypeConverter.convertToJavaTypeName(Object.class, "typ_file"))
+    assertThat(DbTypeConverter.convertToJavaTypeName(Object.class, "type_file"))
             .isEqualTo("com.epam.digital.data.platform.model.core.kafka.File");
   }
 

@@ -37,13 +37,13 @@ values (1, 'searchCondition', 'pd_processing_consent_2',
         );
 
 --- ddm_role:
-CREATE TYPE typ_perm AS ENUM ('S','I','U','D');
+CREATE TYPE type_perm AS ENUM ('S','I','U','D');
 CREATE TABLE ddm_role_permission
 (
 	permission_id int NOT NULL,
 	object_name text NOT NULL,
 	column_name text,
-	operation typ_perm NOT NULL,
+	operation type_perm NOT NULL,
 	role_name text NOT NULL
 );
 

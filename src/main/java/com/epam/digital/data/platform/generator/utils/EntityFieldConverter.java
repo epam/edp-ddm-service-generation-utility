@@ -8,7 +8,7 @@ public class EntityFieldConverter {
 
   private static final Map<String, String> CUSTOM_DB_TYPE_TO_CONVERTER =
       Map.of(
-          "typ_file",
+          "type_file",
           "com.epam.digital.data.platform.kafkaapi.core.util.JooqDataTypes.FILE_DATA_TYPE",
           ARRAY,
           "com.epam.digital.data.platform.kafkaapi.core.util.JooqDataTypes.ARRAY_DATA_TYPE");

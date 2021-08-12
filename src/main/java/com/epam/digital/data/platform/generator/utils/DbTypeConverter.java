@@ -20,7 +20,7 @@ public class DbTypeConverter {
     BASE_CLASSES.put("uuid", UUID.class.getCanonicalName());
     BASE_CLASSES.put("dn_edrpou", String.class.getCanonicalName());
     BASE_CLASSES.put("dn_passport_num", String.class.getCanonicalName());
-    BASE_CLASSES.put("typ_file", "com.epam.digital.data.platform.model.core.kafka.File");
+    BASE_CLASSES.put("type_file", "com.epam.digital.data.platform.model.core.kafka.File");
 
     MAPPED_CLASSES.put(Timestamp.class, LocalDateTime.class);
     MAPPED_CLASSES.put(Date.class, LocalDate.class);

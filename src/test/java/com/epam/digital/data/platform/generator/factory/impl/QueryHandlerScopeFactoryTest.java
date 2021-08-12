@@ -41,7 +41,7 @@ class QueryHandlerScopeFactoryTest {
                         TABLE_NAME,
                         withUuidPk(PK_COLUMN_NAME),
                         withTextColumn(COLUMN_NAME),
-                        withColumn(FILE_COLUMN_NAME, Struct.class, "typ_file")))));
+                        withColumn(FILE_COLUMN_NAME, Struct.class, "type_file")))));
 
     assertThat(resultList).hasSize(1);
     QueryHandlerScope resultScope = resultList.get(0);
