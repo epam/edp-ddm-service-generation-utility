@@ -14,8 +14,12 @@ spring:
       enabled: true
     baggage:
       correlation-enabled: true
-      remote-fields: x-request-id, x-access-token, x-source-system, x-source-business-process, x-source-business-id
-      correlation-fields: x-request-id, x-source-system, x-source-business-process, x-source-business-id
+      remote-fields: x-request-id, x-access-token, x-source-system, x-source-application, x-source-business-process,
+        x-source-business-process-definition-id, x-source-business-process-instance-id,
+        x-source-business-activity, x-source-business-activity-instance-id
+      correlation-fields: x-request-id, x-source-system, x-source-application, x-source-business-process,
+        x-source-business-process-definition-id, x-source-business-process-instance-id,
+        x-source-business-activity, x-source-business-activity-instance-id
 
 springdoc:
   swagger-ui:

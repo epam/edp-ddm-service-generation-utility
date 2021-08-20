@@ -1,4 +1,4 @@
-FROM mdtu-ddm-edp-cicd/rest-api-core-base-image-master:1.4.0-SNAPSHOT.11 AS builder
+FROM mdtu-ddm-edp-cicd/rest-api-core-base-image-master:1.4.0-SNAPSHOT.13 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild
