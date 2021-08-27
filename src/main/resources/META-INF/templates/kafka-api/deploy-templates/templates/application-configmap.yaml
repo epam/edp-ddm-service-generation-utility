@@ -11,7 +11,7 @@ data:
       kafka:
         bootstrap: {{ .Values.kafka.service }}
         ssl:
-          enabled: {{ .Values.kafka.sslEnable }}
+          enabled: {{ .Values.kafka.sslEnabled }}
 
     dso:
       url: {{ .Values.dso.url }}
