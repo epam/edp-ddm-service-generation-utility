@@ -6,10 +6,10 @@ service:
   port: 8080
 
 kafka:
-  service: kafka-cluster-kafka-bootstrap:9093
+  service: kafka-cluster-kafka-bootstrap:9092
   user: kafka-api-user
   clusterName: kafka-cluster
-  sslEnabled: true
+  sslEnabled: false
 
 db:
   secret: citus-roles-secrets
