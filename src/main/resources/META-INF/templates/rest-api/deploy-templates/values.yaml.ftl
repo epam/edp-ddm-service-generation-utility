@@ -10,7 +10,10 @@ ingress:
   site: ${register}-rest-api
 
 kafka:
-  service: kafka-cluster-kafka-bootstrap:9092
+  service: kafka-cluster-kafka-bootstrap:9093
+  user: rest-api-user
+  clusterName: kafka-cluster
+  sslEnabled: true
 
 image:
   name: ${register}-rest-api

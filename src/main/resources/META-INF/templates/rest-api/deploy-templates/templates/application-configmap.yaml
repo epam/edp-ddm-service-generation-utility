@@ -7,6 +7,8 @@ data:
     data-platform:
       kafka:
         bootstrap: {{ .Values.kafka.service }}
+        ssl:
+          enabled: {{ .Values.kafka.sslEnable }}
     server:
       max-http-header-size: 16KB
     dso:

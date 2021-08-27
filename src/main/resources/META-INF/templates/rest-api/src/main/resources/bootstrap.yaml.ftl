@@ -21,3 +21,5 @@ spring:
           - /app/secrets/datafactoryceph
           - /app/secrets/datafactoryresponseceph
           - /app/secrets/datafactoryfileceph
+          - /app/secrets/kafkausercertificate
+          - /app/secrets/kafkaclustercertificate

@@ -13,4 +13,7 @@ spring:
         paths: /app/config/config.yaml
         enable-api: false
       secrets:
-        paths: /app/secrets
+        paths:
+          - /app/secrets
+          - /app/secrets/kafkausercertificate
+          - /app/secrets/kafkaclustercertificate

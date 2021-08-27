@@ -69,6 +69,12 @@ spec:
             - mountPath: /app/secrets/datafactoryfileceph
               name: {{ .Chart.Name }}-datafactory-file-ceph-bucket-credentials
               readOnly: true
+            - mountPath: /app/secrets/kafkausercertificate
+              name: kafka-user-certificate
+              readOnly: true
+            - mountPath: /app/secrets/kafkaclustercertificate
+              name: kafka-cluster-certificate
+              readOnly: true
           env:
             - name: CEPH_BUCKET_NAME
               valueFrom:
@@ -146,3 +152,17 @@ spec:
                 path: datafactory-file-ceph.access-key
               - key: AWS_SECRET_ACCESS_KEY
                 path: datafactory-file-ceph.secret-key
+        - name: kafka-user-certificate
+          secret:
+            secretName: {{ .Values.kafka.user }}
+            items:
+              - key: user.crt
+                path: data-platform.kafka.ssl.keystore-certificate
+              - key: user.key
+                path: data-platform.kafka.ssl.keystore-key
+        - name: kafka-cluster-certificate
+          secret:
+            secretName: {{ .Values.kafka.clusterName }}-cluster-ca-cert
+            items:
+              - key: ca.crt
+                path: data-platform.kafka.ssl.truststore-certificate
