@@ -32,7 +32,7 @@ management:
         liveness:
           include: livenessState, livenessResponseCheck
         readiness:
-          include: readinessState, kafka, db, webServices
+          include: readinessState, db, webServices
     loggers:
       enabled: true
     prometheus:
