@@ -6,6 +6,8 @@ import com.epam.digital.data.platform.kafkaapi.core.listener.GenericSearchListen
 import com.epam.digital.data.platform.model.core.kafka.Request;
 import com.epam.digital.data.platform.model.core.kafka.Response;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.Header;
@@ -18,6 +20,8 @@ import ${basePackage}.model.dto.${schemaName}SearchConditions;
 @Component
 public class ${schemaName}Listener extends
     GenericSearchListener<${schemaName}SearchConditions, ${schemaName}> {
+
+  private final Logger log = LoggerFactory.getLogger(${className}.class);
 
   public ${schemaName}Listener(
       ${schemaName}SearchHandler searchHandler) {
@@ -33,6 +37,7 @@ public class ${schemaName}Listener extends
   public Message<Response<List<${schemaName}>>> search(
       @Header(name = DIGITAL_SEAL, required = false) String key,
       Request<${schemaName}SearchConditions> searchConditions) {
+    log.info("Kafka event received with search");
     return super.search(key, searchConditions);
   }
 }

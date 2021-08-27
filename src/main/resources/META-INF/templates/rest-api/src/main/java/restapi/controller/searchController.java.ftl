@@ -9,6 +9,8 @@ import com.epam.digital.data.platform.model.core.kafka.SecurityContext;
 import com.epam.digital.data.platform.restapi.core.annotation.HttpRequestContext;
 import com.epam.digital.data.platform.restapi.core.annotation.HttpSecurityContext;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.epam.digital.data.platform.restapi.core.utils.ResponseResolverUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,8 @@ import ${basePackage}.restapi.service.${schemaName}SearchService;
 @RequestMapping("${endpoint}")
 public class ${className} {
 
+  private final Logger log = LoggerFactory.getLogger(${className}.class);
+
   private final ${schemaName}SearchService searchService;
 
   public ${className}(
@@ -36,6 +40,7 @@ public class ${className} {
       ${schemaName}SearchConditions searchConditions,
       @HttpRequestContext RequestContext context,
       @HttpSecurityContext SecurityContext securityContext) {
+    log.info("GET ${endpoint} called");
     var request = new Request<>(searchConditions, context, securityContext);
     var response = searchService.request(request);
     return ResponseResolverUtil.getHttpResponseFromKafka(response);

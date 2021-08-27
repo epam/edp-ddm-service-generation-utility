@@ -35,17 +35,17 @@ class PermissionMapTest {
   static final String DENIED_READ_COLUMN_NAME = "DENIED_READ_COLUMN_NAME";
   static final String ANY_ROLE_READ_COLUMN_NAME = "ANY_ROLE_READ_COLUMN_NAME";
 
-  public static final String CITIZEN_ROLE_TITLE = "citizen";
-  public static final String OFFICER_ROLE_TITLE = "officer";
-  public static final String MAJOR_OFFICER_ROLE_TITLE = "major-officer";
+  static final String CITIZEN_ROLE_TITLE = "citizen";
+  static final String OFFICER_ROLE_TITLE = "officer";
+  static final String MAJOR_OFFICER_ROLE_TITLE = "major-officer";
 
-  public static final String CITIZEN_ROLE_EXPRESSION =
+  static final String CITIZEN_ROLE_EXPRESSION =
       "hasAnyAuthority('" + CITIZEN_ROLE_TITLE + "')";
-  public static final String MAJOR_OFFICER_ROLE_EXPRESSION =
+  static final String MAJOR_OFFICER_ROLE_EXPRESSION =
       "hasAnyAuthority('" + MAJOR_OFFICER_ROLE_TITLE + "')";
-  public static final String COMPOSITE_CITIZEN_AND_OFFICER_ROLE_EXPRESSION =
+  static final String COMPOSITE_CITIZEN_AND_OFFICER_ROLE_EXPRESSION =
       "hasAnyAuthority('" + CITIZEN_ROLE_TITLE + "','" + OFFICER_ROLE_TITLE + "')";
-  public static final String COMPOSITE_MAJOR_OFFICER_AND_OFFICER_ROLE_EXPRESSION =
+  static final String COMPOSITE_MAJOR_OFFICER_AND_OFFICER_ROLE_EXPRESSION =
       "hasAnyAuthority('" + MAJOR_OFFICER_ROLE_TITLE + "','" + OFFICER_ROLE_TITLE + "')";
 
   @Mock
