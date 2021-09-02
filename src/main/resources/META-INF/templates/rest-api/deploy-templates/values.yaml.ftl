@@ -52,3 +52,11 @@ audit:
   kafka:
     topic: audit-events
     schemaRegistryUrl: http://kafka-schema-registry:8081
+
+keycloak:
+  rulesEnabled: true
+  realms:
+    officer: officer-portal
+    citizen: citizen-portal
+    external: external-system
+  certificatesEndpoint: /protocol/openid-connect/certs
