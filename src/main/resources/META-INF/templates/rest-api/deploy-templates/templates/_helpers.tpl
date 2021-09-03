@@ -1,5 +1,5 @@
 {{- define "keycloak.urlPrefix" -}}
-{{- printf "%s%s%s%s" .Values.keycloak.url "/auth/realms/" .Release.Namespace -}}
+{{- printf "%s%s%s" .Values.keycloak.url "/auth/realms/" .Release.Namespace -}}
 {{- end -}}
 
 {{- define "issuer.officer" -}}
