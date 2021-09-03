@@ -139,10 +139,6 @@ data-platform:
   files:
     processing:
       enabled: true
-  header:
-    format:
-      validation:
-        enabled: false
   kafka:
     group-id: ${register}-rest-api
     trusted-packages:
