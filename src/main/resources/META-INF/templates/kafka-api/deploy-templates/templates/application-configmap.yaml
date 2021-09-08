@@ -36,6 +36,7 @@ data:
       url: {{ .Values.keycloak.url }}
       realms:
         - {{ .Values.ciProject }}-officer-portal
+        - {{ .Values.ciProject }}-citizen-portal
         - {{ .Values.ciProject }}-external-system
 
     audit:
