@@ -128,17 +128,6 @@ platform:
       - /actuator/**
 
 data-platform:
-  signature:
-    validation:
-      enabled: false
-  authentication:
-    enabled: false
-  kafka-request:
-    signing:
-      enabled: false
-  files:
-    processing:
-      enabled: true
   kafka:
     group-id: ${register}-rest-api
     trusted-packages:

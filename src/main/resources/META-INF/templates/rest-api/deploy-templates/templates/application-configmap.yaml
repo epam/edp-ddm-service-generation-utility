@@ -9,10 +9,22 @@ data:
         bootstrap: {{ .Values.kafka.service }}
         ssl:
           enabled: {{ .Values.kafka.sslEnabled }}
+      signature:
+        validation:
+          enabled: true
+      kafka-request:
+        signing:
+          enabled: true
+      files:
+        processing:
+          enabled: true
+
     server:
       max-http-header-size: 16KB
+
     dso:
       url: {{ .Values.dso.url }}
+
     ceph:
       http-endpoint: {{ .Values.ceph.httpEndpoint }}
       bucketName: {{ .Values.ceph.bucketName }}

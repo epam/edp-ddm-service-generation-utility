@@ -12,9 +12,16 @@ data:
         bootstrap: {{ .Values.kafka.service }}
         ssl:
           enabled: {{ .Values.kafka.sslEnabled }}
+      kafka-request:
+        validation:
+          enabled: true
+      jwt:
+        validation:
+          enabled: true
 
     dso:
       url: {{ .Values.dso.url }}
+
     ceph:
       http-endpoint: {{ .Values.datafactoryceph.httpEndpoint }}
       bucketName: {{ .Values.datafactoryceph.bucketName }}

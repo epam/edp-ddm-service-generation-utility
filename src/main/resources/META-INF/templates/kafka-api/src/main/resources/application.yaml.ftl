@@ -65,12 +65,6 @@ datafactory-file-ceph:
 </#noparse>
 
 data-platform:
-  kafka-request:
-    validation:
-      enabled: false
-  jwt:
-    validation:
-      enabled: false
   kafka:
     group-id: ${register}-kafka-api
     max-request-size: 1000000
