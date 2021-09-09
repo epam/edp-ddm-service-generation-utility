@@ -24,9 +24,6 @@ image:
 ceph:
   bucketName: lowcode-form-data-storage
 
-lowcodeFileCeph:
-  bucketName: lowcode-file-storage
-
 datafactoryceph:
   bucketName: datafactory-ceph-bucket
 
