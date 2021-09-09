@@ -127,6 +127,13 @@ platform:
       - /swagger-ui/**
       - /actuator/**
 
+logbook:
+  exclude:
+    - /openapi
+    - /v3/api-docs/**
+    - /swagger-ui/**
+    - /actuator/**
+
 data-platform:
   kafka:
     group-id: ${register}-rest-api
