@@ -15,6 +15,13 @@ spring:
         x-source-business-process-definition-id, x-source-business-process-instance-id,
         x-source-business-activity, x-source-business-activity-instance-id
 
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 4000
+        readTimeout: 8000
+
 management:
   endpoints:
     enabled-by-default: false
