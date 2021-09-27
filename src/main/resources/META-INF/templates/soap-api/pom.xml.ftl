@@ -6,7 +6,7 @@
 
   <groupId>${basePackage}</groupId>
   <artifactId>soap-api</artifactId>
-  <version>${serviceVersion}</version>
+  <version>${fullVersion}</version>
 
   <name>soap-api</name>
   <description>SOAP API</description>
@@ -48,7 +48,7 @@
     <dependency>
       <groupId>${basePackage}</groupId>
       <artifactId>model</artifactId>
-      <version>${serviceVersion}</version>
+      <version>${fullVersion}</version>
     </dependency>
 <#noparse>
   </dependencies>

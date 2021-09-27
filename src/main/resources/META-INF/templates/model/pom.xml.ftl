@@ -6,7 +6,7 @@
 
   <groupId>${basePackage}</groupId>
   <artifactId>model</artifactId>
-  <version>${serviceVersion}</version>
+  <version>${fullVersion}</version>
 
     <#noparse>
       <name>model</name>

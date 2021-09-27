@@ -6,7 +6,7 @@
 
   <groupId>${basePackage}</groupId>
   <artifactId>rest-api</artifactId>
-  <version>${serviceVersion}</version>
+  <version>${fullVersion}</version>
 
     <#noparse>
     <name>rest-api</name>
@@ -49,7 +49,7 @@
       <dependency>
         <groupId>${basePackage}</groupId>
         <artifactId>model</artifactId>
-        <version>${serviceVersion}</version>
+        <version>${fullVersion}</version>
       </dependency>
     <#noparse>
     </dependencies>
