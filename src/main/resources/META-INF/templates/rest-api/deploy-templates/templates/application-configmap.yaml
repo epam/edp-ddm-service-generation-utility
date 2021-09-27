@@ -46,3 +46,7 @@ data:
         bootstrap: {{ .Values.kafka.service }}
         topic: {{ .Values.audit.kafka.topic }}
         schema-registry-url: {{ .Values.audit.kafka.schemaRegistryUrl }}
+
+    logging:
+      level:
+        org.zalando.logbook: TRACE

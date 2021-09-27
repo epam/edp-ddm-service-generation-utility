@@ -128,6 +128,8 @@ platform:
       - /actuator/**
 
 logbook:
+  secure-filter:
+    enabled: false
   exclude:
     - /openapi
     - /v3/api-docs/**
