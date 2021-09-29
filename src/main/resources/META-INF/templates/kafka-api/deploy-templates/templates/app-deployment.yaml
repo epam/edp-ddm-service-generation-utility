@@ -28,11 +28,11 @@ spec:
           imagePullPolicy: Always
           resources:
             limits:
-              cpu: '1'
-              memory: 1.5Gi
+              cpu: 400m
+              memory: 768Mi
             requests:
-              cpu: '1'
-              memory: 1.5Gi
+              cpu: 400m
+              memory: 768Mi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           livenessProbe:
@@ -77,6 +77,8 @@ spec:
               name: kafka-cluster-certificate
               readOnly: true
           env:
+            - name: JAVA_OPTS
+              value: {{ .Values.java.javaOpts }}
             - name: KAFKA_BROKER
               value: {{ .Values.kafka.service }}
             - name: DB_URL

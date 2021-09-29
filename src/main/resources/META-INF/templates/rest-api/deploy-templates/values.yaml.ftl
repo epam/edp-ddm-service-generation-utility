@@ -5,6 +5,9 @@ port: 8080
 service:
   port: 8080
 
+java:
+  javaOpts: -Xms512m -Xmx512m -XX:+UseG1GC
+
 ingress:
   required: true
   site: ${register}-rest-api

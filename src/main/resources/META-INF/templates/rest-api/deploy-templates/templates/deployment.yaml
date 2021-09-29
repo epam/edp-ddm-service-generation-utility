@@ -48,11 +48,11 @@ spec:
             timeoutSeconds: 5
           resources:
             limits:
-              cpu: '1'
-              memory: 1.5Gi
+              cpu: 400m
+              memory: 768Mi
             requests:
-              cpu: '1'
-              memory: 1.5Gi
+              cpu: 400m
+              memory: 768Mi
           volumeMounts:
             - mountPath: /app/config/config.yaml
               name: config
@@ -80,6 +80,8 @@ spec:
               name: kafka-cluster-certificate
               readOnly: true
           env:
+            - name: JAVA_OPTS
+              value: {{ .Values.java.javaOpts }}
             - name: CEPH_BUCKET_NAME
               valueFrom:
                 configMapKeyRef:
