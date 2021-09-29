@@ -49,10 +49,10 @@ spec:
           resources:
             limits:
               cpu: 400m
-              memory: 768Mi
+              memory: 1Gi
             requests:
               cpu: 400m
-              memory: 768Mi
+              memory: 1Gi
           volumeMounts:
             - mountPath: /app/config/config.yaml
               name: config
