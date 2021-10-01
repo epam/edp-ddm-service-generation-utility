@@ -17,6 +17,8 @@ kafka:
   user: rest-api-user
   clusterName: kafka-cluster
   sslEnabled: false
+  numPartitions: 15
+  replicationFactor: 3
 
 image:
   name: ${register}-rest-api

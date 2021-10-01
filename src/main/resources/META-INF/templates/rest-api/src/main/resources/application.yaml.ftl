@@ -147,8 +147,6 @@ data-platform:
       max-elapsed-time: 6000
       multiplier: 2
     topic-properties:
-      num-partitions: 15
-      replication-factor: 3
       retention-policy-in-days:
         read: ${retentionPolicyDaysRead?c}
         write: ${retentionPolicyDaysWrite?c}

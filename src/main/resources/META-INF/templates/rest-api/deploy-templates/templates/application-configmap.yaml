@@ -9,6 +9,9 @@ data:
         bootstrap: {{ .Values.kafka.service }}
         ssl:
           enabled: {{ .Values.kafka.sslEnabled }}
+        topic-properties:
+          num-partitions: {{ .Values.kafka.numPartitions }}
+          replication-factor: {{ .Values.kafka.replicationFactor }}
       signature:
         validation:
           enabled: true
