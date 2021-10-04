@@ -35,7 +35,9 @@ public class ${className} extends
   @SendTo
   public Message<Response<${listener.outputType}>> ${listener.operation}(@Header(name = DIGITAL_SEAL, required = false) String key, Request<${listener.inputType}> input) {
     log.info("Kafka event received with ${listener.operation}");
-    return super.${listener.operation}(key, input);
+    var response = super.${listener.operation}(key, input);
+    log.info("${listener.operation} kafka event processing finished");
+    return response;
   }
 </#list>
 }

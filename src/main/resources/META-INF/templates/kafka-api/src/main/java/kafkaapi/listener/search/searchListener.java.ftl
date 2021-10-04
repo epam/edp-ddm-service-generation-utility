@@ -38,6 +38,8 @@ public class ${schemaName}Listener extends
       @Header(name = DIGITAL_SEAL, required = false) String key,
       Request<${schemaName}SearchConditions> searchConditions) {
     log.info("Kafka event received with search");
-    return super.search(key, searchConditions);
+    var response = super.search(key, searchConditions);
+    log.info("search kafka event processing finished");
+    return response;
   }
 }
