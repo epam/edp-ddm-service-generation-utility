@@ -24,10 +24,10 @@ spec:
           image: "{{ .Values.image.name }}:{{ .Values.image.version }}"
           ports:
             - containerPort: {{ .Values.port }}
-              name: {{.Values.name }}
+              name: kafka-api
               protocol: TCP
             - containerPort: 9010
-              name: JMX
+              name: jmx
               protocol: TCP
           imagePullPolicy: Always
           resources:
