@@ -17,8 +17,8 @@ kafka:
   user: rest-api-user
   clusterName: kafka-cluster
   sslEnabled: false
-  numPartitions: 15
-  replicationFactor: 3
+  numPartitions: 1
+  replicationFactor: 1
   consumerConfigs:
     "[fetch.max.wait.ms]": 500
   producerConfigs:

@@ -6,7 +6,7 @@ service:
   port: 8080
 
 java:
-  javaOpts: -Xms512m -Xmx512m -XX:+UseG1GC -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.ssl=false
+  javaOpts: -Xms380m -Xmx380m -Xmn240m -XX:+UseG1GC -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.rmi.port=9010 -Djava.rmi.server.hostname=127.0.0.1
 
 kafka:
   service: kafka-cluster-kafka-bootstrap:9092
