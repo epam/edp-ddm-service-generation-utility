@@ -13,6 +13,10 @@ kafka:
   user: kafka-api-user
   clusterName: kafka-cluster
   sslEnabled: false
+  consumerConfigs:
+    "[fetch.min.bytes]": 0
+  producerConfigs:
+    acks: ALL
 
 db:
   secret: citus-roles-secrets

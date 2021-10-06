@@ -12,6 +12,8 @@ data:
         topic-properties:
           num-partitions: {{ .Values.kafka.numPartitions }}
           replication-factor: {{ .Values.kafka.replicationFactor }}
+        consumer-configs: {{ .Values.kafka.consumerConfigs | toYaml | nindent 10 }}
+        producer-configs: {{ .Values.kafka.producerConfigs | toYaml | nindent 10 }}
       signature:
         validation:
           enabled: true

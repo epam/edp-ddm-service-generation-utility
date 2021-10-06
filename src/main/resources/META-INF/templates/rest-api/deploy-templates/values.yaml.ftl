@@ -19,6 +19,10 @@ kafka:
   sslEnabled: false
   numPartitions: 15
   replicationFactor: 3
+  consumerConfigs:
+    "[fetch.min.bytes]": 0
+  producerConfigs:
+    acks: ALL
 
 image:
   name: ${register}-rest-api

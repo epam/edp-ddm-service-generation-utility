@@ -12,6 +12,8 @@ data:
         bootstrap: {{ .Values.kafka.service }}
         ssl:
           enabled: {{ .Values.kafka.sslEnabled }}
+        consumer-configs: {{ .Values.kafka.consumerConfigs | toYaml | nindent 10 }}
+        producer-configs: {{ .Values.kafka.producerConfigs | toYaml | nindent 10 }}
       kafka-request:
         validation:
           enabled: true
