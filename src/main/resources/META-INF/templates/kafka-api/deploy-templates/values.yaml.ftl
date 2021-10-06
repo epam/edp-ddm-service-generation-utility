@@ -14,7 +14,7 @@ kafka:
   clusterName: kafka-cluster
   sslEnabled: false
   consumerConfigs:
-    "[fetch.min.bytes]": 0
+    "[fetch.max.wait.ms]": 500
   producerConfigs:
     acks: all
 

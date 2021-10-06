@@ -20,7 +20,7 @@ kafka:
   numPartitions: 15
   replicationFactor: 3
   consumerConfigs:
-    "[fetch.min.bytes]": 0
+    "[fetch.max.wait.ms]": 500
   producerConfigs:
     acks: all
 
