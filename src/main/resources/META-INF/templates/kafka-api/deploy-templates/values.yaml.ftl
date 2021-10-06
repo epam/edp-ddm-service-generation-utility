@@ -16,7 +16,7 @@ kafka:
   consumerConfigs:
     "[fetch.min.bytes]": 0
   producerConfigs:
-    acks: ALL
+    acks: all
 
 db:
   secret: citus-roles-secrets

@@ -22,7 +22,7 @@ kafka:
   consumerConfigs:
     "[fetch.min.bytes]": 0
   producerConfigs:
-    acks: ALL
+    acks: all
 
 image:
   name: ${register}-rest-api
