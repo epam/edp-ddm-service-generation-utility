@@ -20,6 +20,8 @@ spring:
       correlation-fields: x-request-id, x-source-system, x-source-application, x-source-business-process,
         x-source-business-process-definition-id, x-source-business-process-instance-id,
         x-source-business-activity, x-source-business-activity-instance-id
+    web:
+      filter-order: -2147483648 # HIGHEST_PRECEDENCE
 
 springdoc:
   swagger-ui:
