@@ -6,7 +6,7 @@ service:
   port: 8080
 
 java:
-  javaOpts: -Xms512m -Xmx512m -XX:+UseG1GC
+  javaOpts: -Xms380m -Xmx380m -Xmn230m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent
 
 ingress:
   required: true
@@ -18,7 +18,7 @@ kafka:
   clusterName: kafka-cluster
   sslEnabled: false
   numPartitions: 3
-  replicationFactor: 1
+  replicationFactor: 3
   consumerConfigs:
     "[fetch.max.wait.ms]": 500
   producerConfigs:
