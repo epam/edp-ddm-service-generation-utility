@@ -28,6 +28,7 @@ image:
   name: ${register}-rest-api
   version: latest
 
+<#noparse>
 ceph:
   bucketName: lowcode-form-data-storage
   httpEndpoint: ${CEPH_BUCKET_HOST}
@@ -47,6 +48,7 @@ datafactoryResponseCeph:
 datafactoryFileCeph:
   bucketName: file-ceph-bucket
   httpEndpoint: ${DATAFACTORY_FILE_CEPH_BUCKET_HOST}
+</#noparse>
 
 dso:
   url: http://digital-signature-ops:8080

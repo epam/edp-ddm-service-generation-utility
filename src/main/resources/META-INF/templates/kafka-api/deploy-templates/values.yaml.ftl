@@ -28,6 +28,7 @@ image:
   name: ${register}-kafka-api
   version: latest
 
+<#noparse>
 datafactoryceph:
   bucketName: datafactory-ceph-bucket
   httpEndpoint: ${DATAFACTORY_CEPH_BUCKET_HOST}
@@ -39,6 +40,7 @@ datafactoryResponseCeph:
 datafactoryFileCeph:
   bucketName: file-ceph-bucket
   httpEndpoint: ${DATAFACTORY_FILE_CEPH_BUCKET_HOST}
+</#noparse>
 
 dso:
   url: http://digital-signature-ops:8080
