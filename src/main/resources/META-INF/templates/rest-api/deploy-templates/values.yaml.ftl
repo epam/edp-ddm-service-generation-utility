@@ -30,18 +30,23 @@ image:
 
 ceph:
   bucketName: lowcode-form-data-storage
+  httpEndpoint: ${CEPH_BUCKET_HOST}
 
 lowcodeFileCeph:
   bucketName: lowcode-file-storage
+  httpEndpoint: ${LOWCODE_FILE_CEPH_BUCKET_HOST}
 
 datafactoryceph:
   bucketName: datafactory-ceph-bucket
+  httpEndpoint: ${DATAFACTORY_CEPH_BUCKET_HOST}
 
 datafactoryResponseCeph:
   bucketName: response-ceph-bucket
+  httpEndpoint: ${DATAFACTORY_RESPONSE_CEPH_BUCKET_HOST}
 
 datafactoryFileCeph:
   bucketName: file-ceph-bucket
+  httpEndpoint: ${DATAFACTORY_FILE_CEPH_BUCKET_HOST}
 
 dso:
   url: http://digital-signature-ops:8080

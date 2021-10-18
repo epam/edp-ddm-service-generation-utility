@@ -104,16 +104,31 @@ spec:
                 configMapKeyRef:
                   name: {{ .Values.datafactoryceph.bucketName }}
                   key: BUCKET_NAME
+            - name: DATAFACTORY_CEPH_BUCKET_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.datafactoryceph.bucketName }}
+                  key: BUCKET_HOST
             - name: DATAFACTORY_RESPONSE_CEPH_BUCKET_NAME
               valueFrom:
                 configMapKeyRef:
                   name: {{ .Values.datafactoryResponseCeph.bucketName }}
                   key: BUCKET_NAME
+            - name: DATAFACTORY_RESPONSE_CEPH_BUCKET_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.datafactoryResponseCeph.bucketName }}
+                  key: BUCKET_HOST
             - name: DATAFACTORY_FILE_CEPH_BUCKET_NAME
               valueFrom:
                 configMapKeyRef:
                   name: {{ .Values.datafactoryFileCeph.bucketName }}
                   key: BUCKET_NAME
+            - name: DATAFACTORY_FILE_CEPH_BUCKET_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.datafactoryFileCeph.bucketName }}
+                  key: BUCKET_HOST
       initContainers:
         - name: init
           image: {{ .Values.dockerProxyRegistry }}/busybox
