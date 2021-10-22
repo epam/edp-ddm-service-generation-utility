@@ -1,3 +1,6 @@
+global:
+  disableRequestsLimits: false
+
 name: ${register}-kafka-api
 
 port: 8080

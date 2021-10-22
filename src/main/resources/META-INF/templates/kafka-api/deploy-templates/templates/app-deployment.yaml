@@ -30,6 +30,7 @@ spec:
               name: jmx
               protocol: TCP
           imagePullPolicy: Always
+          {{- if not .Values.global.disableRequestsLimits }}
           resources:
             limits:
               cpu: 400m
@@ -37,6 +38,7 @@ spec:
             requests:
               cpu: 400m
               memory: 900Mi
+          {{- end }}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           livenessProbe:

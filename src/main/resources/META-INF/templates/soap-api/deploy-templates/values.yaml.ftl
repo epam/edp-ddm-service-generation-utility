@@ -1,3 +1,6 @@
+global:
+  disableRequestsLimits: false
+  
 name: ${register}-soap-api
 
 version: 1.1.0

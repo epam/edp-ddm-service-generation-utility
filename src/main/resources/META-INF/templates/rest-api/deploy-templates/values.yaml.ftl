@@ -1,3 +1,6 @@
+global:
+  disableRequestsLimits: false
+  
 name: ${register}-rest-api
 
 port: 8080

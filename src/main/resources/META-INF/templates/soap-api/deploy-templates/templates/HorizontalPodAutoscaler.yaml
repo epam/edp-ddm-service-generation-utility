@@ -1,3 +1,4 @@
+{{- if not .Values.global.disableRequestsLimits }}
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
 metadata:
@@ -25,3 +26,4 @@ spec:
         target:
           type: Utilization
           averageUtilization: 90
+{{- end }}
