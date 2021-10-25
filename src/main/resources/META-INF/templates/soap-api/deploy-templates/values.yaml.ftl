@@ -10,6 +10,9 @@ port: 8080
 service:
   port: 8080
 
+java:
+  javaOpts: -Xms128m -Xmx128m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent
+
 ingress:
   required: true
   site: ${register}-soap-api
