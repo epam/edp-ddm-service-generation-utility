@@ -16,6 +16,7 @@ spring:
         enabled: true
         enable-api: false
         paths:
+          - /app/secrets
           - /app/secrets/ceph
           - /app/secrets/lowcodefileceph
           - /app/secrets/datafactoryceph

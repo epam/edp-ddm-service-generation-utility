@@ -16,6 +16,7 @@ spec:
     metadata:
       annotations:
         sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: '5432'
       labels:
         app: {{ .Values.name }}
         version: {{ .Values.version | squote }}
