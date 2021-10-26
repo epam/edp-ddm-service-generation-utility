@@ -23,6 +23,13 @@ spring:
     web:
       filter-order: -2147483648 # HIGHEST_PRECEDENCE
 
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 4000
+        readTimeout: 8000
+
 springdoc:
   swagger-ui:
     path: /openapi
@@ -86,7 +93,7 @@ management:
         liveness:
           include: livenessState, livenessResponseCheck
         readiness:
-          include: readinessState, webServices, kafka
+          include: readinessState, kafka, db, webServices
     loggers:
       enabled: true
     prometheus:

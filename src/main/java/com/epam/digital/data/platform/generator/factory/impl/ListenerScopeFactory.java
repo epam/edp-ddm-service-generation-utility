@@ -17,7 +17,6 @@ public class ListenerScopeFactory extends CrudAbstractScope<ListenerScope> {
     scope.setPkType(getPkTypeName(table));
 
     var rootOfTopicName = toHyphenTableName(table);
-    scope.addListener("read", rootOfTopicName, scope.getPkType(), scope.getSchemaName());
     scope.addListener("update", rootOfTopicName, scope.getSchemaName(), "Void");
     scope.addListener("create", rootOfTopicName, scope.getSchemaName(),
         "com.epam.digital.data.platform.model.core.kafka.EntityId");

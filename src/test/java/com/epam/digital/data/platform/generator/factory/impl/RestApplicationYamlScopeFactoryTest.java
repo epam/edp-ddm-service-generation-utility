@@ -27,8 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class RestApplicationYamlScopeFactoryTest {
 
-  private static final List<String> CRUD = List.of("create", "read", "update", "delete");
-  private static final String SEARCH = "search";
+  private static final List<String> CRUD = List.of("create", "update", "delete");
 
   private final Context context = getContext();
 
@@ -96,7 +95,6 @@ class RestApplicationYamlScopeFactoryTest {
     for (String operation : CRUD) {
       result.add(operation + "-" + table);
     }
-    result.add(SEARCH + "-" + view);
     return result;
   }
 

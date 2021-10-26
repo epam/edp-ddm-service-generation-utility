@@ -1,12 +1,12 @@
 package com.epam.digital.data.platform.generator.factory.impl;
 
+import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.getSelectableFields;
+
+import com.epam.digital.data.platform.generator.factory.CrudAbstractScope;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.QueryHandlerScope;
 import org.springframework.stereotype.Component;
 import schemacrawler.schema.Table;
-import com.epam.digital.data.platform.generator.factory.CrudAbstractScope;
-
-import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.getSelectableFields;
 
 @Component
 public class QueryHandlerScopeFactory extends CrudAbstractScope<QueryHandlerScope> {
@@ -25,6 +25,6 @@ public class QueryHandlerScopeFactory extends CrudAbstractScope<QueryHandlerScop
 
   @Override
   public String getPath() {
-    return "kafka-api/src/main/java/kafkaapi/queryhandler/impl/queryHandler.java.ftl";
+    return "rest-api/src/main/java/restapi/handler/queryHandler.java.ftl";
   }
 }

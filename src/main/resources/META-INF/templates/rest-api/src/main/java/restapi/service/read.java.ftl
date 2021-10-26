@@ -1,29 +1,16 @@
 package ${basePackage}.restapi.service;
 
-import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
+import com.epam.digital.data.platform.restapi.core.service.GenericQueryService;
 import org.springframework.stereotype.Service;
-
 import ${basePackage}.model.dto.${schemaName};
-import com.epam.digital.data.platform.model.core.kafka.Request;
-import com.epam.digital.data.platform.model.core.kafka.Response;
-import com.epam.digital.data.platform.restapi.core.service.GenericService;
-import com.epam.digital.data.platform.starter.restapi.config.properties.KafkaProperties;
-import com.fasterxml.jackson.core.type.TypeReference;
+import ${basePackage}.restapi.handler.${schemaName}QueryHandler;
 
 @Service
-public class ${className} extends GenericService<Request<${pkType}>, ${schemaName}> {
-
-  private static final String REQUEST_TYPE = "${requestType}";
+public class ${className}
+    extends GenericQueryService<${pkType}, ${schemaName}> {
 
   public ${className}(
-    ReplyingKafkaTemplate<String, Request<${pkType}>, String> replyingKafkaTemplate,
-      KafkaProperties kafkaProperties) {
-
-    super(replyingKafkaTemplate, kafkaProperties.getTopics().get(REQUEST_TYPE));
-  }
-
-  @Override
-  protected TypeReference type() {
-    return new TypeReference<Response<${schemaName}>>() {};
+      ${schemaName}QueryHandler handler) {
+    super(handler);
   }
 }

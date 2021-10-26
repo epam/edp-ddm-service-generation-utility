@@ -5,6 +5,9 @@ metadata:
 data:
   config.yaml: |-
     data-platform:
+      datasource:
+        url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}
+        connection-timeout: {{.Values.db.connectionTimeout}}
       kafka:
         bootstrap: {{ .Values.kafka.service }}
         ssl:
@@ -22,6 +25,9 @@ data:
           enabled: true
       files:
         processing:
+          enabled: true
+      jwt:
+        validation:
           enabled: true
 
     server:
@@ -45,6 +51,13 @@ data:
     datafactory-file-ceph:
       http-endpoint: {{ .Values.datafactoryFileCeph.httpEndpoint }}
       bucketName: {{ .Values.datafactoryFileCeph.bucketName }}
+
+    keycloak:
+      url: {{ .Values.keycloak.url }}
+      realms:
+        - {{ .Values.ciProject }}-officer-portal
+        - {{ .Values.ciProject }}-citizen-portal
+        - {{ .Values.ciProject }}-external-system
 
     audit:
       kafka:

@@ -1,15 +1,15 @@
-package ${basePackage}.kafkaapi.queryhandler.impl;
+package ${basePackage}.restapi.handler;
 
-import com.epam.digital.data.platform.kafkaapi.core.queryhandler.AbstractQueryHandler;
-import com.epam.digital.data.platform.kafkaapi.core.service.AccessPermissionService;
+import com.epam.digital.data.platform.restapi.core.queryhandler.AbstractQueryHandler;
+import com.epam.digital.data.platform.restapi.core.service.AccessPermissionService;
 import org.jooq.SelectFieldOrAsterisk;
 import org.jooq.impl.DSL;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 import ${basePackage}.model.dto.${schemaName};
 
-@Service
+@Component
 public class ${className} extends
     AbstractQueryHandler<${pkType}, ${schemaName}> {
 

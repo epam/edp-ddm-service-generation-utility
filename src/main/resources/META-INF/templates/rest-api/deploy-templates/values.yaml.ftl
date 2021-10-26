@@ -27,6 +27,13 @@ kafka:
   producerConfigs:
     acks: all
 
+db:
+  secret: citus-roles-secrets
+  url: citus-master
+  port: 5432
+  name: ${register}
+  connectionTimeout: 4000
+
 image:
   name: ${register}-rest-api
   version: latest

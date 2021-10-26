@@ -18,6 +18,7 @@
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
       <java.version>11</java.version>
       <spring.boot.version>2.3.5.RELEASE</spring.boot.version>
+      <jackson.core.version>2.12.0</jackson.core.version>
   </properties>
 
     <dependencyManagement>
@@ -52,6 +53,22 @@
         <version>${fullVersion}</version>
       </dependency>
     <#noparse>
+
+        <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+          <version>${jackson.core.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+          <version>${jackson.core.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+          <version>${jackson.core.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

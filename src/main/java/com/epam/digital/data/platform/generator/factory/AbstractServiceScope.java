@@ -15,13 +15,11 @@ public abstract class AbstractServiceScope<T extends ServiceScope> extends CrudA
   protected T map(Table table, Context context) {
     String modelName = getSchemaName(table);
 
-    String pkName = getPkName(table);
-
     T scope = instantiate();
 
     scope.setClassName(modelName + StringUtils.capitalize(getOperation()) + "Service");
     scope.setSchemaName(modelName);
-    scope.setPkName(pkName);
+    scope.setPkName(getPkName(table));
     scope.setPkType(getPkTypeName(table));
 
     String requestType = getOperation() + "-" + toHyphenTableName(table);

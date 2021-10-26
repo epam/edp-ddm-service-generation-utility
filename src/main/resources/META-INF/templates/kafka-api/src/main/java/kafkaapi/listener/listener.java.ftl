@@ -13,7 +13,6 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 import ${basePackage}.kafkaapi.commandhandler.impl.${schemaName}CommandHandler;
-import ${basePackage}.kafkaapi.queryhandler.impl.${schemaName}QueryHandler;
 import ${basePackage}.model.dto.${schemaName};
 
 @Component
@@ -23,9 +22,8 @@ public class ${className} extends
   private final Logger log = LoggerFactory.getLogger(${className}.class);
 
   public ${className}(
-    ${schemaName}CommandHandler commandHandler,
-    ${schemaName}QueryHandler queryHandler) {
-        super(commandHandler, queryHandler);
+    ${schemaName}CommandHandler commandHandler) {
+        super(commandHandler);
     }
 
 <#list listeners as listener>

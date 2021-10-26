@@ -36,13 +36,11 @@ class ListenerScopeFactoryTest {
     assertThat(resultScope.getPkType()).isEqualTo(expectedPkType);
 
     assertThat(resultScope.getListeners().get(0)).usingRecursiveComparison().isEqualTo(
-        new ListenerDetails("read", ROOT_OF_TOPIC_NAME, expectedPkType, SCHEMA_NAME));
-    assertThat(resultScope.getListeners().get(1)).usingRecursiveComparison().isEqualTo(
         new ListenerDetails("update", ROOT_OF_TOPIC_NAME, SCHEMA_NAME, "Void"));
-    assertThat(resultScope.getListeners().get(2)).usingRecursiveComparison().isEqualTo(
+    assertThat(resultScope.getListeners().get(1)).usingRecursiveComparison().isEqualTo(
         new ListenerDetails("create", ROOT_OF_TOPIC_NAME, SCHEMA_NAME,
             "com.epam.digital.data.platform.model.core.kafka.EntityId"));
-    assertThat(resultScope.getListeners().get(3)).usingRecursiveComparison().isEqualTo(
+    assertThat(resultScope.getListeners().get(2)).usingRecursiveComparison().isEqualTo(
         new ListenerDetails("delete", ROOT_OF_TOPIC_NAME, SCHEMA_NAME, "Void"));
   }
 }

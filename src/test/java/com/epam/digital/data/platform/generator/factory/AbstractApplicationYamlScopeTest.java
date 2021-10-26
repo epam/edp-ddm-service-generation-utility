@@ -54,12 +54,10 @@ class AbstractApplicationYamlScopeTest {
     var scope = scopes.get(0);
 
     var roots = scope.getRootsOfTopicNames();
-    assertThat(roots).hasSize(5);
+    assertThat(roots).hasSize(3);
     assertThat(roots.get(0)).isEqualTo("create-" + crud);
-    assertThat(roots.get(1)).isEqualTo("read-" + crud);
-    assertThat(roots.get(2)).isEqualTo("update-" + crud);
-    assertThat(roots.get(3)).isEqualTo("delete-" + crud);
-    assertThat(roots.get(4)).isEqualTo("search-test-schema-search");
+    assertThat(roots.get(1)).isEqualTo("update-" + crud);
+    assertThat(roots.get(2)).isEqualTo("delete-" + crud);
   }
 
   @Test

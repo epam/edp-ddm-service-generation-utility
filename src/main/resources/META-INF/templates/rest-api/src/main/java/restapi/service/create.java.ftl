@@ -8,7 +8,7 @@ import ${basePackage}.model.dto.${schemaName};
 import com.epam.digital.data.platform.model.core.kafka.Request;
 import com.epam.digital.data.platform.model.core.kafka.Response;
 import com.epam.digital.data.platform.restapi.core.service.GenericService;
-import com.epam.digital.data.platform.starter.restapi.config.properties.KafkaProperties;
+import com.epam.digital.data.platform.restapi.core.config.properties.KafkaProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 @Service

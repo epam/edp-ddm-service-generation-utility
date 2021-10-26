@@ -57,7 +57,7 @@ class QueryHandlerScopeFactoryTest {
     assertThat(resultScope.getOutputFields().get(1).getName()).isEqualTo(FILE_COLUMN_NAME);
     assertThat(resultScope.getOutputFields().get(1).getConverter())
         .isEqualTo(
-            "com.epam.digital.data.platform.kafkaapi.core.util.JooqDataTypes.FILE_DATA_TYPE");
+            "com.epam.digital.data.platform.restapi.core.utils.JooqDataTypes.FILE_DATA_TYPE");
     assertThat(resultScope.getOutputFields().get(2).getName()).isEqualTo(PK_COLUMN_NAME);
     assertThat(resultScope.getOutputFields().get(2).getConverter()).isNull();
   }

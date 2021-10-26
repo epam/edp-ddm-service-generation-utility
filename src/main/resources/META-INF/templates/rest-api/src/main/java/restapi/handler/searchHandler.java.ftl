@@ -1,18 +1,20 @@
-package ${basePackage}.kafkaapi.searchhandler.impl;
+package ${basePackage}.restapi.handler;
 
-import com.epam.digital.data.platform.kafkaapi.core.searchhandler.AbstractSearchHandler;
+import com.epam.digital.data.platform.restapi.core.searchhandler.AbstractSearchHandler;
 import org.jooq.Condition;
 import org.jooq.SelectFieldOrAsterisk;
 import org.jooq.impl.DSL;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 import ${basePackage}.model.dto.${schemaName};
 import ${basePackage}.model.dto.${schemaName}SearchConditions;
 
-@Service
-public class ${schemaName}SearchHandler extends
-    AbstractSearchHandler<${schemaName}SearchConditions, ${schemaName}> {
+@Component
+public class ${className}
+    extends AbstractSearchHandler<
+        ${schemaName}SearchConditions,
+        ${schemaName}> {
 
   @Override
   protected Condition whereClause(${schemaName}SearchConditions searchConditions) {

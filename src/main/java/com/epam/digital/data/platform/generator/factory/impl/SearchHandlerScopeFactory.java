@@ -101,6 +101,6 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
 
   @Override
   public String getPath() {
-    return "kafka-api/src/main/java/kafkaapi/searchhandler/impl/searchHandler.java.ftl";
+    return "rest-api/src/main/java/restapi/handler/searchHandler.java.ftl";
   }
 }

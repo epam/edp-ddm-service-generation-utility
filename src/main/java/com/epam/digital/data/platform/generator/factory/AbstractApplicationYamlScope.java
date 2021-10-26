@@ -12,7 +12,7 @@ import java.util.List;
 public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScope>
     extends AbstractScope<T> {
 
-  static final List<String> CRUD_REQUESTS = List.of("create", "read", "update", "delete");
+  static final List<String> CRUD_REQUESTS = List.of("create", "update", "delete");
 
   private final PartialUpdateProvider partialUpdateProvider;
 
@@ -28,7 +28,6 @@ public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScop
     var rootTopics = new ArrayList<String>();
     rootTopics.addAll(getCrudTopics(context));
     rootTopics.addAll(getPartialUpdateTopics(context));
-    rootTopics.addAll(getSearchConditionTopics(context));
 
     var applicationYamlScope = instantiate();
     applicationYamlScope.setRootsOfTopicNames(rootTopics);
@@ -50,13 +49,6 @@ public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScop
         .map(this::toHyphenTableName)
         .flatMap(topicRoot -> CRUD_REQUESTS.stream()
             .map(request -> request + "-" + topicRoot))
-        .collect(toList());
-  }
-
-  private List<String> getSearchConditionTopics(Context context) {
-    return context.getCatalog().getTables().stream()
-        .filter(this::isSearchConditionsView)
-        .map(t -> "search-" + toHyphenTableName(t))
         .collect(toList());
   }
 }
