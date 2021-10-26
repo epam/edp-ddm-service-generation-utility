@@ -31,7 +31,7 @@ data:
           enabled: true
 
     server:
-      max-http-header-size: 16KB
+      max-http-header-size: 32KB
 
     dso:
       url: {{ .Values.dso.url }}
