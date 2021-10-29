@@ -9,7 +9,7 @@ app:
   templates: META-INF/templates
 
 schema-crawler:
-  schema: public
+  schema: ${DB_SCHEMA:registry}
   exclude-tables:
     - public.databasechangelog
     - public.databasechangeloglock
