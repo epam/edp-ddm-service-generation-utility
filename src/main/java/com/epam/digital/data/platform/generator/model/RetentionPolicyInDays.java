@@ -1,9 +1,15 @@
 package com.epam.digital.data.platform.generator.model;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
 public class RetentionPolicyInDays {
 
-  private Integer read;
-  private Integer write;
+  @JsonSetter(nulls = Nulls.SKIP)
+  private Integer read = 3 * 365;
+
+  @JsonSetter(nulls = Nulls.SKIP)
+  private Integer write = 3 * 365;
 
   public Integer getRead() {
     return read;

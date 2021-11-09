@@ -1,9 +1,14 @@
 package com.epam.digital.data.platform.generator.model;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
 public class Settings {
 
   private General general;
-  private Kafka kafka;
+
+  @JsonSetter(nulls = Nulls.SKIP)
+  private Kafka kafka = new Kafka();
 
   public General getGeneral() {
     return general;
