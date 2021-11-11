@@ -120,3 +120,4 @@ class ServiceGenerationUtilityApplicationTest {
     FileUtils.deleteDirectory(new File(folder));
   }
 }
+
