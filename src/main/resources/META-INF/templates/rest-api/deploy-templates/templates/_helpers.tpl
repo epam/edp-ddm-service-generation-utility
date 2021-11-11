@@ -33,3 +33,10 @@
 {{- define "jwksUri.external" -}}
 {{- printf "%s-%s%s" (include "keycloak.urlPrefix" .) .Values.keycloak.realms.external .Values.keycloak.certificatesEndpoint -}}
 {{- end -}}
+
+{{- define "imageRegistry" -}}
+{{- if .Values.global.imageRegistry -}}
+{{- printf "%s/" .Values.global.imageRegistry -}}
+{{- else -}}
+{{- end -}}
+{{- end }}

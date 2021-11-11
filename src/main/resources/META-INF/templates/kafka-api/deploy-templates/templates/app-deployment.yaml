@@ -133,10 +133,10 @@ spec:
                   key: BUCKET_HOST
       initContainers:
         - name: wait-for-rest-api
-          image: {{ .Values.dockerProxyRegistry }}/busybox
+          image: {{ template "imageRegistry" . -}} busybox
           command: ["sh", "-c", "while ! nc -w 1 {{ .Values.restApi.service.name }} {{ .Values.restApi.service.port }} </dev/null; do echo waiting for rest-api service; sleep 10; done;"]
         - name: init
-          image: {{ .Values.dockerProxyRegistry }}/busybox
+          image: {{ template "imageRegistry" . -}} busybox
           command: ["sh", "-c", "while ! nc -w 1 {{ .Values.db.url }} {{ .Values.db.port }} </dev/null; do echo waiting for {{ .Values.db.url }}; sleep 10; done;"]
           env:
             - name: POSTGRES_USER
