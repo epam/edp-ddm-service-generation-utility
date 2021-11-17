@@ -20,7 +20,7 @@ feign:
     config:
       default:
         connectTimeout: 4000
-        readTimeout: 8000
+        readTimeout: 30000
 
 management:
   endpoints:
