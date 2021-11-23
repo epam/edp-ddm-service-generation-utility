@@ -42,3 +42,6 @@ settings:
 1. (Optional) Package application into jar file with `mvn clean package`
 2. Add `--module=model --module=kafka-api --module=rest-api --module=soap-api` to program run arguments, depending on the list of Services to be generated
 3. Run application with your favourite IDE or via `java -jar ...` with jar file, created above
+
+### License
+service-generation-utility is Open Source software released under the Apache 2.0 license.
