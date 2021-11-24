@@ -3,6 +3,10 @@ spring:
     name: ${register}-rest-api
   mvc:
     throw-exception-if-no-handler-found: true
+    format:
+      date: yyyy-MM-dd
+      date-time: yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+      time: HH:mm:ss
   resources:
     add-mappings: false
   zipkin:
@@ -165,3 +169,4 @@ data-platform:
         request: ${root}-${serviceVersion}-inbound
         replay: ${root}-${serviceVersion}-outbound
   </#list>
+
