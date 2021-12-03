@@ -24,7 +24,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
-import com.epam.digital.data.platform.generator.model.Blueprint;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.General;
 import com.epam.digital.data.platform.generator.model.Kafka;
@@ -57,7 +56,7 @@ public class ContextTestUtils {
   public static final Integer RETENTION_READ = 2;
   public static final Integer RETENTION_WRITE = 365;
 
-  public static Blueprint getBlueprint() {
+  public static Settings getSettings() {
     var general = new General();
     general.setVersion(VERSION);
     general.setBasePackageName(BASE_PACKAGE_NAME);
@@ -73,13 +72,11 @@ public class ContextTestUtils {
     settings.setGeneral(general);
     settings.setKafka(kafka);
 
-    var blueprint = new Blueprint();
-    blueprint.setSettings(settings);
-    return blueprint;
+    return settings;
   }
 
   public static Context getContext() {
-    return new Context(getBlueprint(), getCatalog());
+    return new Context(getSettings(), getCatalog());
   }
 
   public static Catalog getCatalog() {

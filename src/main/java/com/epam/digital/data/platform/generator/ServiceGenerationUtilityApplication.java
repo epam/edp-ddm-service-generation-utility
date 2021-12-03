@@ -102,7 +102,7 @@ public class ServiceGenerationUtilityApplication implements ApplicationRunner {
     String resultFile = temp.replace(TEMPLATE_EXTENSION, "");
     if (temp.contains(sourceDir)) {
       String basePackageName =
-          context.getBlueprint().getSettings().getGeneral().getBasePackageName().replace('.', File.separatorChar);
+          context.getSettings().getGeneral().getBasePackageName().replace('.', File.separatorChar);
       String packageDir = File.separatorChar + basePackageName;
       String[] paths = resultFile.split(safeRegexp(sourceDir));
       String completePath = paths[0] + sourceDir + packageDir + paths[1];

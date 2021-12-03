@@ -21,7 +21,7 @@ import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.FI
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.PK_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SCHEMA_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.TABLE_NAME;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getBlueprint;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getSettings;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.newCatalog;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withColumn;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withTable;
@@ -51,7 +51,7 @@ class QueryHandlerScopeFactoryTest {
     List<QueryHandlerScope> resultList =
         queryHandlerScopeFactory.create(
             new Context(
-                getBlueprint(),
+                getSettings(),
                 newCatalog(
                     withTable(
                         TABLE_NAME,

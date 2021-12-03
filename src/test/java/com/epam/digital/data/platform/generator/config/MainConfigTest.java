@@ -22,8 +22,8 @@ import static com.epam.digital.data.platform.generator.config.MainConfigTest.Row
 import static com.epam.digital.data.platform.generator.config.MainConfigTest.Row.WRITE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.epam.digital.data.platform.generator.model.Blueprint;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.epam.digital.data.platform.generator.model.Settings;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ class MainConfigTest {
 
   @Test
   void shouldSetDefaultValueForReadAndWriteWhenWholeKafkaBlockIsMissing()
-      throws JsonProcessingException {
+      throws IOException {
     var croppedSettings = settingsWithoutRows(KAFKA, RETENTION_POLICY, READ, WRITE);
 
     assertReadWriteValues(croppedSettings, DEFAULT_RETENTION_POLICY, DEFAULT_RETENTION_POLICY);
@@ -54,31 +54,32 @@ class MainConfigTest {
 
   @Test
   void shouldSetDefaultValueForReadAndWriteWhenWholeRetentionPolicyBlockIsMissing()
-      throws JsonProcessingException {
+      throws IOException {
     var croppedSettings = settingsWithoutRows(RETENTION_POLICY, READ, WRITE);
 
     assertReadWriteValues(croppedSettings, DEFAULT_RETENTION_POLICY, DEFAULT_RETENTION_POLICY);
   }
 
   @Test
-  void shouldSetDefaultValueForReadWhenThisRowIsMissing() throws JsonProcessingException {
+  void shouldSetDefaultValueForReadWhenThisRowIsMissing() throws IOException {
     var croppedSettings = settingsWithoutRows(READ);
 
     assertReadWriteValues(croppedSettings, DEFAULT_RETENTION_POLICY, 20);
   }
 
   @Test
-  void shouldSetDefaultValueForWriteWhenThisRowIsMissing() throws JsonProcessingException {
+  void shouldSetDefaultValueForWriteWhenThisRowIsMissing() throws IOException {
     var croppedSettings = settingsWithoutRows(WRITE);
 
     assertReadWriteValues(croppedSettings, 10, DEFAULT_RETENTION_POLICY);
   }
 
   private void assertReadWriteValues(String croppedSettings, int read, int write)
-      throws JsonProcessingException {
-    var blueprint = instance.yamlMapper().readValue(croppedSettings, Blueprint.class);
+      throws IOException {
+    var objectReader = instance.yamlMapper().reader().withRootName("settings");
+    var settings = objectReader.readValue(croppedSettings, Settings.class);
 
-    var retentionPolicy = blueprint.getSettings().getKafka().getRetentionPolicyInDays();
+    var retentionPolicy = settings.getKafka().getRetentionPolicyInDays();
     assertThat(retentionPolicy.getRead()).isEqualTo(read);
     assertThat(retentionPolicy.getWrite()).isEqualTo(write);
   }

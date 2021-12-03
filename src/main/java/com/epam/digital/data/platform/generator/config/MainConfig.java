@@ -17,8 +17,8 @@
 package com.epam.digital.data.platform.generator.config;
 
 import com.epam.digital.data.platform.generator.config.properties.ServiceGenerationProperties;
-import com.epam.digital.data.platform.generator.model.Blueprint;
 import com.epam.digital.data.platform.generator.model.Context;
+import com.epam.digital.data.platform.generator.model.Settings;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.FileInputStream;
@@ -43,10 +43,13 @@ import schemacrawler.schema.Catalog;
 public class MainConfig {
 
   @Bean
-  public Blueprint blueprint(@Value("file:#{systemProperties.settings}") Resource file,
-      ObjectMapper mapper)
-      throws IOException {
-    return mapper.readValue(new FileInputStream(file.getFile()), Blueprint.class);
+  public Settings settings(@Value("file:#{systemProperties.settings}") Resource file,
+      ObjectMapper mapper) throws IOException {
+
+    var objectReader = mapper.reader().withRootName("settings");
+    try (var fis = new FileInputStream(file.getFile())) {
+      return objectReader.readValue(fis, Settings.class);
+    }
   }
 
   @Bean
@@ -73,7 +76,7 @@ public class MainConfig {
   }
 
   @Bean
-  public Context context(Blueprint blueprint, Catalog catalog) {
-    return new Context(blueprint, catalog);
+  public Context context(Settings settings, Catalog catalog) {
+    return new Context(settings, catalog);
   }
 }

@@ -32,7 +32,7 @@ class FreeMarkerConfigurationTest {
 
   @Test
   void shouldExtractMajorVersion() throws TemplateModelException {
-    var config = instance.getConfig(getContext().getBlueprint());
+    var config = instance.getConfig(getContext().getSettings());
 
     assertThat(((SimpleScalar) config.getSharedVariable("fullVersion")).getAsString())
         .isEqualTo(VERSION);
@@ -42,10 +42,10 @@ class FreeMarkerConfigurationTest {
 
   @Test
   void shouldThrowIllegalArgumentExceptionWhenCanNotExtractMajorVersion() {
-    var blueprint = getContext().getBlueprint();
-    blueprint.getSettings().getGeneral().setVersion("1");
+    var settings = getContext().getSettings();
+    settings.getGeneral().setVersion("1");
 
-    assertThatThrownBy(() -> instance.getConfig(blueprint))
+    assertThatThrownBy(() -> instance.getConfig(settings))
         .isInstanceOf(IllegalArgumentException.class);
   }
 }

@@ -20,18 +20,18 @@ import schemacrawler.schema.Catalog;
 
 public final class Context {
 
-  private final Blueprint blueprint;
+  private final Settings settings;
 
   private final Catalog catalog;
 
   public Context(
-      Blueprint blueprint, Catalog catalog) {
-    this.blueprint = blueprint;
+      Settings settings, Catalog catalog) {
+    this.settings = settings;
     this.catalog = catalog;
   }
 
-  public Blueprint getBlueprint() {
-    return blueprint;
+  public Settings getSettings() {
+    return settings;
   }
 
   public Catalog getCatalog() {

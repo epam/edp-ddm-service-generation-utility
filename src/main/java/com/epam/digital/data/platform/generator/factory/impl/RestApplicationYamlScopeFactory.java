@@ -57,9 +57,9 @@ public class RestApplicationYamlScopeFactory
     result.get(0).setEntityPaths(getEntityPaths(context));
     result.get(0).setSearchPaths(getSearchPaths(context));
     result.get(0).setEnumPresent(isEnumPresent());
-    result.get(0).setRetentionPolicyDaysRead(context.getBlueprint().getSettings().getKafka()
+    result.get(0).setRetentionPolicyDaysRead(context.getSettings().getKafka()
         .getRetentionPolicyInDays().getRead());
-    result.get(0).setRetentionPolicyDaysWrite(context.getBlueprint().getSettings().getKafka()
+    result.get(0).setRetentionPolicyDaysWrite(context.getSettings().getKafka()
         .getRetentionPolicyInDays().getWrite());
     return result;
   }
