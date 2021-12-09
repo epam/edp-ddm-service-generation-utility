@@ -49,6 +49,7 @@ class SearchConditionProviderTest {
   class FindFor {
 
     static final String CHANGE_NAME = "some changeName";
+    static final String TABLE_NAME = "table";
 
     @BeforeEach
     public void setUp() {
@@ -74,7 +75,9 @@ class SearchConditionProviderTest {
               "whatever5"),
           new Metadata(6L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, CONTAINS_ATTRIBUTE_NAME,
               "whatever6"),
-          new Metadata(7L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, LIMIT_ATTRIBUTE_NAME, "7")
+          new Metadata(7L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, LIMIT_ATTRIBUTE_NAME, "7"),
+          new Metadata(8L, CHANGE_NAME, TABLE_NAME, SEARCH_CONDITION_COLUMN_ATTRIBUTE, "alias1"),
+          new Metadata(9L, CHANGE_NAME, TABLE_NAME, SEARCH_CONDITION_COLUMN_ATTRIBUTE, "alias2")
       );
     }
 
@@ -103,6 +106,15 @@ class SearchConditionProviderTest {
       assertThat(list).hasSize(2);
       assertThat(list.get(0)).isEqualTo("whatever5");
       assertThat(list.get(1)).isEqualTo("whatever6");
+    }
+
+    @Test
+    void shouldCollectReturningColumnsByChangeType() {
+      var list = instance.findFor(CHANGE_NAME).getReturningColumns();
+
+      assertThat(list).hasSize(2);
+      assertThat(list.get(0)).isEqualTo("alias1");
+      assertThat(list.get(1)).isEqualTo("alias2");
     }
 
     @Test

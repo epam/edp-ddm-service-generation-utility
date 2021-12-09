@@ -17,6 +17,7 @@
 package com.epam.digital.data.platform.generator.utils;
 
 import com.epam.digital.data.platform.generator.model.template.SelectableField;
+import schemacrawler.schema.Column;
 import schemacrawler.schema.Table;
 
 import java.util.List;
@@ -27,13 +28,16 @@ public class ReadOperationUtils {
 
   private ReadOperationUtils() {}
 
-  public static List<SelectableField> getSelectableFields(Table table) {
-    return table.getColumns().stream()
-        .map(
-            column ->
-                new SelectableField(
-                    column.getName(),
-                    EntityFieldConverter.getConverterCode(column.getColumnDataType().getName())))
+  public static List<SelectableField> getSelectableFields(List<Column> columns) {
+    return columns.stream()
+        .map(column -> new SelectableField(column.getName(),
+            EntityFieldConverter.getConverterCode(column.getColumnDataType().getName())))
         .collect(toList());
   }
+
+  public static List<SelectableField> getSelectableFields(Table table, List<String> allowedColumns) {
+    List<Column> columns = table.getColumns().stream()
+        .filter(column -> allowedColumns.contains(column.getName())).collect(toList());
+    return getSelectableFields(columns);
+    }
 }

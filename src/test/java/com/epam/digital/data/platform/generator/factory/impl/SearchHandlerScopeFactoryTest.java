@@ -47,6 +47,7 @@ import com.epam.digital.data.platform.generator.model.template.SearchConditionFi
 import com.epam.digital.data.platform.generator.scope.SearchHandlerScope;
 
 import java.sql.Struct;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,6 +102,10 @@ class SearchHandlerScopeFactoryTest {
 
   @Test
   void shouldCreateScopes() {
+    lenient().when(scProvider.findFor("test_view"))
+             .thenReturn(new SearchConditionsBuilder()
+             .returningColumns(Arrays.asList(FIELD, FIELD_TOO_COLUMN_NAME)).build());
+
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     assertThat(resultList).hasSize(3);

@@ -35,7 +35,7 @@ public class QueryHandlerScopeFactory extends CrudAbstractScope<QueryHandlerScop
     scope.setPkColumnName(getPkColumn(table).getName());
     scope.setTableName(table.getName());
     scope.setPkType(getPkTypeName(table));
-    scope.setOutputFields(getSelectableFields(table));
+    scope.setOutputFields(getSelectableFields(table.getColumns()));
     return scope;
   }
 

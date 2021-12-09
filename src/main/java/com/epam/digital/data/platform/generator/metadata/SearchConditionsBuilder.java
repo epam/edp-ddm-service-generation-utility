@@ -25,6 +25,7 @@ public class SearchConditionsBuilder {
   private List<String> equal = emptyList();
   private List<String> startsWith = emptyList();
   private List<String> contains = emptyList();
+  private List<String> returningColumns = emptyList();
   private Integer limit;
   private Boolean pagination;
 
@@ -43,6 +44,11 @@ public class SearchConditionsBuilder {
     return this;
   }
 
+  public SearchConditionsBuilder returningColumns(List<String> returningColumns) {
+    this.returningColumns = returningColumns;
+    return this;
+  }
+
   public SearchConditionsBuilder limit(Integer limit) {
     this.limit = limit;
     return this;
@@ -54,6 +60,6 @@ public class SearchConditionsBuilder {
   }
 
   public SearchConditions build() {
-    return new SearchConditions(equal, startsWith, contains, limit, pagination);
+    return new SearchConditions(equal, startsWith, contains, returningColumns, limit, pagination);
   }
 }

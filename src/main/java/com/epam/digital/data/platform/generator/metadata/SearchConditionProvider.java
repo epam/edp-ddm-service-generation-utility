@@ -57,10 +57,14 @@ public class SearchConditionProvider {
             mapping(Metadata::getValue,
                 toList())));
 
+    var returningColumns = metadataFacade.findByChangeType(name)
+        .map(Metadata::getValue).collect(toList());
+
     var b = new SearchConditionsBuilder()
         .equal(groupedByName.getOrDefault(EQUAL_ATTRIBUTE_NAME, emptyList()))
         .startsWith(groupedByName.getOrDefault(STARTS_WITH_ATTRIBUTE_NAME, emptyList()))
-        .contains(groupedByName.getOrDefault(CONTAINS_ATTRIBUTE_NAME, emptyList()));
+        .contains(groupedByName.getOrDefault(CONTAINS_ATTRIBUTE_NAME, emptyList()))
+        .returningColumns(returningColumns);
 
     var limit = groupedByName.get(LIMIT_ATTRIBUTE_NAME);
     if (limit != null) {

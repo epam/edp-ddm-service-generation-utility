@@ -84,7 +84,7 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     scope.setLimit(sc.getLimit());
     scope.setSearchConditionFields(searchConditionFields);
     scope.setEnumSearchConditionFields(enumSearchConditionFields);
-    scope.setOutputFields(getSelectableFields(table));
+    scope.setOutputFields(getSelectableFields(table, sc.getReturningColumns()));
     scope.setPagination(sc.getPagination());
     return scope;
   }
