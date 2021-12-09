@@ -19,8 +19,10 @@ package com.epam.digital.data.platform.generator.config;
 import com.epam.digital.data.platform.generator.config.properties.ServiceGenerationProperties;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.Settings;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -50,6 +52,12 @@ public class MainConfig {
     try (var fis = new FileInputStream(file.getFile())) {
       return objectReader.readValue(fis, Settings.class);
     }
+  }
+  
+  @Bean
+  public JsonNode values(@Value("file:${PLATFORM_VALUES_PATH}") File file, ObjectMapper mapper)
+      throws IOException {
+    return mapper.readTree(file);
   }
 
   @Bean

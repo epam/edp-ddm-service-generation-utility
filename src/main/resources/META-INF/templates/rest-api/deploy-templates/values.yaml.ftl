@@ -21,7 +21,7 @@ kafka:
   clusterName: kafka-cluster
   sslEnabled: false
   numPartitions: 3
-  replicationFactor: 3
+  replicationFactor: ${replicationFactor}
   consumerConfigs:
     "[fetch.max.wait.ms]": 500
   producerConfigs:
