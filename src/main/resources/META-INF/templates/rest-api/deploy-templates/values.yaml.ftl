@@ -60,6 +60,13 @@ datafactoryFileCeph:
   httpEndpoint: ${DATAFACTORY_FILE_CEPH_BUCKET_HOST}
 </#noparse>
 
+s3:
+  config:
+    client:
+      protocol: http
+    options:
+      pathStyleAccess: true
+
 dso:
   url: http://digital-signature-ops:8080
 

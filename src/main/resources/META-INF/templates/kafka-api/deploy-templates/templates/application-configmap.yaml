@@ -34,6 +34,11 @@ data:
       http-endpoint: {{ .Values.datafactoryFileCeph.httpEndpoint }}
       bucketName: {{ .Values.datafactoryFileCeph.bucketName }}
 
+    s3:
+      config:
+        client: {{ .Values.s3.config.client | toYaml | nindent 10 }}
+        options: {{ .Values.s3.config.options | toYaml | nindent 10 }}
+
     keycloak:
       url: {{ .Values.keycloak.url }}
       realms:
