@@ -12,6 +12,7 @@ import com.epam.digital.data.platform.model.core.kafka.RequestContext;
 import com.epam.digital.data.platform.model.core.kafka.SecurityContext;
 import com.epam.digital.data.platform.restapi.core.annotation.HttpRequestContext;
 import com.epam.digital.data.platform.restapi.core.annotation.HttpSecurityContext;
+import com.epam.digital.data.platform.restapi.core.audit.AuditableController;
 import com.epam.digital.data.platform.restapi.core.utils.ResponseResolverUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,6 +52,7 @@ public class ${className} {
       this.deleteService = deleteService;
   }
 
+  @AuditableController
 <@PreAuthorize roles=readRoles />
   @GetMapping("/{id}")
   public ResponseEntity<${schemaName}> findById${schemaName}(
@@ -63,6 +65,7 @@ public class ${className} {
     return ResponseResolverUtil.getHttpResponseFromKafka(response);
   }
 
+  @AuditableController
 <@PreAuthorize roles=createRoles />
   @PostMapping
   public ResponseEntity<EntityId> create${schemaName}(
@@ -75,6 +78,7 @@ public class ${className} {
     return ResponseResolverUtil.getHttpResponseFromKafka(response);
   }
 
+  @AuditableController
 <@PreAuthorize roles=updateRoles />
   @PutMapping("/{id}")
   public ResponseEntity<Void> update${schemaName}(
@@ -89,6 +93,7 @@ public class ${className} {
     return ResponseResolverUtil.getHttpResponseFromKafka(response);
   }
 
+  @AuditableController
 <@PreAuthorize roles=deleteRoles />
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteById${schemaName}(@PathVariable("id") ${pkType} id,

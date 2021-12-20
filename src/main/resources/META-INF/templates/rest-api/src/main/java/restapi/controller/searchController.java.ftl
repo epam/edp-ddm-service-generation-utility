@@ -8,6 +8,7 @@ import com.epam.digital.data.platform.model.core.kafka.RequestContext;
 import com.epam.digital.data.platform.model.core.kafka.SecurityContext;
 import com.epam.digital.data.platform.restapi.core.annotation.HttpRequestContext;
 import com.epam.digital.data.platform.restapi.core.annotation.HttpSecurityContext;
+import com.epam.digital.data.platform.restapi.core.audit.AuditableController;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ public class ${className} {
       this.searchService = searchService;
   }
 
+  @AuditableController
 <@PreAuthorize roles=readRoles />
   @GetMapping
   public ResponseEntity<List<${schemaName}>> search(

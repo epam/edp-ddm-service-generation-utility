@@ -11,6 +11,7 @@ import com.epam.digital.data.platform.model.core.kafka.RequestContext;
 import com.epam.digital.data.platform.model.core.kafka.SecurityContext;
 import com.epam.digital.data.platform.restapi.core.annotation.HttpRequestContext;
 import com.epam.digital.data.platform.restapi.core.annotation.HttpSecurityContext;
+import com.epam.digital.data.platform.restapi.core.audit.AuditableController;
 import com.epam.digital.data.platform.restapi.core.utils.ResponseResolverUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,7 @@ public class ${className} {
       this.updateService = updateService;
   }
 
+  @AuditableController
 <@PreAuthorize roles=updateRoles />
   @PatchMapping("/{id}")
   public ResponseEntity<Void> update${schemaName}(
