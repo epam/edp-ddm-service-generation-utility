@@ -7,3 +7,5 @@ spring:
     
 schema-crawler:
   schema: public
+
+PLATFORM_VALUES_PATH: src/test/resources/registryConfigurationValues.yaml
