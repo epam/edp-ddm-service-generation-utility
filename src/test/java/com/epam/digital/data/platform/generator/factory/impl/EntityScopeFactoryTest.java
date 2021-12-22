@@ -31,6 +31,8 @@ import static org.mockito.Mockito.lenient;
 import com.epam.digital.data.platform.generator.constraints.impl.CompositeConstraintProvider;
 import com.epam.digital.data.platform.generator.constraints.impl.FormattingConstraintProvider;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.Field;
 import com.epam.digital.data.platform.generator.scope.ModelScope;
@@ -52,6 +54,9 @@ class EntityScopeFactoryTest {
   private CompositeConstraintProvider constraintProviders;
 
   @Mock
+  private SearchConditionProvider searchConditionProvider;
+
+  @Mock
   private FormattingConstraintProvider formattingConstraintProvider;
 
   private EntityScopeFactory instance;
@@ -60,7 +65,7 @@ class EntityScopeFactoryTest {
 
   @BeforeEach
   public void init() {
-    instance = new EntityScopeFactory(enumProvider, constraintProviders);
+    instance = new EntityScopeFactory(enumProvider, constraintProviders, searchConditionProvider);
 
     lenient().when(constraintProviders.getFormattingConstraintProvider())
         .thenReturn(formattingConstraintProvider);
@@ -153,7 +158,11 @@ class EntityScopeFactoryTest {
         context.getCatalog(),
         withSearchConditionView("test_table_search",
             withTextColumn("my_col"),
-            withTextColumn("another_col")));
+            withTextColumn("another_col"),
+            withTextColumn("not_returning_column")));
+    given(searchConditionProvider.findFor("test_table_search"))
+        .willReturn(new SearchConditionsBuilder().returningColumns(List.of("my_col", "another_col"))
+            .build());
 
     List<ModelScope> scopes = instance.create(context);
 
