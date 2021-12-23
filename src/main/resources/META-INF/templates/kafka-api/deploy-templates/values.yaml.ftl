@@ -75,5 +75,3 @@ audit:
   kafka:
     topic: audit-events
     schemaRegistryUrl: http://kafka-schema-registry:8081
-
-dockerProxyRegistry: nexus-docker-registry.apps.cicd2.mdtu-ddm.projects.epam.com

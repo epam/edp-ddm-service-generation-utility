@@ -34,7 +34,7 @@ class MainConfigTest {
   private static final String settingsStr =
       "settings:\n"
           + "  general:\n"
-          + "    package: ua.gov.mdtu.ddm.dataplatform.template\n"
+          + "    package: my.fav.registry\n"
           + "    register: registry\n"
           + "    version: 1.2.3\n"
           + "  kafka:\n"

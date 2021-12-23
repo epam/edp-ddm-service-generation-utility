@@ -58,7 +58,7 @@ class ServiceGenerationUtilityApplicationTest {
   private static final String ROOT_FOLDER = "src/test/resources/templates/";
 
   private static final String MODEL_RESULT_URL = "./testModule/template";
-  private static final String JAVA_MODEL_RESULT_URL = "./javaTestModule/java/ua/gov/mdtu/ddm/ClassName.java";
+  private static final String JAVA_MODEL_RESULT_URL = "./javaTestModule/java/my/fav/registry/ClassName.java";
 
   private static final Path rootPath = Paths.get(ROOT_FOLDER);
 
