@@ -13,12 +13,13 @@
     <description>REST API</description>
 
   <properties>
-      <rest.api.core.version>1.5.1-SNAPSHOT</rest.api.core.version>
+      <rest.api.core.version>1.5.2-SNAPSHOT</rest.api.core.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
       <java.version>11</java.version>
       <log4j.version>2.16.0</log4j.version>
-      <spring.boot.version>2.3.5.RELEASE</spring.boot.version>
+      <spring.boot.version>2.6.1</spring.boot.version>
+      <spring.cloud.version>2021.0.0</spring.cloud.version>
       <jackson.core.version>2.12.0</jackson.core.version>
   </properties>
 
@@ -34,7 +35,7 @@
         <dependency>
           <groupId>org.springframework.cloud</groupId>
           <artifactId>spring-cloud-dependencies</artifactId>
-          <version>Hoxton.SR8</version>
+          <version>${spring.cloud.version}</version>
           <type>pom</type>
           <scope>import</scope>
         </dependency>

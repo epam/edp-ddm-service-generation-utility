@@ -1,4 +1,4 @@
-FROM ${dockerProxyRegistry}/${globalNexusNamespace}/rest-api-core-base-image-master:1.5.0-SNAPSHOT.46 AS builder
+FROM ${dockerProxyRegistry}/${globalNexusNamespace}/rest-api-core-base-image-master:1.5.0-SNAPSHOT.53 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild

@@ -7,8 +7,6 @@ spring:
       date: yyyy-MM-dd
       date-time: yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
       time: HH:mm:ss
-  resources:
-    add-mappings: false
   zipkin:
     baseUrl: http://zipkin.istio-system.svc:9411
     sender:
@@ -26,6 +24,9 @@ spring:
         x-source-business-activity, x-source-business-activity-instance-id
     web:
       filter-order: -2147483648 # HIGHEST_PRECEDENCE
+  web:
+    resources:
+      add-mappings: false
 
 feign:
   client:
