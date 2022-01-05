@@ -64,6 +64,9 @@ s3:
   config:
     client:
       protocol: http
+      <#if s3Signer??>
+      signerOverride: ${s3Signer}
+      </#if>
     options:
       pathStyleAccess: true
 

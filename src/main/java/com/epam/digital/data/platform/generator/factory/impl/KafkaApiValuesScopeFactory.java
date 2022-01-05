@@ -18,28 +18,27 @@ package com.epam.digital.data.platform.generator.factory.impl;
 
 import com.epam.digital.data.platform.generator.factory.ScopeFactory;
 import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.scope.RestApiValuesScope;
+import com.epam.digital.data.platform.generator.scope.KafkaApiValuesScope;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
-
 @Component
-public class RestApiValuesScopeFactory implements ScopeFactory<RestApiValuesScope> {
+public class KafkaApiValuesScopeFactory implements ScopeFactory<KafkaApiValuesScope> {
 
   private final JsonNode values;
 
-  public RestApiValuesScopeFactory(JsonNode values) {
+  public KafkaApiValuesScopeFactory(JsonNode values) {
     this.values = values;
   }
 
   @Override
-  public List<RestApiValuesScope> create(Context context) {
-    RestApiValuesScope scope = new RestApiValuesScope();
-    scope.setReplicationFactor(
-        values.get("global").get("kafkaOperator").get("replicationFactor").asInt());
-    String signer = Optional.ofNullable(values.get("s3"))
+  public List<KafkaApiValuesScope> create(Context context) {
+    var scope = new KafkaApiValuesScope();
+    String signer =
+        Optional.ofNullable(values.get("s3"))
             .map(node -> node.get("config"))
             .map(node -> node.get("client"))
             .map(node -> node.get("signerOverride"))
@@ -51,6 +50,6 @@ public class RestApiValuesScopeFactory implements ScopeFactory<RestApiValuesScop
 
   @Override
   public String getPath() {
-    return "rest-api/deploy-templates/values.yaml.ftl";
+    return "kafka-api/deploy-templates/values.yaml.ftl";
   }
 }

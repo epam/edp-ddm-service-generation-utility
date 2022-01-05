@@ -16,18 +16,9 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
-public class RestApiValuesScope {
+public class KafkaApiValuesScope {
 
-  private int replicationFactor;
   private String s3Signer;
-
-  public int getReplicationFactor() {
-    return replicationFactor;
-  }
-
-  public void setReplicationFactor(int replicationFactor) {
-    this.replicationFactor = replicationFactor;
-  }
 
   public String getS3Signer() {
     return s3Signer;

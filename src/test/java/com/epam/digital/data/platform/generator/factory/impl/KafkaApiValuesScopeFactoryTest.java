@@ -16,35 +16,35 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getContext;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.epam.digital.data.platform.generator.config.MainConfig;
 import com.epam.digital.data.platform.generator.model.Context;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class RestApiValuesScopeFactoryTest {
+import java.io.File;
+import java.io.IOException;
+
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getContext;
+import static org.assertj.core.api.Assertions.assertThat;
+
+class KafkaApiValuesScopeFactoryTest {
 
   File file = new File("src/test/resources/registryConfigurationValues.yaml");
 
   private final Context context = getContext();
   private final MainConfig mainConfig = new MainConfig();
 
-  private RestApiValuesScopeFactory instance;
+  private KafkaApiValuesScopeFactory instance;
 
   @BeforeEach
   void init() throws IOException {
-    instance = new RestApiValuesScopeFactory(mainConfig.values(file, mainConfig.yamlMapper()));
+    instance = new KafkaApiValuesScopeFactory(mainConfig.values(file, mainConfig.yamlMapper()));
   }
 
   @Test
   void shouldReturnCorrectValue() {
     var result = instance.create(context);
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).getReplicationFactor()).isEqualTo(10);
     assertThat(result.get(0).getS3Signer()).isEqualTo("S3SignerType");
   }
 }
