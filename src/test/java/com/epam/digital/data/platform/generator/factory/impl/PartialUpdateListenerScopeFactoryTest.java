@@ -82,13 +82,9 @@ public class PartialUpdateListenerScopeFactoryTest {
     assertThat(resultScope.getClassName()).isEqualTo("MyTableMyTableUpdListener");
     assertThat(resultScope.getSchemaName()).isEqualTo("MyTableMyTableUpd");
     assertThat(resultScope.getPkType()).isEqualTo(UUID.class.getCanonicalName());
-    assertThat(resultScope.getListeners()).hasSize(1);
-
-    var listener = resultScope.getListeners().get(0);
-
-    assertThat(listener.getInputType()).isEqualTo("MyTableMyTableUpd");
-    assertThat(listener.getOperation()).isEqualTo("update");
-    assertThat(listener.getRootOfTopicName()).isEqualTo("my-table-my-table-upd");
-    assertThat(listener.getOutputType()).isEqualTo("Void");
+    assertThat(resultScope.getOperation()).isEqualTo("update");
+    assertThat(resultScope.getRootOfTopicName()).isEqualTo("my-table-my-table-upd");
+    assertThat(resultScope.getOutputType()).isEqualTo("Void");
+    assertThat(resultScope.getCommandHandler()).isEqualTo("MyTableMyTableUpdCommandHandler");
   }
 }

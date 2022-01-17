@@ -1,27 +1,17 @@
 package ${basePackage}.kafkaapi.commandhandler.impl;
 
-import org.springframework.stereotype.Service;
-import com.epam.digital.data.platform.kafkaapi.core.commandhandler.AbstractCommandHandler;
+import com.epam.digital.data.platform.kafkaapi.core.commandhandler.Abstract${operation?capitalize}CommandHandler;
 import com.epam.digital.data.platform.kafkaapi.core.commandhandler.util.EntityConverter;
+import org.springframework.stereotype.Service;
+import ${basePackage}.kafkaapi.commandhandler.tabledata.${providerName};
 import ${basePackage}.model.dto.${schemaName};
 
 @Service
-public class ${className} extends
-    AbstractCommandHandler<${schemaName}> {
+public class ${className} extends Abstract${operation?capitalize}CommandHandler<${schemaName}> {
 
   public ${className}(
-      EntityConverter<${schemaName}> entityConverter) {
-    super(entityConverter);
+      EntityConverter<${schemaName}> entityConverter,
+      ${providerName} tableDataProvider) {
+    super(entityConverter, tableDataProvider);
   }
-
-  @Override
-  public String tableName() {
-    return "${tableName}";
-  }
-
-  @Override
-  public String pkColumnName() {
-    return "${pkColumnName}";
-  }
-
 }

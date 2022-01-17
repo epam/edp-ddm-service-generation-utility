@@ -44,8 +44,8 @@ public class PartialUpdateCommandHandlerScopeFactory extends AbstractScope<Comma
           var scope = new CommandHandlerScope();
           scope.setClassName(getSchemaName(table, upd.getName()) + "CommandHandler");
           scope.setSchemaName(getSchemaName(table, upd.getName()));
-          scope.setPkColumnName(getPkColumn(table).getName());
-          scope.setTableName(table.getName());
+          scope.setProviderName(getSchemaName(table) + "TableDataProvider");
+          scope.setOperation("update");
 
           return scope;
         })

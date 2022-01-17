@@ -16,14 +16,13 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ListenerScope extends ClassScope {
 
   private String schemaName;
   private String pkType;
-  private List<ListenerDetails> listeners = new ArrayList<>();
+  private String operation;
+  private String rootOfTopicName;
+  private String outputType;
 
   public String getSchemaName() {
     return schemaName;
@@ -41,17 +40,27 @@ public class ListenerScope extends ClassScope {
     this.pkType = pkType;
   }
 
-  public List<ListenerDetails> getListeners() {
-    return listeners;
+  public String getOperation() {
+    return operation;
   }
 
-  public void setListeners(
-      List<ListenerDetails> listeners) {
-    this.listeners = listeners;
+  public void setOperation(String operation) {
+    this.operation = operation;
   }
 
-  public void addListener(String operation, String rootOfTopicName, String inputType,
-      String outputType) {
-    this.listeners.add(new ListenerDetails(operation, rootOfTopicName, inputType, outputType));
+  public String getRootOfTopicName() {
+    return rootOfTopicName;
+  }
+
+  public void setRootOfTopicName(String rootOfTopicName) {
+    this.rootOfTopicName = rootOfTopicName;
+  }
+
+  public String getOutputType() {
+    return outputType;
+  }
+
+  public void setOutputType(String outputType) {
+    this.outputType = outputType;
   }
 }

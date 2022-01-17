@@ -16,33 +16,14 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
-public class CommandHandlerScope extends ClassScope {
+public class CommandListenerScope extends ListenerScope {
+  private String commandHandler;
 
-  private String schemaName;
-  private String providerName;
-  private String operation;
-
-  public String getSchemaName() {
-    return schemaName;
+  public String getCommandHandler() {
+    return commandHandler;
   }
 
-  public void setSchemaName(String schemaName) {
-    this.schemaName = schemaName;
-  }
-
-  public String getProviderName() {
-    return providerName;
-  }
-
-  public void setProviderName(String providerName) {
-    this.providerName = providerName;
-  }
-
-  public String getOperation() {
-    return operation;
-  }
-
-  public void setOperation(String operation) {
-    this.operation = operation;
+  public void setCommandHandler(String commandHandler) {
+    this.commandHandler = commandHandler;
   }
 }

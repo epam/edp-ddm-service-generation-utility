@@ -14,49 +14,65 @@
  * limitations under the License.
  */
 
-package com.epam.digital.data.platform.generator.factory.impl;
+package com.epam.digital.data.platform.generator.factory;
+
+import com.epam.digital.data.platform.generator.scope.CommandListenerScope;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.UUID;
 
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SCHEMA_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.epam.digital.data.platform.generator.scope.ListenerDetails;
-import com.epam.digital.data.platform.generator.scope.ListenerScope;
-import java.util.List;
-import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+class AbstractCommandListenerScopeFactoryTest {
 
-class ListenerScopeFactoryTest {
+  class TestScope extends AbstractCommandListenerScopeFactory {
+
+    @Override
+    protected String getOperation() {
+      return "update";
+    }
+
+    @Override
+    protected String getOutputType() {
+      return "Void";
+    }
+
+    @Override
+    public String getPath() {
+      return null;
+    }
+  }
+
 
   private static final String ROOT_OF_TOPIC_NAME = "test-schema";
 
-  private ListenerScopeFactory instance;
+  private TestScope instance;
 
   @BeforeEach
   void setup() {
-    instance = new ListenerScopeFactory();
+    instance = new TestScope();
   }
 
   @Test
   void listenerScopeFactoryTest() {
     String expectedPkType = UUID.class.getCanonicalName();
 
-    List<ListenerScope> resultList = instance.create(getContext());
+    List<CommandListenerScope> resultList = instance.create(getContext());
 
     assertThat(resultList).hasSize(1);
 
-    ListenerScope resultScope = resultList.get(0);
-    assertThat(resultScope.getClassName()).isEqualTo(SCHEMA_NAME + "Listener");
+    CommandListenerScope resultScope = resultList.get(0);
+    assertThat(resultScope.getClassName()).isEqualTo(SCHEMA_NAME + "UpdateListener");
     assertThat(resultScope.getSchemaName()).isEqualTo(SCHEMA_NAME);
     assertThat(resultScope.getPkType()).isEqualTo(expectedPkType);
 
-    assertThat(resultScope.getListeners().get(0)).usingRecursiveComparison().isEqualTo(
-        new ListenerDetails("update", ROOT_OF_TOPIC_NAME, SCHEMA_NAME, "Void"));
-    assertThat(resultScope.getListeners().get(1)).usingRecursiveComparison().isEqualTo(
-        new ListenerDetails("create", ROOT_OF_TOPIC_NAME, SCHEMA_NAME,
-            "com.epam.digital.data.platform.model.core.kafka.EntityId"));
-    assertThat(resultScope.getListeners().get(2)).usingRecursiveComparison().isEqualTo(
-        new ListenerDetails("delete", ROOT_OF_TOPIC_NAME, SCHEMA_NAME, "Void"));
+    assertThat(resultScope.getOperation()).isEqualTo("update");
+    assertThat(resultScope.getOutputType()).isEqualTo("Void");
+    assertThat(resultScope.getRootOfTopicName()).isEqualTo(ROOT_OF_TOPIC_NAME);
+    assertThat(resultScope.getCommandHandler()).isEqualTo(SCHEMA_NAME + "UpdateCommandHandler");
   }
 }

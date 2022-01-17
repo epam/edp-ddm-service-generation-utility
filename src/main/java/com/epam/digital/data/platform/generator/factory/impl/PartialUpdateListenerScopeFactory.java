@@ -16,17 +16,18 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import static java.util.stream.Collectors.toList;
-
 import com.epam.digital.data.platform.generator.factory.AbstractScope;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.scope.ListenerScope;
-import java.util.List;
+import com.epam.digital.data.platform.generator.scope.CommandListenerScope;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Component
-public class PartialUpdateListenerScopeFactory extends AbstractScope<ListenerScope> {
+public class PartialUpdateListenerScopeFactory extends AbstractScope<CommandListenerScope> {
 
   private final PartialUpdateProvider provider;
 
@@ -36,18 +37,21 @@ public class PartialUpdateListenerScopeFactory extends AbstractScope<ListenerSco
   }
 
   @Override
-  public List<ListenerScope> create(Context context) {
+  public List<CommandListenerScope> create(Context context) {
     return provider.findAll().stream()
         .map(upd -> {
           var table = findTable(upd.getTableName(), context);
-
-          var scope = new ListenerScope();
-          scope.setClassName(getSchemaName(table, upd.getName()) + "Listener");
-          scope.setSchemaName(getSchemaName(table, upd.getName()));
-          scope.setPkType(getPkTypeName(table));
-
+          var schemaName = getSchemaName(table, upd.getName());
           var rootOfTopicName = toHyphenTableName(table) + "-" + toHyphenTableName(upd.getName());
-          scope.addListener("update", rootOfTopicName, scope.getSchemaName(), "Void");
+
+          var scope = new CommandListenerScope();
+          scope.setClassName(schemaName + "Listener");
+          scope.setSchemaName(schemaName);
+          scope.setPkType(getPkTypeName(table));
+          scope.setOperation("update");
+          scope.setRootOfTopicName(rootOfTopicName);
+          scope.setOutputType("Void");
+          scope.setCommandHandler(schemaName + "CommandHandler");
 
           return scope;
         })
@@ -56,6 +60,6 @@ public class PartialUpdateListenerScopeFactory extends AbstractScope<ListenerSco
 
   @Override
   public String getPath() {
-    return "kafka-api/src/main/java/kafkaapi/listener/commandListener.java.ftl";
+    return "kafka-api/src/main/java/kafkaapi/listener/listener.java.ftl";
   }
 }

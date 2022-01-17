@@ -16,34 +16,24 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
-public class ListenerDetails {
+public class TableDataProviderScope extends ClassScope {
 
-  private final String operation;
-  private final String rootOfTopicName;
-  private final String inputType;
-  private final String outputType;
+  private String pkColumnName;
+  private String tableName;
 
-  public ListenerDetails(String operation, String rootOfTopicName, String inputType,
-      String outputType) {
-    this.operation = operation;
-    this.rootOfTopicName = rootOfTopicName;
-    this.inputType = inputType;
-    this.outputType = outputType;
+  public String getPkColumnName() {
+    return pkColumnName;
   }
 
-  public String getOperation() {
-    return operation;
+  public void setPkColumnName(String pkColumnName) {
+    this.pkColumnName = pkColumnName;
   }
 
-  public String getRootOfTopicName() {
-    return rootOfTopicName;
+  public String getTableName() {
+    return tableName;
   }
 
-  public String getInputType() {
-    return inputType;
-  }
-
-  public String getOutputType() {
-    return outputType;
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
   }
 }
