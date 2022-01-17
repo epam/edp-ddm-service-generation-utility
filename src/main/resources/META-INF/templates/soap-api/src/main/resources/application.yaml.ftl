@@ -43,6 +43,7 @@ management:
       readiness:
         services:
           - ${rest-api.url}/actuator/health
+          - ${keycloak.server-url}
 </#noparse>
 
 probes:

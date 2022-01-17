@@ -113,6 +113,7 @@ management:
         services:
 <#noparse>
           - ${dso.url}/actuator/health
+          - ${keycloak.url}
 </#noparse>
 
 probes:
