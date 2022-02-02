@@ -17,6 +17,7 @@
 package com.epam.digital.data.platform.generator.factory.impl;
 
 import com.epam.digital.data.platform.generator.factory.AbstractApplicationYamlScope;
+import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.scope.KafkaApplicationYamlScope;
 import org.springframework.stereotype.Component;
@@ -26,8 +27,9 @@ public class KafkaApplicationYamlScopeFactory
     extends AbstractApplicationYamlScope<KafkaApplicationYamlScope> {
 
   public KafkaApplicationYamlScopeFactory(
-      PartialUpdateProvider partialUpdateProvider) {
-    super(partialUpdateProvider);
+      PartialUpdateProvider partialUpdateProvider,
+      NestedStructureProvider nestedStructureProvider) {
+    super(partialUpdateProvider, nestedStructureProvider);
   }
 
   @Override

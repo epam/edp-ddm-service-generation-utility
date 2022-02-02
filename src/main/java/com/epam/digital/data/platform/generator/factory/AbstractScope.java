@@ -21,6 +21,8 @@ import com.epam.digital.data.platform.generator.model.Context;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import com.epam.digital.data.platform.generator.utils.DbUtils;
 import org.apache.commons.text.CaseUtils;
 import schemacrawler.schema.Column;
 import schemacrawler.schema.Table;
@@ -98,6 +100,14 @@ public abstract class AbstractScope<T> implements ScopeFactory<T> {
     return sb.toString();
   }
 
+  protected String getSchemaName(String tableName, String ... appendix) {
+    var sb = new StringBuilder(getSchemaName(tableName));
+    for (String s: appendix) {
+      sb.append(getSchemaName(s));
+    }
+    return sb.toString();
+  }
+
   protected String getPropertyName(Column column) {
     return getPropertyName(column.getName());
   }
@@ -106,19 +116,20 @@ public abstract class AbstractScope<T> implements ScopeFactory<T> {
     return CaseUtils.toCamelCase(columnName, false, '-', '_');
   }
 
+  protected String getPropertyName(String columnName, String ... appendix) {
+    var sb = new StringBuilder(getPropertyName(columnName));
+    for (String s: appendix) {
+      sb.append(getSchemaName(s));
+    }
+    return sb.toString();
+  }
+
   protected Table findTable(String name, Context context) {
-    return context.getCatalog().getTables().stream()
-        .filter(t -> t.getName().equals(name))
-        .findAny()
-        .orElseThrow(() -> new IllegalArgumentException("Can't find table with name: " + name));
+    return DbUtils.findTable(name, context);
   }
 
   protected Column findColumn(String name, Table table) {
-    return table.getColumns().stream()
-        .filter(c -> c.getName().equals(name))
-        .findAny()
-        .orElseThrow(() -> new IllegalArgumentException(String
-            .format("Can not find in %s the column with name: %s", table.getName(), name)));
+    return DbUtils.findColumn(name, table);
   }
 
   protected boolean isHistoricalDataTable(Table table) {

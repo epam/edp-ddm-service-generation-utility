@@ -27,6 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -276,6 +278,14 @@ class PermissionMapTest {
     void shouldFindCreatesIgnoringColumnName() {
       assertThat(instance.getCreateExpressionsFor(IGNORING_COLUMN_TABLE_NAME))
           .containsExactly(MAJOR_OFFICER_ROLE_EXPRESSION);
+    }
+
+    @Test
+    void shouldJoinExpressionsForMultipleTables() {
+      assertThat(
+              instance.getCreateExpressionsFor(
+                  Set.of(NO_ACCESS_MAP_TABLE_NAME, NO_ROLE_FOR_COLUMN_TABLE_NAME, SOME_TABLE_NAME)))
+          .containsExactlyInAnyOrder(DENY_ALL, MAJOR_OFFICER_ROLE_EXPRESSION);
     }
   }
 

@@ -26,11 +26,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
+import com.epam.digital.data.platform.generator.metadata.NestedNode;
+import com.epam.digital.data.platform.generator.metadata.NestedStructure;
+import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdate;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.EnumLabel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,17 +57,21 @@ class RestApplicationYamlScopeFactoryTest {
   private EnumProvider enumProvider;
   @Mock
   private PartialUpdateProvider partialUpdateProvider;
+  @Mock
+  private NestedStructureProvider nestedStructureProvider;
 
   @BeforeEach
   void setup() {
-    instance = new RestApplicationYamlScopeFactory(enumProvider, partialUpdateProvider);
+    instance =
+        new RestApplicationYamlScopeFactory(
+            enumProvider, partialUpdateProvider, nestedStructureProvider);
   }
 
   @Test
   void shouldCreateCorrectScope() {
     var resultList = instance.create(context);
-    var resultScope = resultList.get(0);
 
+    var resultScope = resultList.get(0);
     assertThat(resultList).hasSize(1);
     assertThat(resultScope.getSearchPaths()).isEqualTo(List.of(hyphen(VIEW_NAME)));
     assertThat(resultScope.getEntityPaths())
@@ -83,12 +91,36 @@ class RestApplicationYamlScopeFactoryTest {
     ));
 
     var resultList = instance.create(context);
-    var resultScope = resultList.get(0);
 
+    var resultScope = resultList.get(0);
     assertThat(resultList).hasSize(1);
     assertThat(resultScope.getEntityPaths())
         .containsEntry(hyphen(TABLE_NAME),
             List.of(hyphen(TABLE_NAME), "partial/UPDATE-1", "partial/UPDATE-2"));
+  }
+
+  @Test
+  void shouldCreateScopeWithNestedEntityPaths() {
+    // given
+    var nestedStructure = new NestedStructure();
+    nestedStructure.setName("nesting_flow");
+    var nestedNode = new NestedNode();
+    nestedNode.setTableName(TABLE_NAME);
+    nestedNode.setChildNodes(Map.of("column", new NestedNode()));
+    nestedStructure.setRoot(nestedNode);
+
+    given(nestedStructureProvider.findAll())
+            .willReturn(Collections.singletonList(nestedStructure));
+
+    // when
+    var resultList = instance.create(context);
+
+    //then
+    assertThat(resultList).hasSize(1);
+    var resultScope = resultList.get(0);
+    assertThat(resultScope.getEntityPaths())
+            .containsEntry(hyphen(TABLE_NAME),
+                    List.of(hyphen(TABLE_NAME), "nested/nesting-flow"));
   }
 
   @Test
@@ -97,15 +129,14 @@ class RestApplicationYamlScopeFactoryTest {
     when(enumProvider.findAllLabels()).thenReturn(enumLabels);
 
     var resultList = instance.create(context);
-    var resultScope = resultList.get(0);
 
+    var resultScope = resultList.get(0);
     assertThat(resultList).hasSize(1);
     assertThat(resultScope.isEnumPresent()).isTrue();
   }
 
   private List<String> getRootsOfTopicNames(String table, String view) {
     table = hyphen(table);
-    view = hyphen(view);
 
     List<String> result = new ArrayList<>();
     for (String operation : CRUD) {

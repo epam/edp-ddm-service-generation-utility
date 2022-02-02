@@ -30,10 +30,13 @@ import com.epam.digital.data.platform.generator.model.Kafka;
 import com.epam.digital.data.platform.generator.model.RetentionPolicyInDays;
 import com.epam.digital.data.platform.generator.model.Settings;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 import schemacrawler.schema.Catalog;
 import schemacrawler.schema.Column;
 import schemacrawler.schema.ColumnDataType;
+import schemacrawler.schema.ForeignKey;
+import schemacrawler.schema.ForeignKeyColumnReference;
 import schemacrawler.schema.PrimaryKey;
 import schemacrawler.schema.Table;
 import schemacrawler.schema.TableConstraintColumn;
@@ -91,7 +94,7 @@ public class ContextTestUtils {
 
   private static PrimaryKey withPk(String name, Class<?> clazz, String typeName) {
     PrimaryKey pk = mock(PrimaryKey.class);
-    TableConstraintColumn c = withColumn(TableConstraintColumn.class, name, clazz, typeName);
+    TableConstraintColumn c = withColumn(TableConstraintColumn.class, name, clazz, typeName, null);
     lenient().when(pk.getColumns()).thenReturn(singletonList(c));
     return pk;
   }
@@ -151,11 +154,15 @@ public class ContextTestUtils {
     List<Column> columnsList = newArrayList(columns);
     if (pk != null) {
       lenient().when(table.getPrimaryKey()).thenReturn(pk);
+      lenient().when(pk.getParent()).thenReturn(table);
+      lenient().when(pk.getColumns().get(0).getParent()).thenReturn(table);
       columnsList.add(pk.getColumns().get(0));
     }
 
     if (isNotEmpty(columns)) {
       lenient().when(table.getColumns()).thenReturn(columnsList);
+      Arrays.stream(columns)
+          .forEach(column -> lenient().when(column.getParent()).thenReturn(table));
     }
 
     return table;
@@ -163,6 +170,10 @@ public class ContextTestUtils {
 
   public static Column withTextColumn(String name) {
     return withColumn(name, String.class, "text");
+  }
+
+  public static Column withFkColumn(String name, Column referencedColumn) {
+    return withColumn(name, Object.class, "uuid", referencedColumn);
   }
 
   public static Column withUuidColumn(String name) {
@@ -178,10 +189,15 @@ public class ContextTestUtils {
   }
 
   public static Column withColumn(String name, Class<?> clazz, String typeName) {
-    return withColumn(Column.class, name, clazz, typeName);
+    return withColumn(Column.class, name, clazz, typeName, null);
   }
 
-  private static <T extends Column> T withColumn(Class<T> mockClazz, String name, Class<?> clazz, String typeName) {
+  public static Column withColumn(String name, Class<?> clazz, String typeName, Column referencedColumn) {
+    return withColumn(Column.class, name, clazz, typeName, referencedColumn);
+  }
+
+  private static <T extends Column> T withColumn(
+      Class<T> mockClazz, String name, Class<?> clazz, String typeName, Column referencedColumn) {
     var column = mock(mockClazz);
     lenient().when(column.getName()).thenReturn(name);
 
@@ -190,6 +206,7 @@ public class ContextTestUtils {
     lenient().when(type.getName()).thenReturn(typeName);
 
     lenient().when(column.getColumnDataType()).thenReturn(type);
+    lenient().when(column.getReferencedColumn()).thenReturn(referencedColumn);
     return column;
   }
 }

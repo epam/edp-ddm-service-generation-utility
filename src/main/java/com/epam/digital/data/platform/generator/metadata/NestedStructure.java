@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-package com.epam.digital.data.platform.generator.constraints;
+package com.epam.digital.data.platform.generator.metadata;
 
-import java.util.List;
-import com.epam.digital.data.platform.generator.model.template.Constraint;
+public class NestedStructure {
+  private String name;
+  private NestedNode root;
 
-public interface ConstraintProvider {
+  public String getName() {
+    return name;
+  }
 
-  List<Constraint> getConstraintForProperty(String propertyDataType, String propertyClassName);
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public NestedNode getRoot() {
+    return root;
+  }
+
+  public void setRoot(NestedNode root) {
+    this.root = root;
+  }
 }

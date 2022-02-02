@@ -27,8 +27,10 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 
@@ -98,6 +100,12 @@ public class PermissionMap {
         .collect(toList());
   }
 
+  public Set<String> getCreateExpressionsFor(Set<String> tableNames) {
+    return tableNames.stream()
+        .flatMap(table -> filterExpressions(table, CREATE_PREDICATE))
+        .collect(Collectors.toSet());
+  }
+
   public List<String> getDeleteExpressionsFor(String tableName) {
     return filterExpressions(tableName,
         DELETE_PREDICATE)
@@ -126,7 +134,7 @@ public class PermissionMap {
     return toCompositeExpression(filtered);
   }
 
-  public List<String> toCompositeExpression(List<String> roles) {
+  private List<String> toCompositeExpression(List<String> roles) {
     String expression = DENY_ALL;
 
     if (roles.contains(ANY_ROLE)) {

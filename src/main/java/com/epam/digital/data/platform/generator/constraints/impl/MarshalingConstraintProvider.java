@@ -23,10 +23,10 @@ import com.epam.digital.data.platform.generator.model.template.Constraint.Conten
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
@@ -46,9 +46,8 @@ public class MarshalingConstraintProvider implements ConstraintProvider {
                   "com.epam.digital.data.platform.model.core.xmladapter.LocalTimeXmlAdapter.class"));
 
   @Override
-  public List<Constraint> getConstraintForProperty(String... propertyValues) {
-    return Arrays.stream(propertyValues)
-        .map(CONSTRAINTS::get)
+  public List<Constraint> getConstraintForProperty(String propertyDataType, String propertyClassName) {
+    return Optional.ofNullable(CONSTRAINTS.get(propertyClassName)).stream()
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }

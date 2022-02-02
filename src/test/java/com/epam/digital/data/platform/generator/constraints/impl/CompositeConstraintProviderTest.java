@@ -33,7 +33,7 @@ class CompositeConstraintProviderTest {
 
   @Test
   void shouldFindConstraintsInAllProviders() {
-    assertThat(instance.getConstraintForProperty("java.time.LocalDateTime")).hasSize(2);
-    assertThat(instance.getConstraintForProperty("dn_edrpou")).hasSize(1);
+    assertThat(instance.getConstraintForProperty("timestamp with time zone", "java.time.LocalDateTime")).hasSize(2);
+    assertThat(instance.getConstraintForProperty( "dn_edrpou", "java.lang.String")).hasSize(1);
   }
 }

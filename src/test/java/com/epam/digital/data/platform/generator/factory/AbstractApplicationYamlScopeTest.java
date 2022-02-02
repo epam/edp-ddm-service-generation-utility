@@ -24,11 +24,17 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
+import com.epam.digital.data.platform.generator.metadata.NestedNode;
+import com.epam.digital.data.platform.generator.metadata.NestedStructure;
+import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdate;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.RestApplicationYamlScope;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,12 +54,14 @@ class AbstractApplicationYamlScopeTest {
 
   @Mock
   PartialUpdateProvider partialUpdateProvider;
+  @Mock
+  NestedStructureProvider nestedStructureProvider;
 
   private final Context context = getContext();
 
   @BeforeEach
   void setup() {
-    instance = new TestApplicationYamlScope(partialUpdateProvider);
+    instance = new TestApplicationYamlScope(partialUpdateProvider, nestedStructureProvider);
   }
 
   @Test
@@ -97,11 +105,34 @@ class AbstractApplicationYamlScopeTest {
         .contains("update-my-table-my-table-upd", "update-second-test-table-second-test-table-upd");
   }
 
+  @Test
+  void shouldAddNestedEntityTopics() {
+    // given
+    var nestedStructure = new NestedStructure();
+    nestedStructure.setName("nesting_flow");
+    var nestedNode = new NestedNode();
+    nestedNode.setTableName(TABLE_1);
+    nestedNode.setChildNodes(Map.of("column", new NestedNode()));
+    nestedStructure.setRoot(nestedNode);
+
+    given(nestedStructureProvider.findAll())
+            .willReturn(Collections.singletonList(nestedStructure));
+
+    // when
+    var scopes = instance.create(context);
+
+    // then
+    var actualTopicRoots = scopes.get(0).getRootsOfTopicNames();
+    assertThat(actualTopicRoots)
+            .contains("create-nesting-flow-my-table-nested");
+  }
+
   private class TestApplicationYamlScope
       extends AbstractApplicationYamlScope<RestApplicationYamlScope> {
 
-    private TestApplicationYamlScope(PartialUpdateProvider partialUpdateProvider) {
-      super(partialUpdateProvider);
+    private TestApplicationYamlScope(PartialUpdateProvider partialUpdateProvider,
+                                     NestedStructureProvider nestedStructureProvider) {
+      super(partialUpdateProvider, nestedStructureProvider);
     }
 
     @Override

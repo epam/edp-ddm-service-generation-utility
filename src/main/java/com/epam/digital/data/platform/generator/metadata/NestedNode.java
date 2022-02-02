@@ -14,12 +14,28 @@
  * limitations under the License.
  */
 
-package com.epam.digital.data.platform.generator.constraints;
+package com.epam.digital.data.platform.generator.metadata;
 
-import java.util.List;
-import com.epam.digital.data.platform.generator.model.template.Constraint;
+import java.util.Map;
 
-public interface ConstraintProvider {
+public class NestedNode {
 
-  List<Constraint> getConstraintForProperty(String propertyDataType, String propertyClassName);
+  private String tableName;
+  private Map<String, NestedNode> childNodes;
+
+  public String getTableName() {
+    return tableName;
+  }
+
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
+  }
+
+  public Map<String, NestedNode> getChildNodes() {
+    return childNodes;
+  }
+
+  public void setChildNodes(Map<String, NestedNode> childNodes) {
+    this.childNodes = childNodes;
+  }
 }

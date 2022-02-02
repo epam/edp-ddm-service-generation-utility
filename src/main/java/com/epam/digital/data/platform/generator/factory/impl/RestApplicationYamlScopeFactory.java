@@ -23,6 +23,8 @@ import static java.util.stream.Collectors.toList;
 
 import com.epam.digital.data.platform.generator.factory.AbstractApplicationYamlScope;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
+import com.epam.digital.data.platform.generator.metadata.NestedStructure;
+import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdate;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
@@ -41,14 +43,13 @@ public class RestApplicationYamlScopeFactory
     extends AbstractApplicationYamlScope<RestApplicationYamlScope> {
 
   private final EnumProvider enumProvider;
-  private final PartialUpdateProvider partialUpdateProvider;
 
   public RestApplicationYamlScopeFactory(
       EnumProvider enumProvider,
-      PartialUpdateProvider partialUpdateProvider) {
-    super(partialUpdateProvider);
+      PartialUpdateProvider partialUpdateProvider,
+      NestedStructureProvider nestedStructureProvider) {
+    super(partialUpdateProvider, nestedStructureProvider);
     this.enumProvider = enumProvider;
-    this.partialUpdateProvider = partialUpdateProvider;
   }
 
   @Override
@@ -84,8 +85,10 @@ public class RestApplicationYamlScopeFactory
         .collect(Collectors.toMap(Function.identity(), asList));
 
     var partialUpdatePaths = getPartialUpdatePaths();
+    var nestedInsertPaths = getNestedInsertPaths();
 
     entityPaths.forEach((k, v) -> ofNullable(partialUpdatePaths.get(k)).ifPresent(v::addAll));
+    entityPaths.forEach((k, v) -> ofNullable(nestedInsertPaths.get(k)).ifPresent(v::addAll));
     return entityPaths;
   }
 
@@ -104,6 +107,16 @@ public class RestApplicationYamlScopeFactory
 
     return partialUpdateProvider.findAll().stream()
         .collect(groupingBy(tableName, mapping(endpoint, toList())));
+  }
+
+  private Map<String, List<String>> getNestedInsertPaths() {
+    Function<NestedStructure, String> tableNameMapper =
+        structure -> toHyphenTableName(structure.getRoot().getTableName());
+    Function<NestedStructure, String> endpointMapper =
+        structure -> "nested" + getEndpoint(structure.getName());
+
+    return nestedStructureProvider.findAll().stream()
+        .collect(groupingBy(tableNameMapper, mapping(endpointMapper, toList())));
   }
 
   private boolean isEnumPresent() {

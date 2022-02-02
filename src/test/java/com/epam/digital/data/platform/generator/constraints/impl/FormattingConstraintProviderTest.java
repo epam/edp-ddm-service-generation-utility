@@ -23,13 +23,14 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class FormattingConstraintProviderTest {
-  private FormattingConstraintProvider provider = new FormattingConstraintProvider();
+  private final FormattingConstraintProvider provider = new FormattingConstraintProvider();
 
   @Test
   void shouldReturnConstraintForJavaClassName() {
-    String type = "java.time.LocalDateTime";
+    String dbType = "timestamp with time zone";
+    String clazzName = "java.time.LocalDateTime";
 
-    List<Constraint> constraints = provider.getConstraintForProperty(type);
+    List<Constraint> constraints = provider.getConstraintForProperty(dbType, clazzName);
 
     assertEquals(1, constraints.size());
     assertEquals("@com.fasterxml.jackson.annotation.JsonFormat", constraints.get(0).getName());
@@ -43,9 +44,10 @@ class FormattingConstraintProviderTest {
 
   @Test
   void shouldReturnEmptyListForNotConstrainedParameter() {
-    String type = "stub";
+    String dbType = "stub";
+    String clazzName = "java.lang.String";
 
-    List<Constraint> constraints = provider.getConstraintForProperty(type);
+    List<Constraint> constraints = provider.getConstraintForProperty(dbType, clazzName);
 
     assertEquals(0, constraints.size());
   }

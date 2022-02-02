@@ -40,9 +40,9 @@ public class CompositeConstraintProvider implements ConstraintProvider {
   }
 
   @Override
-  public List<Constraint> getConstraintForProperty(String... propertyValues) {
+  public List<Constraint> getConstraintForProperty(String propertyDataType, String propertyClassName) {
     return providers.stream()
-        .map(x -> x.getConstraintForProperty(propertyValues))
+        .map(x -> x.getConstraintForProperty(propertyDataType, propertyClassName))
         .flatMap(List::stream)
         .collect(toList());
   }

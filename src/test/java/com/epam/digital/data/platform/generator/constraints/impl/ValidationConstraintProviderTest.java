@@ -24,14 +24,15 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class ValidationConstraintProviderTest {
-  private ValidationConstraintProvider provider = new ValidationConstraintProvider();
+  private final ValidationConstraintProvider provider = new ValidationConstraintProvider();
 
   @Test
   void shouldReturnConstraintForDomainType() {
-    String type = "dn_edrpou";
+    String dbType = "dn_edrpou";
+    String clazzName = "java.lang.String";
     Constraint expected = buildConstraint();
 
-    List<Constraint> constraints = provider.getConstraintForProperty(type);
+    List<Constraint> constraints = provider.getConstraintForProperty(dbType, clazzName);
 
     assertEquals(1, constraints.size());
     assertEquals(expected.getName(), constraints.get(0).getName());
@@ -42,9 +43,10 @@ class ValidationConstraintProviderTest {
 
   @Test
   void shouldReturnEmptyListForNotConstrainedParameter() {
-    String type = "stub";
+    String dbType = "stub";
+    String clazzName = "java.lang.String";
 
-    List<Constraint> constraints = provider.getConstraintForProperty(type);
+    List<Constraint> constraints = provider.getConstraintForProperty(dbType, clazzName);
 
     assertEquals(0, constraints.size());
   }

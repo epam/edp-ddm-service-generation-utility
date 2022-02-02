@@ -19,6 +19,7 @@ package com.epam.digital.data.platform.generator.factory;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
+import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.ApplicationYamlScope;
@@ -30,11 +31,14 @@ public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScop
 
   static final List<String> CRUD_REQUESTS = List.of("create", "update", "delete");
 
-  private final PartialUpdateProvider partialUpdateProvider;
+  protected final PartialUpdateProvider partialUpdateProvider;
+  protected final NestedStructureProvider nestedStructureProvider;
 
   protected AbstractApplicationYamlScope(
-      PartialUpdateProvider partialUpdateProvider) {
+      PartialUpdateProvider partialUpdateProvider,
+      NestedStructureProvider nestedStructureProvider) {
     this.partialUpdateProvider = partialUpdateProvider;
+    this.nestedStructureProvider = nestedStructureProvider;
   }
 
   protected abstract T instantiate();
@@ -44,6 +48,7 @@ public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScop
     var rootTopics = new ArrayList<String>();
     rootTopics.addAll(getCrudTopics(context));
     rootTopics.addAll(getPartialUpdateTopics(context));
+    rootTopics.addAll(getNestedTopics());
 
     var applicationYamlScope = instantiate();
     applicationYamlScope.setRootsOfTopicNames(rootTopics);
@@ -65,6 +70,18 @@ public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScop
         .map(this::toHyphenTableName)
         .flatMap(topicRoot -> CRUD_REQUESTS.stream()
             .map(request -> request + "-" + topicRoot))
+        .collect(toList());
+  }
+
+  private List<String> getNestedTopics() {
+    return nestedStructureProvider.findAll().stream()
+        .map(
+            nestedStructure ->
+                "create-"
+                    + toHyphenTableName(nestedStructure.getName())
+                    + "-"
+                    + toHyphenTableName(nestedStructure.getRoot().getTableName())
+                    + "-nested")
         .collect(toList());
   }
 }
