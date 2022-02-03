@@ -36,7 +36,13 @@ probes:
     path: /actuator/health/readiness
 
 kafka:
-  service: kafka-cluster-kafka-bootstrap:9092
+  service: kafka-cluster-kafka-bootstrap:9093
+  user: soap-api-user
+  clusterName: kafka-cluster
+  sslEnabled: true
+  sslUserKey: ${KAFKA_USER_KEYSTORE_KEY}
+  sslUserCertificate: ${KAFKA_USER_KEYSTORE_CERTIFICATE}
+  sslClusterCertificate: ${KAFKA_CLUSTER_TRUSTSTORE}
 
 audit:
   kafka:

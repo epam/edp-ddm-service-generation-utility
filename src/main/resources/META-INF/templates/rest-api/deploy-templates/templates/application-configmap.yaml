@@ -12,6 +12,9 @@ data:
         bootstrap: {{ .Values.kafka.service }}
         ssl:
           enabled: {{ .Values.kafka.sslEnabled }}
+          keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
+          keystore-key: {{ .Values.kafka.sslUserKey }}
+          truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
         topic-properties:
           num-partitions: {{ .Values.kafka.numPartitions }}
           replication-factor: {{ .Values.kafka.replicationFactor }}
@@ -69,3 +72,8 @@ data:
         bootstrap: {{ .Values.kafka.service }}
         topic: {{ .Values.audit.kafka.topic }}
         schema-registry-url: {{ .Values.audit.kafka.schemaRegistryUrl }}
+        ssl:
+          enabled: {{ .Values.kafka.sslEnabled }}
+          keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
+          keystore-key: {{ .Values.kafka.sslUserKey }}
+          truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}

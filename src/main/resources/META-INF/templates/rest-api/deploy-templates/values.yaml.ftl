@@ -16,10 +16,13 @@ ingress:
   site: ${register}-rest-api
 
 kafka:
-  service: kafka-cluster-kafka-bootstrap:9092
+  service: kafka-cluster-kafka-bootstrap:9093
   user: rest-api-user
   clusterName: kafka-cluster
-  sslEnabled: false
+  sslEnabled: true
+  sslUserKey: ${KAFKA_USER_KEYSTORE_KEY}
+  sslUserCertificate: ${KAFKA_USER_KEYSTORE_CERTIFICATE}
+  sslClusterCertificate: ${KAFKA_CLUSTER_TRUSTSTORE}
   numPartitions: 3
   replicationFactor: ${replicationFactor}
   consumerConfigs:

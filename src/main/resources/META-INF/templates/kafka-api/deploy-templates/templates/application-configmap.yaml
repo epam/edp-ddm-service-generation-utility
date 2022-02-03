@@ -12,6 +12,9 @@ data:
         bootstrap: {{ .Values.kafka.service }}
         ssl:
           enabled: {{ .Values.kafka.sslEnabled }}
+          keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
+          keystore-key: {{ .Values.kafka.sslUserKey }}
+          truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
         consumer-configs: {{ .Values.kafka.consumerConfigs | toYaml | nindent 10 }}
         producer-configs: {{ .Values.kafka.producerConfigs | toYaml | nindent 10 }}
       kafka-request:
@@ -51,6 +54,11 @@ data:
         bootstrap: {{ .Values.kafka.service }}
         topic: {{ .Values.audit.kafka.topic }}
         schema-registry-url: {{ .Values.audit.kafka.schemaRegistryUrl }}
+        ssl:
+          enabled: {{ .Values.kafka.sslEnabled }}
+          keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
+          keystore-key: {{ .Values.kafka.sslUserKey }}
+          truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
 
     logging:
       level:

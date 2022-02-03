@@ -76,12 +76,6 @@ spec:
             - mountPath: /app/secrets/datafactoryfileceph
               name: {{ .Chart.Name }}-datafactory-file-ceph-bucket-credentials
               readOnly: true
-            - mountPath: /app/secrets/kafkausercertificate
-              name: kafka-user-certificate
-              readOnly: true
-            - mountPath: /app/secrets/kafkaclustercertificate
-              name: kafka-cluster-certificate
-              readOnly: true
           env:
             - name: JAVA_OPTS
               value: {{ .Values.java.javaOpts }}
@@ -131,6 +125,21 @@ spec:
                 configMapKeyRef:
                   name: {{ .Values.datafactoryFileCeph.bucketName }}
                   key: BUCKET_HOST
+            - name: KAFKA_USER_KEYSTORE_CERTIFICATE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.kafka.user }}
+                  key: user.crt
+            - name: KAFKA_USER_KEYSTORE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.kafka.user }}
+                  key: user.key
+            - name: KAFKA_CLUSTER_TRUSTSTORE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.kafka.clusterName }}-cluster-ca-cert
+                  key: ca.crt
       initContainers:
         - name: wait-for-rest-api
           image: {{ template "imageRegistry" . -}} busybox
@@ -190,17 +199,3 @@ spec:
                 path: datafactory-file-ceph.access-key
               - key: AWS_SECRET_ACCESS_KEY
                 path: datafactory-file-ceph.secret-key
-        - name: kafka-user-certificate
-          secret:
-            secretName: {{ .Values.kafka.user }}
-            items:
-              - key: user.crt
-                path: data-platform.kafka.ssl.keystore-certificate
-              - key: user.key
-                path: data-platform.kafka.ssl.keystore-key
-        - name: kafka-cluster-certificate
-          secret:
-            secretName: {{ .Values.kafka.clusterName }}-cluster-ca-cert
-            items:
-              - key: ca.crt
-                path: data-platform.kafka.ssl.truststore-certificate
