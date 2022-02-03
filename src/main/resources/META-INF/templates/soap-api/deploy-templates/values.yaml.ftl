@@ -40,9 +40,11 @@ kafka:
   user: soap-api-user
   clusterName: kafka-cluster
   sslEnabled: true
+<#noparse>
   sslUserKey: ${KAFKA_USER_KEYSTORE_KEY}
   sslUserCertificate: ${KAFKA_USER_KEYSTORE_CERTIFICATE}
   sslClusterCertificate: ${KAFKA_CLUSTER_TRUSTSTORE}
+</#noparse>
 
 audit:
   kafka:
