@@ -23,6 +23,7 @@ public class RestApplicationYamlScope extends ApplicationYamlScope {
 
   private Map<String, List<String>> entityPaths;
   private List<String> searchPaths;
+  private List<String> nestedPaths;
   private boolean isEnumPresent;
   private Integer retentionPolicyDaysRead;
   private Integer retentionPolicyDaysWrite;
@@ -41,6 +42,14 @@ public class RestApplicationYamlScope extends ApplicationYamlScope {
 
   public void setSearchPaths(List<String> searchPaths) {
     this.searchPaths = searchPaths;
+  }
+
+  public List<String> getNestedPaths() {
+    return nestedPaths;
+  }
+
+  public void setNestedPaths(List<String> nestedPaths) {
+    this.nestedPaths = nestedPaths;
   }
 
   public boolean isEnumPresent() {

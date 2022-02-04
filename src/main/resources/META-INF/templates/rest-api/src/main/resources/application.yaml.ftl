@@ -70,6 +70,12 @@ openapi:
         - ${path}
 </#list>
 </#if>
+<#if nestedPaths?has_content>
+      nested:
+<#list nestedPaths as path>
+        - ${path}
+</#list>
+</#if>
 
   response:
     codes:

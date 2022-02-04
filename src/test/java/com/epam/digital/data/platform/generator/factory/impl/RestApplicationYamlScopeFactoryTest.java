@@ -118,9 +118,8 @@ class RestApplicationYamlScopeFactoryTest {
     //then
     assertThat(resultList).hasSize(1);
     var resultScope = resultList.get(0);
-    assertThat(resultScope.getEntityPaths())
-            .containsEntry(hyphen(TABLE_NAME),
-                    List.of(hyphen(TABLE_NAME), "nested/nesting-flow"));
+    assertThat(resultScope.getNestedPaths())
+            .containsOnly("nested/nesting-flow");
   }
 
   @Test
