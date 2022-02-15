@@ -67,9 +67,6 @@ ceph:
 
 datafactory-response-ceph:
   bucket: ${DATAFACTORY_RESPONSE_CEPH_BUCKET_NAME}
-
-datafactory-file-ceph:
-  bucket: ${DATAFACTORY_FILE_CEPH_BUCKET_NAME}
 </#noparse>
 
 data-platform:

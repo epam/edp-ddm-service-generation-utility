@@ -33,9 +33,6 @@ data:
     datafactory-response-ceph:
       http-endpoint: {{ .Values.datafactoryResponseCeph.httpEndpoint }}
       bucketName: {{ .Values.datafactoryResponseCeph.bucketName }}
-    datafactory-file-ceph:
-      http-endpoint: {{ .Values.datafactoryFileCeph.httpEndpoint }}
-      bucketName: {{ .Values.datafactoryFileCeph.bucketName }}
 
     s3:
       config:

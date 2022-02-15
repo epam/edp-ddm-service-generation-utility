@@ -73,9 +73,6 @@ spec:
             - mountPath: /app/secrets/datafactoryresponseceph
               name: {{ .Values.name }}-datafactory-response-ceph-bucket-credentials
               readOnly: true
-            - mountPath: /app/secrets/datafactoryfileceph
-              name: {{ .Chart.Name }}-datafactory-file-ceph-bucket-credentials
-              readOnly: true
           env:
             - name: JAVA_OPTS
               value: {{ .Values.java.javaOpts }}
@@ -114,16 +111,6 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: {{ .Values.datafactoryResponseCeph.bucketName }}
-                  key: BUCKET_HOST
-            - name: DATAFACTORY_FILE_CEPH_BUCKET_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.datafactoryFileCeph.bucketName }}
-                  key: BUCKET_NAME
-            - name: DATAFACTORY_FILE_CEPH_BUCKET_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.datafactoryFileCeph.bucketName }}
                   key: BUCKET_HOST
             - name: KAFKA_USER_KEYSTORE_CERTIFICATE
               valueFrom:
@@ -191,11 +178,3 @@ spec:
                 path: datafactory-response-ceph.access-key
               - key: AWS_SECRET_ACCESS_KEY
                 path: datafactory-response-ceph.secret-key
-        - name: {{ .Chart.Name }}-datafactory-file-ceph-bucket-credentials
-          secret:
-            secretName: {{ .Values.datafactoryFileCeph.bucketName }}
-            items:
-              - key: AWS_ACCESS_KEY_ID
-                path: datafactory-file-ceph.access-key
-              - key: AWS_SECRET_ACCESS_KEY
-                path: datafactory-file-ceph.secret-key
