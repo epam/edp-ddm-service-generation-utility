@@ -54,9 +54,9 @@ class NestedServiceScopeFactoryTest {
     var actualScope = nestedServiceScopeFactory.create(context).get(0);
 
     var expectedScope = new CreateServiceScope();
-    expectedScope.setClassName("NestingFlowApplicationNestedCreateService");
+    expectedScope.setClassName("NestingFlowApplicationNestedUpsertService");
     expectedScope.setSchemaName("NestingFlowApplicationNested");
-    expectedScope.setRequestType("create-nesting-flow-application-nested");
+    expectedScope.setRequestType("upsert-nesting-flow-application-nested");
 
     assertThat(actualScope)
             .usingRecursiveComparison()

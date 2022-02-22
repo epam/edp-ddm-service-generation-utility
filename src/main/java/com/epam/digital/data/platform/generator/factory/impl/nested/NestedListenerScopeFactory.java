@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 @Component
 public class NestedListenerScopeFactory extends AbstractScope<CommandListenerScope> {
 
-  static final String CREATE_OUTPUT_TYPE =
+  static final String UPSERT_OUTPUT_TYPE =
       "com.epam.digital.data.platform.model.core.kafka.EntityId";
 
   private final NestedStructureProvider nestedStructureProvider;
@@ -46,7 +46,7 @@ public class NestedListenerScopeFactory extends AbstractScope<CommandListenerSco
               var tableName = nestedStructure.getRoot().getTableName();
               var schemaName = getSchemaName(nestedStructure.getName(), tableName) + "Nested";
               var scope = new CommandListenerScope();
-              scope.setClassName(schemaName + "CreateListener");
+              scope.setClassName(schemaName + "UpsertListener");
               scope.setSchemaName(schemaName);
 
               var rootOfTopicName =
@@ -55,9 +55,9 @@ public class NestedListenerScopeFactory extends AbstractScope<CommandListenerSco
                       + toHyphenTableName(nestedStructure.getRoot().getTableName())
                       + "-nested";
               scope.setRootOfTopicName(rootOfTopicName);
-              scope.setOperation("create");
-              scope.setOutputType(CREATE_OUTPUT_TYPE);
-              scope.setCommandHandler(schemaName + "CreateCommandHandler");
+              scope.setOperation("upsert");
+              scope.setOutputType(UPSERT_OUTPUT_TYPE);
+              scope.setCommandHandler(schemaName + "UpsertCommandHandler");
 
               return scope;
             })

@@ -15,36 +15,35 @@ import com.epam.digital.data.platform.restapi.core.annotation.HttpSecurityContex
 import com.epam.digital.data.platform.restapi.core.audit.AuditableController;
 import com.epam.digital.data.platform.restapi.core.utils.ResponseResolverUtil;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ${basePackage}.model.dto.${schemaName};
-import ${basePackage}.restapi.service.${schemaName}CreateService;
+import ${basePackage}.restapi.service.${schemaName}UpsertService;
 
 @RestController
-@RequestMapping("${endpoint}")
+@RequestMapping("/nested")
 public class ${className} {
 
   private final Logger log = LoggerFactory.getLogger(${className}.class);
 
-  private final ${schemaName}CreateService createService;
+  private final ${schemaName}UpsertService upsertService;
 
-  public ${className}(${schemaName}CreateService createService) {
-      this.createService = createService;
+  public ${className}(${schemaName}UpsertService upsertService) {
+      this.upsertService = upsertService;
   }
 
   @AuditableController
-  <@PreAuthorize roles=createRoles />
-  @PostMapping
-  public ResponseEntity<EntityId> create${schemaName}(
+  @PutMapping("${endpoint}")
+  public ResponseEntity<EntityId> upsert${schemaName}(
     @Valid @RequestBody ${schemaName} ${schemaName?uncap_first},
     @HttpRequestContext RequestContext context,
     @HttpSecurityContext SecurityContext securityContext) {
-    log.info("POST ${endpoint} called");
+    log.info("PUT /nested${endpoint} called");
     Request<${schemaName}> request = new Request<>(${schemaName?uncap_first}, context, securityContext);
-    var response = createService.request(request);
+    var response = upsertService.request(request);
     return ResponseResolverUtil.getHttpResponseFromKafka(response);
   }
 }

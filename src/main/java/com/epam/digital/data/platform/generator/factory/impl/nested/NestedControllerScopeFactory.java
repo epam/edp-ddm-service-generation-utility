@@ -55,7 +55,7 @@ public class NestedControllerScopeFactory extends AbstractScope<ControllerScope>
               var scope = new ControllerScope();
               scope.setClassName(schemaName + "Controller");
               scope.setSchemaName(schemaName);
-              scope.setEndpoint("/nested" + getEndpoint(nestedStructure.getName()));
+              scope.setEndpoint(getEndpoint(nestedStructure.getName()));
               scope.setCreateRoles(new ArrayList<>(findRolesFor(nestedStructure)));
               return scope;
             })

@@ -2,14 +2,14 @@ package ${basePackage}.kafkaapi.commandhandler.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.epam.digital.data.platform.kafkaapi.core.commandhandler.CreateCommandHandler;
+import com.epam.digital.data.platform.kafkaapi.core.commandhandler.UpsertCommandHandler;
 import com.epam.digital.data.platform.model.core.kafka.EntityId;
 import com.epam.digital.data.platform.model.core.kafka.Request;
 import ${basePackage}.model.dto.${schemaName};
 import ${basePackage}.model.dto.${rootEntityName?cap_first};
 
 @Service
-public class ${className} implements CreateCommandHandler<${schemaName}> {
+public class ${className} implements UpsertCommandHandler<${schemaName}> {
 
   private final ${rootHandler?cap_first} ${rootHandler};
   <#list nestedHandlers as handler>
@@ -30,7 +30,7 @@ public class ${className} implements CreateCommandHandler<${schemaName}> {
 
   @Override
   @Transactional
-  public EntityId save(Request<${schemaName}> request) {
+  public EntityId upsert(Request<${schemaName}> request) {
     var requestContext = request.getRequestContext();
     var securityContext = request.getSecurityContext();
     var requestPayload = request.getPayload();
@@ -41,10 +41,10 @@ public class ${className} implements CreateCommandHandler<${schemaName}> {
     <#list nestedHandlers as handler>
     var ${handler.injectionField} =
         ${handler.name}
-          .save(new Request<>(requestPayload.get${handler.childField?cap_first}(), requestContext, securityContext))
+          .upsert(new Request<>(requestPayload.get${handler.childField?cap_first}(), requestContext, securityContext))
           .getId();    
     ${rootEntityName}.set${handler.injectionField?cap_first}(${handler.injectionField});
     </#list>
-    return ${rootHandler}.save(new Request<>(${rootEntityName}, requestContext, securityContext));
+    return ${rootHandler}.upsert(new Request<>(${rootEntityName}, requestContext, securityContext));
   }
 }

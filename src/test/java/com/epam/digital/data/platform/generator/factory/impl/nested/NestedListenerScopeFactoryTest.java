@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.epam.digital.data.platform.generator.factory.impl.nested.NestedListenerScopeFactory.CREATE_OUTPUT_TYPE;
+import static com.epam.digital.data.platform.generator.factory.impl.nested.NestedListenerScopeFactory.UPSERT_OUTPUT_TYPE;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getSettings;
 import static com.epam.digital.data.platform.generator.utils.NestedStructureUtils.mockNestedDbCatalog;
 import static com.epam.digital.data.platform.generator.utils.NestedStructureUtils.mockSingleChildChainNestedStructure;
@@ -55,12 +55,12 @@ class NestedListenerScopeFactoryTest {
     var actualScope = nestedListenerScopeFactory.create(context).get(0);
 
     var expectedScope = new CommandListenerScope();
-    expectedScope.setClassName("NestingFlowApplicationNestedCreateListener");
+    expectedScope.setClassName("NestingFlowApplicationNestedUpsertListener");
     expectedScope.setSchemaName("NestingFlowApplicationNested");
     expectedScope.setRootOfTopicName("nesting-flow-application-nested");
-    expectedScope.setOperation("create");
-    expectedScope.setOutputType(CREATE_OUTPUT_TYPE);
-    expectedScope.setCommandHandler("NestingFlowApplicationNestedCreateCommandHandler");
+    expectedScope.setOperation("upsert");
+    expectedScope.setOutputType(UPSERT_OUTPUT_TYPE);
+    expectedScope.setCommandHandler("NestingFlowApplicationNestedUpsertCommandHandler");
 
     assertThat(actualScope)
             .usingRecursiveComparison()

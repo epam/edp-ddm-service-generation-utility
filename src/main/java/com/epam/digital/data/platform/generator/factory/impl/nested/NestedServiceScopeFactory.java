@@ -43,10 +43,10 @@ public class NestedServiceScopeFactory extends AbstractScope<CreateServiceScope>
               var tableName = nestedStructure.getRoot().getTableName();
               var scope = new CreateServiceScope();
               var schemaName = getSchemaName(nestedStructure.getName(), tableName) + "Nested";
-              scope.setClassName(schemaName + "CreateService");
+              scope.setClassName(schemaName + "UpsertService");
               scope.setSchemaName(schemaName);
               scope.setRequestType(
-                  "create-"
+                  "upsert-"
                       + toHyphenTableName(nestedStructure.getName())
                       + "-"
                       + toHyphenTableName(tableName)

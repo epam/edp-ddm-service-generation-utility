@@ -67,7 +67,7 @@ class NestedControllerScopeFactoryTest {
 
     var expectedScope = new ControllerScope();
     expectedScope.setClassName("NestingFlowApplicationNestedController");
-    expectedScope.setEndpoint("/nested/nesting-flow");
+    expectedScope.setEndpoint("/nesting-flow");
     expectedScope.setSchemaName("NestingFlowApplicationNested");
     expectedScope.setCreateRoles(Lists.newArrayList(RBAC_EXPRESSION));
 

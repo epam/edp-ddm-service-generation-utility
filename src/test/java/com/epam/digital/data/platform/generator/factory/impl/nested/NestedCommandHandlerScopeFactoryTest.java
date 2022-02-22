@@ -67,14 +67,14 @@ class NestedCommandHandlerScopeFactoryTest {
 
   private NestedCommandHandlerScope createApplicationScope() {
     var applicationScope = new NestedCommandHandlerScope();
-    applicationScope.setClassName("NestingFlowApplicationNestedCreateCommandHandler");
+    applicationScope.setClassName("NestingFlowApplicationNestedUpsertCommandHandler");
     applicationScope.setSchemaName("NestingFlowApplicationNested");
     applicationScope.setSimpleFields(List.of("name", "id"));
     applicationScope.setRootEntityName("application");
-    applicationScope.setRootHandler("applicationCreateCommandHandler");
+    applicationScope.setRootHandler("applicationUpsertCommandHandler");
 
     var orderNestedCommandHandler = new NestedCommandHandlerField();
-    orderNestedCommandHandler.setName("nestingFlowOrderNestedCreateCommandHandler");
+    orderNestedCommandHandler.setName("nestingFlowOrderNestedUpsertCommandHandler");
     orderNestedCommandHandler.setChildField("order");
     orderNestedCommandHandler.setInjectionField("orderId");
     applicationScope.setNestedHandlers(singletonList(orderNestedCommandHandler));
@@ -83,14 +83,14 @@ class NestedCommandHandlerScopeFactoryTest {
 
   private NestedCommandHandlerScope createOrderScope() {
     var orderScope = new NestedCommandHandlerScope();
-    orderScope.setClassName("NestingFlowOrderNestedCreateCommandHandler");
+    orderScope.setClassName("NestingFlowOrderNestedUpsertCommandHandler");
     orderScope.setSchemaName("NestingFlowOrderNested");
     orderScope.setSimpleFields(List.of("name", "itemId", "id"));
     orderScope.setRootEntityName("order");
-    orderScope.setRootHandler("orderCreateCommandHandler");
+    orderScope.setRootHandler("orderUpsertCommandHandler");
 
     var transactionNestedCommandHandler = new NestedCommandHandlerField();
-    transactionNestedCommandHandler.setName("transactionCreateCommandHandler");
+    transactionNestedCommandHandler.setName("transactionUpsertCommandHandler");
     transactionNestedCommandHandler.setChildField("transaction");
     transactionNestedCommandHandler.setInjectionField("transactionId");
     orderScope.setNestedHandlers(singletonList(transactionNestedCommandHandler));

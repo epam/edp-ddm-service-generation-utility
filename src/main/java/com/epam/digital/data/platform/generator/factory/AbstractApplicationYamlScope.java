@@ -77,7 +77,7 @@ public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScop
     return nestedStructureProvider.findAll().stream()
         .map(
             nestedStructure ->
-                "create-"
+                "upsert-"
                     + toHyphenTableName(nestedStructure.getName())
                     + "-"
                     + toHyphenTableName(nestedStructure.getRoot().getTableName())

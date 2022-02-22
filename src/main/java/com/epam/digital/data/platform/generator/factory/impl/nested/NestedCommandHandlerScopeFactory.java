@@ -70,10 +70,10 @@ public class NestedCommandHandlerScopeFactory extends AbstractScope<NestedComman
 
     var schemaName = getSchemaName(structureName, table.getName()) + "Nested";
     var scope = new NestedCommandHandlerScope();
-    scope.setClassName(schemaName + "CreateCommandHandler");
+    scope.setClassName(schemaName + "UpsertCommandHandler");
     scope.setSchemaName(schemaName);
     scope.setRootEntityName(getPropertyName(table.getName()));
-    scope.setRootHandler(getPropertyName(node.getTableName()) + "CreateCommandHandler");
+    scope.setRootHandler(getPropertyName(node.getTableName()) + "UpsertCommandHandler");
     scope.setSimpleFields(simpleFieldNames);
     scope.getNestedHandlers().addAll(getChildHandlers(structureName, node, nestedColumns));
 
@@ -95,7 +95,7 @@ public class NestedCommandHandlerScopeFactory extends AbstractScope<NestedComman
                       getPropertyName(structureName, childElement.getTableName()) + "Nested";
 
               var nestedCommandHandlerField = new NestedCommandHandlerField();
-              nestedCommandHandlerField.setName(childSchemaName + "CreateCommandHandler");
+              nestedCommandHandlerField.setName(childSchemaName + "UpsertCommandHandler");
               nestedCommandHandlerField.setInjectionField(
                   getPropertyName(column.getName()));
               nestedCommandHandlerField.setChildField(getPropertyName(childElement.getTableName()));

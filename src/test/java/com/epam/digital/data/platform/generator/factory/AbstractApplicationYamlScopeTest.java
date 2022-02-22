@@ -124,7 +124,7 @@ class AbstractApplicationYamlScopeTest {
     // then
     var actualTopicRoots = scopes.get(0).getRootsOfTopicNames();
     assertThat(actualTopicRoots)
-            .contains("create-nesting-flow-my-table-nested");
+            .contains("upsert-nesting-flow-my-table-nested");
   }
 
   private class TestApplicationYamlScope
