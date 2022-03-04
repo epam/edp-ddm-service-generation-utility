@@ -30,7 +30,7 @@ public class ${className} extends
   @AuditableListener(Operation.${operation?upper_case})
   @Override
   @KafkaListener(topics = "\u0023{kafkaProperties.topics['${operation}-${rootOfTopicName}']}",
-    groupId = "\u0023{kafkaProperties.groupId}",
+    groupId = "\u0023{kafkaProperties.consumer.groupId}",
     containerFactory = "concurrentKafkaListenerContainerFactory")
   @SendTo
   public Message<Response<${outputType}>> ${operation}(@Header(name = DIGITAL_SEAL, required = false) String key, Request<${schemaName}> input) {

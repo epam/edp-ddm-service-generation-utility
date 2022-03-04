@@ -20,6 +20,7 @@ kafka:
   user: rest-api-user
   clusterName: kafka-cluster
   sslEnabled: true
+  sslCertType: PEM
 <#noparse>
   sslUserKey: ${KAFKA_USER_KEYSTORE_KEY}
   sslUserCertificate: ${KAFKA_USER_KEYSTORE_CERTIFICATE}

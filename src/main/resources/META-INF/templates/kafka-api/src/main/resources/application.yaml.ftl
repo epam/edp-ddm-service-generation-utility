@@ -71,16 +71,25 @@ datafactory-response-ceph:
 
 data-platform:
   kafka:
-    group-id: ${register}-kafka-api
-    max-request-size: 1000000
-    trusted-packages:
-      - com.epam.digital.data.platform.model.core.kafka
-      - ${basePackage}.model.dto
-    error-handler:
-      initial-interval: 1500
-      max-elapsede-time: 6000
-      multiplier: 2
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: ${register}-kafka-api
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      trusted-packages:
+        - com.epam.digital.data.platform.model.core.kafka
+        - ${basePackage}.model.dto
+      custom-config:
+        "[allow.auto.create.topics]": false
+        "[retry.backoff.ms]": 10000
     topics:
   <#list rootsOfTopicNames as root>
       ${root}: ${root}-${serviceVersion}-inbound
   </#list>
+    error-handler:
+      initial-interval: 1500
+      max-elapsed-time: 6000
+      multiplier: 2
+    max-request-size: 1000000

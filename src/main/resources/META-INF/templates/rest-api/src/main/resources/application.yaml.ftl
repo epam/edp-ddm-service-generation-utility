@@ -160,22 +160,46 @@ logbook:
 
 data-platform:
   kafka:
-    group-id: ${register}-rest-api
-    trusted-packages:
-      - com.epam.digital.data.platform.model.core.kafka
-      - ${basePackage}.model.dto
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: ${register}-rest-api
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      trusted-packages:
+        - com.epam.digital.data.platform.model.core.kafka
+        - ${basePackage}.model.dto
+    request-reply:
+      enabled: true
+      timeout-in-seconds: 30
+      topics:
+      <#list rootsOfTopicNames as root>
+        ${root}:
+          request: ${root}-${serviceVersion}-inbound
+          reply: ${root}-${serviceVersion}-outbound
+      </#list>
+    topic-properties:
+      creation:
+        enabled: true
+        timeout-in-seconds: 60
+      retention:
+        policies:
+          -
+            topic-prefixes:
+              - read
+              - search
+            days: ${retentionPolicyDaysRead?c}
+          -
+            topic-prefixes:
+              - create
+              - update
+              - delete
+              - upsert
+            days: ${retentionPolicyDaysWrite?c}
+        default-in-days: 7
     error-handler:
       initial-interval: 1500
       max-elapsed-time: 6000
       multiplier: 2
-    topic-properties:
-      retention-policy-in-days:
-        read: ${retentionPolicyDaysRead?c}
-        write: ${retentionPolicyDaysWrite?c}
-    topics:
-  <#list rootsOfTopicNames as root>
-      ${root}:
-        request: ${root}-${serviceVersion}-inbound
-        replay: ${root}-${serviceVersion}-outbound
-  </#list>
 

@@ -8,7 +8,7 @@ import ${basePackage}.model.dto.${schemaName};
 import com.epam.digital.data.platform.model.core.kafka.Request;
 import com.epam.digital.data.platform.model.core.kafka.Response;
 import com.epam.digital.data.platform.restapi.core.service.GenericService;
-import com.epam.digital.data.platform.starter.restapi.config.properties.KafkaProperties;
+import com.epam.digital.data.platform.starter.kafka.config.properties.KafkaProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 @Service
@@ -20,7 +20,7 @@ public class ${className} extends GenericService<Request<${schemaName}>, EntityI
     ReplyingKafkaTemplate<String, Request<${schemaName}>, String> replyingKafkaTemplate,
       KafkaProperties kafkaProperties) {
 
-    super(replyingKafkaTemplate, kafkaProperties.getTopics().get(REQUEST_TYPE));
+    super(replyingKafkaTemplate, kafkaProperties.getRequestReply().getTopics().get(REQUEST_TYPE));
   }
 
   @Override
