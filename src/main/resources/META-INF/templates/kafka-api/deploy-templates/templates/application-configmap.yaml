@@ -12,11 +12,15 @@ data:
         bootstrap: {{ .Values.kafka.service }}
         ssl:
           enabled: {{ .Values.kafka.sslEnabled }}
+          keystore-type: {{ .Values.kafka.sslCertType }}
+          truststore-type: {{ .Values.kafka.sslCertType }}
           keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
           keystore-key: {{ .Values.kafka.sslUserKey }}
           truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
-        consumer-configs: {{ .Values.kafka.consumerConfigs | toYaml | nindent 10 }}
-        producer-configs: {{ .Values.kafka.producerConfigs | toYaml | nindent 10 }}
+        consumer:
+          custom-config: {{ .Values.kafka.consumerConfigs | toYaml | nindent 12 }}
+        producer:
+          custom-config: {{ .Values.kafka.producerConfigs | toYaml | nindent 12 }}
       kafka-request:
         validation:
           enabled: true
@@ -53,8 +57,6 @@ data:
         schema-registry-url: {{ .Values.audit.kafka.schemaRegistryUrl }}
         ssl:
           enabled: {{ .Values.kafka.sslEnabled }}
-          keystore-type: {{ .Values.kafka.sslCertType }}
-          truststore-type: {{ .Values.kafka.sslCertType }}
           keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
           keystore-key: {{ .Values.kafka.sslUserKey }}
           truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
