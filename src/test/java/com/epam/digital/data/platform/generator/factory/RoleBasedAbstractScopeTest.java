@@ -24,8 +24,10 @@ import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.wi
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import schemacrawler.schema.Catalog;
@@ -43,7 +45,8 @@ class RoleBasedAbstractScopeTest {
         withTable(TABLE_NAME),
         withTable(TABLE_NAME + "_2"),
         withSearchConditionView(VIEW_NAME));
-    Context context = new Context(null, catalog);
+    AsyncData asyncData = ContextTestUtils.emptyAsyncData();
+    Context context = new Context(null, catalog, asyncData);
 
     var scopes = instance.create(context);
 

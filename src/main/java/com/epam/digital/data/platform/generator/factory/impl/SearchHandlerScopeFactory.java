@@ -17,6 +17,7 @@
 package com.epam.digital.data.platform.generator.factory.impl;
 
 import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.getSelectableFields;
+import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;
 import static java.util.stream.Collectors.toList;
 
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
@@ -84,7 +85,7 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     scope.setLimit(sc.getLimit());
     scope.setSearchConditionFields(searchConditionFields);
     scope.setEnumSearchConditionFields(enumSearchConditionFields);
-    scope.setOutputFields(getSelectableFields(table, sc.getReturningColumns()));
+    scope.setOutputFields(getSelectableFields(table, sc.getReturningColumns(), context));
     scope.setPagination(sc.getPagination());
     return scope;
   }
@@ -113,6 +114,12 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     }
 
     return s;
+  }
+
+  @Override
+  protected boolean isApplicable(Table table, Context context) {
+    return super.isApplicable(table, context) &&
+        !isAsyncSearchCondition(table.getName(), context);
   }
 
   @Override

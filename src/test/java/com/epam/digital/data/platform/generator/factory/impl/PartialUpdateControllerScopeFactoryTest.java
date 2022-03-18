@@ -31,6 +31,7 @@ import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
 import com.epam.digital.data.platform.generator.scope.ControllerScope;
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -76,7 +77,8 @@ class PartialUpdateControllerScopeFactoryTest {
             withTable(TABLE_1, withUuidPk("pk"),
                 withTextColumn("col"), withLocalDateTimeColumn("my_col")),
             withTable(TABLE_2, withUuidPk("pk2"),
-                withTextColumn("col3"))));
+                withTextColumn("col3"))),
+        ContextTestUtils.emptyAsyncData());
   }
 
   @Test

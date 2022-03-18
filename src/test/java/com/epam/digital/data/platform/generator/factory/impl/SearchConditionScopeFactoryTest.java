@@ -39,6 +39,7 @@ import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.Field;
 import com.epam.digital.data.platform.generator.scope.ModelScope;
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,7 +81,8 @@ class SearchConditionScopeFactoryTest {
         .thenReturn(marshalingConstraintProvider);
 
     context = new Context(null,
-        newCatalog(withTable("test_table"), withTable("second_test_table")));
+        newCatalog(withTable("test_table"), withTable("second_test_table")),
+        ContextTestUtils.emptyAsyncData());
   }
 
   @Test

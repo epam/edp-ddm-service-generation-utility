@@ -40,7 +40,7 @@ class EnumScopeFactoryTest {
     @InjectMocks
     private EnumScopeFactory enumScopeFactory;
 
-    private Context context = new Context(null, null);
+    private Context context = new Context(null, null, null);
 
     @Test
     @DisplayName("EnumScopeFactory successful path")

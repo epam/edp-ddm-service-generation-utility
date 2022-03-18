@@ -17,6 +17,7 @@
 package com.epam.digital.data.platform.generator.metadata;
 
 import com.epam.digital.data.platform.generator.model.Context;
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +46,8 @@ class NestedStructureProviderTest {
   @Mock
   private MetadataFacade metadataFacade;
 
-  private final Context context = new Context(getSettings(), mockNestedDbCatalog());
+  private final Context context = new Context(getSettings(), mockNestedDbCatalog(),
+      ContextTestUtils.emptyAsyncData());
 
   @BeforeEach
   void beforeEach() {

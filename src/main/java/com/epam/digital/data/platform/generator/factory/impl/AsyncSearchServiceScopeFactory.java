@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package com.epam.digital.data.platform.generator.factory;
+package com.epam.digital.data.platform.generator.factory.impl;
+
+import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;
 
 import com.epam.digital.data.platform.generator.model.Context;
+import org.springframework.stereotype.Component;
 import schemacrawler.schema.Table;
 
-public abstract class SearchConditionsAbstractScope<T> extends MultiAbstractScope<T> {
+@Component
+public class AsyncSearchServiceScopeFactory extends SearchServiceScopeFactory {
 
   @Override
   protected boolean isApplicable(Table table, Context context) {
-    return isSearchConditionsView(table);
+    return isSearchConditionsView(table) &&
+        isAsyncSearchCondition(table.getName(), context);
+  }
+
+  @Override
+  public String getPath() {
+    return "rest-api/src/main/java/restapi/service/asyncSearch.java.ftl";
   }
 }

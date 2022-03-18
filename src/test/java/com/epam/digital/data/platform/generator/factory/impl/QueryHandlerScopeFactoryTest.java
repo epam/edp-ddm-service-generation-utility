@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.QueryHandlerScope;
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import java.sql.Struct;
 import java.util.List;
 import java.util.UUID;
@@ -57,7 +58,8 @@ class QueryHandlerScopeFactoryTest {
                         TABLE_NAME,
                         withUuidPk(PK_COLUMN_NAME),
                         withTextColumn(COLUMN_NAME),
-                        withColumn(FILE_COLUMN_NAME, Struct.class, "type_file")))));
+                        withColumn(FILE_COLUMN_NAME, Struct.class, "type_file"))),
+                ContextTestUtils.emptyAsyncData()));
 
     assertThat(resultList).hasSize(1);
     QueryHandlerScope resultScope = resultList.get(0);

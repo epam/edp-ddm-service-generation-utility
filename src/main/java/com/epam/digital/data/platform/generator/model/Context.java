@@ -21,13 +21,14 @@ import schemacrawler.schema.Catalog;
 public final class Context {
 
   private final Settings settings;
-
   private final Catalog catalog;
+  private final AsyncData asyncData;
 
   public Context(
-      Settings settings, Catalog catalog) {
+      Settings settings, Catalog catalog, AsyncData asyncData) {
     this.settings = settings;
     this.catalog = catalog;
+    this.asyncData = asyncData;
   }
 
   public Settings getSettings() {
@@ -37,4 +38,7 @@ public final class Context {
   public Catalog getCatalog() {
     return catalog;
   }
+
+  public AsyncData getAsyncData() { return asyncData; }
+
 }

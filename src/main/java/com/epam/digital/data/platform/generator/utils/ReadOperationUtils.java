@@ -16,6 +16,7 @@
 
 package com.epam.digital.data.platform.generator.utils;
 
+import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.SelectableField;
 import schemacrawler.schema.Column;
 import schemacrawler.schema.Table;
@@ -26,18 +27,39 @@ import static java.util.stream.Collectors.toList;
 
 public class ReadOperationUtils {
 
-  private ReadOperationUtils() {}
+  public static final String SYNC_READ_TYPE = "sync";
+  public static final String ASYNC_READ_TYPE = "async";
 
-  public static List<SelectableField> getSelectableFields(List<Column> columns) {
-    return columns.stream()
-        .map(column -> new SelectableField(column.getName(),
-            EntityFieldConverter.getConverterCode(column.getColumnDataType().getName())))
-        .collect(toList());
+  private ReadOperationUtils() {
   }
 
-  public static List<SelectableField> getSelectableFields(Table table, List<String> allowedColumns) {
+  public static List<SelectableField> getSelectableFields(String tableName, List<Column> columns,
+      Context context) {
+    return columns.stream()
+        .map(column -> new SelectableField(column.getName(),
+            EntityFieldConverter.getConverterCode(column.getColumnDataType().getName(),
+                defineReadType(tableName, context)))).collect(toList());
+  }
+
+  public static List<SelectableField> getSelectableFields(Table table, List<String> allowedColumns,
+      Context context) {
     List<Column> columns = table.getColumns().stream()
         .filter(column -> allowedColumns.contains(column.getName())).collect(toList());
-    return getSelectableFields(columns);
+    return getSelectableFields(table.getName(), columns, context);
+  }
+
+  private static String defineReadType(String tableName, Context context) {
+    if (isAsyncTable(tableName, context) || isAsyncSearchCondition(tableName, context)) {
+      return ASYNC_READ_TYPE;
     }
+    return SYNC_READ_TYPE;
+  }
+
+  public static boolean isAsyncTable(String tableName, Context context) {
+    return context.getAsyncData().getAsyncTables().contains(tableName);
+  }
+
+  public static boolean isAsyncSearchCondition(String tableName, Context context) {
+    return context.getAsyncData().getAsyncSearchConditions().contains(tableName);
+  }
 }

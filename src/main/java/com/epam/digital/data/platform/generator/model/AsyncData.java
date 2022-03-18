@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-package com.epam.digital.data.platform.generator.factory;
+package com.epam.digital.data.platform.generator.model;
 
-import com.epam.digital.data.platform.generator.model.Context;
-import schemacrawler.schema.Table;
+import java.util.Set;
 
-public abstract class SearchConditionsAbstractScope<T> extends MultiAbstractScope<T> {
+public class AsyncData {
 
-  @Override
-  protected boolean isApplicable(Table table, Context context) {
-    return isSearchConditionsView(table);
+  private final Set<String> asyncTables;
+  private final Set<String> asyncSearchConditions;
+
+  public AsyncData(Set<String> asyncTables, Set<String> asyncSearchConditions) {
+    this.asyncTables = asyncTables;
+    this.asyncSearchConditions = asyncSearchConditions;
   }
+
+  public Set<String> getAsyncTables() {
+    return asyncTables;
+  }
+
+  public Set<String> getAsyncSearchConditions() {
+    return asyncSearchConditions;
+  }
+
 }

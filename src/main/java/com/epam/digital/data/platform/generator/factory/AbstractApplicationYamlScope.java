@@ -25,11 +25,14 @@ import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.ApplicationYamlScope;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScope>
     extends AbstractScope<T> {
 
-  static final List<String> CRUD_REQUESTS = List.of("create", "update", "delete");
+  static final List<String> CUD_REQUESTS = List.of("create", "update", "delete");
+  static final String READ_OPERATION = "read";
+  static final String SEARCH_OPERATION = "search";
 
   protected final PartialUpdateProvider partialUpdateProvider;
   protected final NestedStructureProvider nestedStructureProvider;
@@ -46,9 +49,15 @@ public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScop
   @Override
   public List<T> create(Context context) {
     var rootTopics = new ArrayList<String>();
-    rootTopics.addAll(getCrudTopics(context));
+    rootTopics.addAll(getCudTopics(context));
     rootTopics.addAll(getPartialUpdateTopics(context));
     rootTopics.addAll(getNestedTopics());
+    if (!context.getAsyncData().getAsyncTables().isEmpty()) {
+      rootTopics.addAll(getAsyncTopics(context.getAsyncData().getAsyncTables(), READ_OPERATION));
+    }
+    if (!context.getAsyncData().getAsyncSearchConditions().isEmpty()){
+      rootTopics.addAll(getAsyncTopics(context.getAsyncData().getAsyncSearchConditions(), SEARCH_OPERATION));
+    }
 
     var applicationYamlScope = instantiate();
     applicationYamlScope.setRootsOfTopicNames(rootTopics);
@@ -64,12 +73,18 @@ public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScop
         .collect(toList());
   }
 
-  private List<String> getCrudTopics(Context context) {
+  private List<String> getCudTopics(Context context) {
     return context.getCatalog().getTables().stream()
         .filter(this::isRecentDataTable)
         .map(this::toHyphenTableName)
-        .flatMap(topicRoot -> CRUD_REQUESTS.stream()
+        .flatMap(topicRoot -> CUD_REQUESTS.stream()
             .map(request -> request + "-" + topicRoot))
+        .collect(toList());
+  }
+
+  private List<String> getAsyncTopics(Set<String> asyncData, String operation) {
+    return asyncData.stream()
+        .map(name -> operation + "-" + toHyphenTableName(name))
         .collect(toList());
   }
 

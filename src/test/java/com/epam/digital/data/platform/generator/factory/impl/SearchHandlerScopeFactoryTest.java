@@ -20,18 +20,13 @@ import static com.epam.digital.data.platform.generator.factory.impl.SearchHandle
 import static com.epam.digital.data.platform.generator.factory.impl.SearchHandlerScopeFactory.OP_EQ;
 import static com.epam.digital.data.platform.generator.factory.impl.SearchHandlerScopeFactory.OP_EQUAL_IGNORE_CASE;
 import static com.epam.digital.data.platform.generator.factory.impl.SearchHandlerScopeFactory.OP_STARTS_WITH_IGNORE_CASE;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.COLUMN_NAME;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.FILE_COLUMN_NAME;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.PK_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.newCatalog;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.override;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withColumn;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withEnumColumn;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withSearchConditionView;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withTable;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withTextColumn;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withUuidColumn;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withUuidPk;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
@@ -42,11 +37,12 @@ import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditions;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
+import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.SearchConditionField;
 import com.epam.digital.data.platform.generator.scope.SearchHandlerScope;
 
-import java.sql.Struct;
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +81,8 @@ class SearchHandlerScopeFactoryTest {
         withSearchConditionView("view_without_fields"),
         withSearchConditionView("find_by_enum", withEnumColumn("status"))
     );
-    ctx = new Context(null, catalog);
+    AsyncData asyncData = ContextTestUtils.emptyAsyncData();
+    ctx = new Context(null, catalog, asyncData);
 
     lenient().when(scProvider.findFor("test_view")).thenReturn(emptySc());
     lenient().when(scProvider.findFor("view_without_fields")).thenReturn(emptySc());

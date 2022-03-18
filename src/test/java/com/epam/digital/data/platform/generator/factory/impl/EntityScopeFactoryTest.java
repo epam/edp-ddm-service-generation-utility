@@ -33,9 +33,11 @@ import com.epam.digital.data.platform.generator.constraints.impl.FormattingConst
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
+import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.Field;
 import com.epam.digital.data.platform.generator.scope.ModelScope;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +73,8 @@ class EntityScopeFactoryTest {
         .thenReturn(formattingConstraintProvider);
 
     context = new Context(null,
-        newCatalog(withTable("test_table"), withTable("second_test_table")));
+        newCatalog(withTable("test_table"), withTable("second_test_table")),
+        new AsyncData(new HashSet<>(), new HashSet<>()));
   }
 
   @Test

@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
+import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.EnumLabel;
 import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
@@ -46,7 +47,8 @@ class EnumControllerScopeFactoryTest {
   EnumControllerScopeFactory instance;
 
   Catalog catalog = ContextTestUtils.newCatalog();
-  Context ctx = new Context(null, catalog);
+  AsyncData asyncData = ContextTestUtils.emptyAsyncData();
+  Context ctx = new Context(null, catalog, asyncData);
 
   EnumLabel[] labelArr = {new EnumLabel("I", "Внесено"), new EnumLabel("D", "Видалено")};
 

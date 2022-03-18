@@ -17,6 +17,7 @@
 package com.epam.digital.data.platform.generator.config;
 
 import com.epam.digital.data.platform.generator.config.properties.ServiceGenerationProperties;
+import com.epam.digital.data.platform.generator.metadata.AsyncDataProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.Settings;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,6 +35,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -43,6 +45,9 @@ import schemacrawler.schema.Catalog;
 
 @Configuration
 public class MainConfig {
+
+  @Autowired
+  private AsyncDataProvider asyncDataProvider;
 
   @Bean
   public Settings settings(@Value("file:#{systemProperties.settings}") Resource file,
@@ -85,6 +90,6 @@ public class MainConfig {
 
   @Bean
   public Context context(Settings settings, Catalog catalog) {
-    return new Context(settings, catalog);
+    return new Context(settings, catalog, asyncDataProvider.findAll());
   }
 }

@@ -20,6 +20,7 @@ import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
 import com.epam.digital.data.platform.generator.scope.ControllerScope;
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,8 @@ class NestedControllerScopeFactoryTest {
   @Mock
   private PermissionMap permissionMap;
 
-  private final Context context = new Context(getSettings(), mockNestedDbCatalog());
+  private final Context context = new Context(getSettings(), mockNestedDbCatalog(),
+      ContextTestUtils.emptyAsyncData());
 
   @BeforeEach
   void beforeEach() {

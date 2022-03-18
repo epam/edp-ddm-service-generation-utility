@@ -33,6 +33,7 @@ import com.epam.digital.data.platform.generator.metadata.PartialUpdate;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.EnumLabel;
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +48,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class RestApplicationYamlScopeFactoryTest {
 
-  private static final List<String> CRUD = List.of("create", "update", "delete");
+  private static final List<String> CUD = List.of("create", "update", "delete");
+  private static final String READ = "read";
+  private static final String SEARCH = "search";
 
   private final Context context = getContext();
 
@@ -68,7 +71,7 @@ class RestApplicationYamlScopeFactoryTest {
   }
 
   @Test
-  void shouldCreateCorrectScope() {
+  void shouldCreateCorrectScopeSync() {
     var resultList = instance.create(context);
 
     var resultScope = resultList.get(0);
@@ -77,7 +80,25 @@ class RestApplicationYamlScopeFactoryTest {
     assertThat(resultScope.getEntityPaths())
         .containsEntry(hyphen(TABLE_NAME), List.of(hyphen(TABLE_NAME)));
     assertThat(resultScope.getRootsOfTopicNames())
-        .isEqualTo(getRootsOfTopicNames(TABLE_NAME, VIEW_NAME));
+        .isEqualTo(getRootsOfTopicNamesSync(TABLE_NAME));
+    assertThat(resultScope.isEnumPresent()).isFalse();
+    assertThat(resultScope.getRetentionPolicyDaysRead()).isEqualTo(RETENTION_READ);
+    assertThat(resultScope.getRetentionPolicyDaysWrite()).isEqualTo(RETENTION_WRITE);
+  }
+
+  @Test
+  void shouldCreateCorrectScopeAsync() {
+    Context context = new Context(ContextTestUtils.getSettings(),
+        ContextTestUtils.getCatalog(), ContextTestUtils.fullAsyncData());
+    var resultList = instance.create(context);
+
+    var resultScope = resultList.get(0);
+    assertThat(resultList).hasSize(1);
+    assertThat(resultScope.getSearchPaths()).isEqualTo(List.of(hyphen(VIEW_NAME)));
+    assertThat(resultScope.getEntityPaths())
+        .containsEntry(hyphen(TABLE_NAME), List.of(hyphen(TABLE_NAME)));
+    assertThat(resultScope.getRootsOfTopicNames())
+        .isEqualTo(getRootsOfTopicNamesAsync(TABLE_NAME, VIEW_NAME));
     assertThat(resultScope.isEnumPresent()).isFalse();
     assertThat(resultScope.getRetentionPolicyDaysRead()).isEqualTo(RETENTION_READ);
     assertThat(resultScope.getRetentionPolicyDaysWrite()).isEqualTo(RETENTION_WRITE);
@@ -134,13 +155,27 @@ class RestApplicationYamlScopeFactoryTest {
     assertThat(resultScope.isEnumPresent()).isTrue();
   }
 
-  private List<String> getRootsOfTopicNames(String table, String view) {
+  private List<String> getRootsOfTopicNamesSync(String table) {
     table = hyphen(table);
 
     List<String> result = new ArrayList<>();
-    for (String operation : CRUD) {
+    for (String operation : CUD) {
       result.add(operation + "-" + table);
     }
+
+    return result;
+  }
+
+  private List<String> getRootsOfTopicNamesAsync(String table, String view) {
+    table = hyphen(table);
+    view = hyphen(view);
+
+    List<String> result = new ArrayList<>();
+    for (String operation : CUD) {
+      result.add(operation + "-" + table);
+    }
+    result.add(READ + "-" + table);
+    result.add(SEARCH + "-" + view);
     return result;
   }
 

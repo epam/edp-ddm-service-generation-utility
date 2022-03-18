@@ -24,6 +24,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
+import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.General;
 import com.epam.digital.data.platform.generator.model.Kafka;
@@ -31,12 +32,12 @@ import com.epam.digital.data.platform.generator.model.RetentionPolicyInDays;
 import com.epam.digital.data.platform.generator.model.Settings;
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import schemacrawler.schema.Catalog;
 import schemacrawler.schema.Column;
 import schemacrawler.schema.ColumnDataType;
-import schemacrawler.schema.ForeignKey;
-import schemacrawler.schema.ForeignKeyColumnReference;
 import schemacrawler.schema.PrimaryKey;
 import schemacrawler.schema.Table;
 import schemacrawler.schema.TableConstraintColumn;
@@ -79,7 +80,7 @@ public class ContextTestUtils {
   }
 
   public static Context getContext() {
-    return new Context(getSettings(), getCatalog());
+    return new Context(getSettings(), getCatalog(), emptyAsyncData());
   }
 
   public static Catalog getCatalog() {
@@ -102,6 +103,16 @@ public class ContextTestUtils {
   public static Catalog newCatalog(Table... tables) {
     var catalog = mock(Catalog.class);
     return override(catalog, tables);
+  }
+
+  public static AsyncData emptyAsyncData() {
+    return new AsyncData(new HashSet<>(), new HashSet<>());
+  }
+
+  public static AsyncData fullAsyncData() {
+    Set<String> tables = new HashSet<>(List.of(ContextTestUtils.TABLE_NAME));
+    Set<String> searchConditions = new HashSet<>(List.of(ContextTestUtils.VIEW_NAME.concat("_v")));
+    return new AsyncData(tables, searchConditions);
   }
 
   public static Catalog override(Catalog catalog, Table... tables) {

@@ -26,12 +26,12 @@ public abstract class MultiAbstractScope<T> extends AbstractScope<T> {
 
   protected abstract T map(Table table, Context context);
 
-  protected abstract boolean isApplicable(Table table);
+  protected abstract boolean isApplicable(Table table, Context context);
 
   @Override
   public List<T> create(Context context) {
     return context.getCatalog().getTables().stream()
-        .filter(this::isApplicable)
+        .filter(t -> isApplicable(t, context))
         .map(t -> map(t, context))
         .collect(toList());
   }

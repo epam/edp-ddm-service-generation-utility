@@ -20,6 +20,7 @@ import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.NestedCommandHandlerField;
 import com.epam.digital.data.platform.generator.scope.NestedCommandHandlerScope;
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +44,8 @@ class NestedCommandHandlerScopeFactoryTest {
   @Mock
   private NestedStructureProvider nestedStructureProvider;
 
-  private final Context context = new Context(getSettings(), mockNestedDbCatalog());
+  private final Context context = new Context(getSettings(), mockNestedDbCatalog(),
+      ContextTestUtils.emptyAsyncData());
 
   @BeforeEach
   void beforeEach() {

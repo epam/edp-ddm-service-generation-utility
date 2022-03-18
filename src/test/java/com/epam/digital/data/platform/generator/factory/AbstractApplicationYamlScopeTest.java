@@ -32,6 +32,7 @@ import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.RestApplicationYamlScope;
 
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -65,9 +66,9 @@ class AbstractApplicationYamlScopeTest {
   }
 
   @Test
-  void shouldReturnScopeWithListOfRootsOfTopicNames() {
+  void shouldReturnScopeWithListOfRootsOfTopicNamesSync() {
     // given
-    var crud = "test-schema";
+    var topicRoot = "test-schema";
 
     // when
     var scopes = instance.create(context);
@@ -79,9 +80,33 @@ class AbstractApplicationYamlScopeTest {
 
     var roots = scope.getRootsOfTopicNames();
     assertThat(roots).hasSize(3);
-    assertThat(roots.get(0)).isEqualTo("create-" + crud);
-    assertThat(roots.get(1)).isEqualTo("update-" + crud);
-    assertThat(roots.get(2)).isEqualTo("delete-" + crud);
+    assertThat(roots.get(0)).isEqualTo("create-" + topicRoot);
+    assertThat(roots.get(1)).isEqualTo("update-" + topicRoot);
+    assertThat(roots.get(2)).isEqualTo("delete-" + topicRoot);
+  }
+
+  @Test
+  void shouldReturnScopeWithListOfRootsOfTopicNamesAsync() {
+    // given
+    var topicRoot = "test-schema";
+
+    // when
+    Context context = new Context(ContextTestUtils.getSettings(),
+        ContextTestUtils.getCatalog(), ContextTestUtils.fullAsyncData());
+    var scopes = instance.create(context);
+
+    // then
+    assertThat(scopes).hasSize(1);
+
+    var scope = scopes.get(0);
+
+    var roots = scope.getRootsOfTopicNames();
+    assertThat(roots).hasSize(5);
+    assertThat(roots.get(0)).isEqualTo("create-" + topicRoot);
+    assertThat(roots.get(1)).isEqualTo("update-" + topicRoot);
+    assertThat(roots.get(2)).isEqualTo("delete-" + topicRoot);
+    assertThat(roots.get(3)).isEqualTo("read-" + topicRoot);
+    assertThat(roots.get(4)).isEqualTo("search-test-schema-search");
   }
 
   @Test

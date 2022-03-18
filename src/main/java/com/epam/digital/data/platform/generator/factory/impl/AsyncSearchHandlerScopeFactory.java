@@ -16,34 +16,30 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncTable;
+import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;
 
+import com.epam.digital.data.platform.generator.metadata.EnumProvider;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.scope.ReadServiceScope;
 import org.springframework.stereotype.Component;
-import com.epam.digital.data.platform.generator.factory.AbstractServiceScope;
 import schemacrawler.schema.Table;
 
 @Component
-public class ReadServiceScopeFactory extends AbstractServiceScope<ReadServiceScope> {
+public class AsyncSearchHandlerScopeFactory extends SearchHandlerScopeFactory {
 
-  @Override
-  protected ReadServiceScope instantiate() {
-    return new ReadServiceScope();
-  }
-
-  @Override
-  protected String getOperation() {
-    return "read";
+  public AsyncSearchHandlerScopeFactory(
+      SearchConditionProvider searchConditionProvider, EnumProvider enumProvider) {
+    super(searchConditionProvider, enumProvider);
   }
 
   @Override
   protected boolean isApplicable(Table table, Context context) {
-    return super.isApplicable(table, context) && !isAsyncTable(table.getName(), context);
+    return isSearchConditionsView(table) &&
+        isAsyncSearchCondition(table.getName(), context);
   }
 
   @Override
   public String getPath() {
-    return "rest-api/src/main/java/restapi/service/read.java.ftl";
+    return "kafka-api/src/main/java/kafkaapi/searchhandler/searchHandler.java.ftl";
   }
 }

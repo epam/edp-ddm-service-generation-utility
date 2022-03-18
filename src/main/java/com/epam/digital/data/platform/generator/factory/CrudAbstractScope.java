@@ -16,12 +16,13 @@
 
 package com.epam.digital.data.platform.generator.factory;
 
+import com.epam.digital.data.platform.generator.model.Context;
 import schemacrawler.schema.Table;
 
 public abstract class CrudAbstractScope<T> extends MultiAbstractScope<T> {
 
   @Override
-  protected boolean isApplicable(Table table) {
+  protected boolean isApplicable(Table table, Context context) {
     return isRecentDataTable(table);
   }
 }

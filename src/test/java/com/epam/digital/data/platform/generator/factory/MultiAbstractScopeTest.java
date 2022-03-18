@@ -21,7 +21,9 @@ import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.ne
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withSearchConditionView;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withTable;
 
+import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import schemacrawler.schema.Catalog;
@@ -44,7 +46,8 @@ class MultiAbstractScopeTest {
     Catalog catalog = newCatalog(
         withTable("some_table"),
         withSearchConditionView(APPLICABLE_VIEW));
-    ctx = new Context(null, catalog);
+    AsyncData asyncData = ContextTestUtils.emptyAsyncData();
+    ctx = new Context(null, catalog, asyncData);
   }
 
   @Test
@@ -69,7 +72,7 @@ class MultiAbstractScopeTest {
     }
 
     @Override
-    protected boolean isApplicable(Table table) {
+    protected boolean isApplicable(Table table, Context context) {
       return table.getName().startsWith(APPLICABLE_PREFIX);
     }
 

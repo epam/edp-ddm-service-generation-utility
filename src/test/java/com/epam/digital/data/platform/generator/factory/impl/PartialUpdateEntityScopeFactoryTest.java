@@ -32,6 +32,7 @@ import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.Field;
 import com.epam.digital.data.platform.generator.scope.ModelScope;
+import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +72,8 @@ class PartialUpdateEntityScopeFactoryTest {
             withTable(TABLE_1, withUuidPk("my_pk"),
                 withTextColumn("col"), withLocalDateTimeColumn("my_col")),
             withTable(TABLE_2, withUuidPk("pk"),
-                withTextColumn("col3"))));
+                withTextColumn("col3"))),
+        ContextTestUtils.emptyAsyncData());
   }
 
   @Test

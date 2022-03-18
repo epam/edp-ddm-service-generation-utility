@@ -16,6 +16,8 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
+import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;
+
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.ServiceScope;
 import org.springframework.stereotype.Component;
@@ -33,6 +35,12 @@ public class SearchServiceScopeFactory extends SearchConditionsAbstractScope<Ser
     serviceScope.setSchemaName(getSchemaName(table));
     serviceScope.setRequestType("search" + "-" + toHyphenTableName(table.getName()));
     return serviceScope;
+  }
+
+  @Override
+  protected boolean isApplicable(Table table, Context context) {
+    return super.isApplicable(table, context) &&
+        !isAsyncSearchCondition(table.getName(), context);
   }
 
   @Override

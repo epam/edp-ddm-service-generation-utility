@@ -20,21 +20,31 @@ import java.util.Map;
 
 public class EntityFieldConverter {
 
+  private static final String TYPE_FILE_SYNC = "type_file_sync";
+  private static final String ARRAY_SYNC = "array_sync";
+  private static final String TYPE_FILE_ASYNC = "type_file_async";
+  private static final String ARRAY_ASYNC = "array_async";
   private static final String ARRAY = "array";
+  private static final String UNDERSCORE = "_";
 
   private static final Map<String, String> CUSTOM_DB_TYPE_TO_CONVERTER =
       Map.of(
-          "type_file",
+          TYPE_FILE_SYNC,
           "com.epam.digital.data.platform.restapi.core.utils.JooqDataTypes.FILE_DATA_TYPE",
-          ARRAY,
-          "com.epam.digital.data.platform.restapi.core.utils.JooqDataTypes.ARRAY_DATA_TYPE");
+          ARRAY_SYNC,
+          "com.epam.digital.data.platform.restapi.core.utils.JooqDataTypes.ARRAY_DATA_TYPE",
+          TYPE_FILE_ASYNC,
+          "com.epam.digital.data.platform.kafkaapi.core.util.JooqDataTypes.FILE_DATA_TYPE",
+          ARRAY_ASYNC,
+          "com.epam.digital.data.platform.kafkaapi.core.util.JooqDataTypes.ARRAY_DATA_TYPE");
 
-  private EntityFieldConverter() {}
+  private EntityFieldConverter() {
+  }
 
-  public static String getConverterCode(String dbType) {
-    var str = dbType;
+  public static String getConverterCode(String dbType, String readType) {
+    var str = dbType + UNDERSCORE + readType;
     if (str.startsWith("_")) {
-      str = ARRAY;
+      str = ARRAY + UNDERSCORE + readType;
     }
     return CUSTOM_DB_TYPE_TO_CONVERTER.get(str);
   }
