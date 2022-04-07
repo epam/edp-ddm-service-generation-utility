@@ -1,27 +1,30 @@
 {{- if .Values.ingress.required }}
+{{- range $serviceName := compact (list .Values.name ((.Values.externalService).name)) }}
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ .Values.name }}
+  name: {{ $serviceName }}
   annotations:
-    description: "Route for {{ .Values.name }} application"
+    description: "Route for {{ $serviceName }} application"
   labels:
-    app: {{ .Values.name }}
+    app: {{ $serviceName }}
 spec:
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
-  {{- if .Values.ingress.site }}
-  host: {{ .Values.ingress.site }}-{{ .Values.namespace }}.{{ .Values.dnsWildcard }}
+  {{- if $.Values.ingress.site }}
+  host: {{ $serviceName }}-{{ $.Values.namespace }}.{{ $.Values.dnsWildcard }}
   {{end}}
-  path: {{ .Values.ingress.path }}
+  path: {{ $.Values.ingress.path }}
   port:
     targetPort: 8080
   to:
     kind: Service
-    name: {{ .Values.name }}
+    name: {{ $serviceName }}
     weight: 100
   wildcardPolicy: None
 status:
   ingress: []
+---
+{{- end }}
   {{end}}

@@ -20,6 +20,7 @@ import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.ge
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.epam.digital.data.platform.generator.metadata.ExposeSearchConditionOption;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.ControllerScope;
@@ -46,7 +47,8 @@ class RestApiClientScopeFactoryTest {
 
   @Test
   void shouldCreateCorrectScopes() {
-    when(provider.getExposedSearchConditions()).thenReturn(Set.of("test_schema_search"));
+    when(provider.getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA))
+        .thenReturn(Set.of("test_schema_search"));
     var expectedSchemaNames = Set.of("TestSchemaSearch", "TestSchemaSearchSearchConditions");
 
     var restApiClientScopes = instance.create(context);
@@ -61,7 +63,8 @@ class RestApiClientScopeFactoryTest {
 
   @Test
   void shouldNotReturnEmptyList() {
-    when(provider.getExposedSearchConditions()).thenReturn(Set.of("incorrect_search"));
+    when(provider.getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA))
+        .thenReturn(Set.of("incorrect_search"));
 
     var restApiClientScopes = instance.create(context);
 

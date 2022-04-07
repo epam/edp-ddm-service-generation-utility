@@ -76,6 +76,28 @@ s3:
     options:
       pathStyleAccess: true
 
+<#if exposedToPlatformPaths?has_content>
+externalService:
+  name: ${register}-rest-api-ext
+</#if>
+
+<#if exposedToPlatformPaths?has_content || exposedToExternalPaths?has_content>
+exposeSearchConditions:
+  <#if exposedToPlatformPaths?has_content>
+  platform:
+    paths:
+    <#list exposedToPlatformPaths as path>
+      - ${path}
+    </#list>
+  </#if>
+  <#if exposedToExternalPaths?has_content>
+  external:
+    paths:
+    <#list exposedToExternalPaths as path>
+      - ${path}
+    </#list>
+  </#if>
+</#if>
 dso:
   url: http://digital-signature-ops:8080
 
@@ -102,3 +124,13 @@ keycloak:
     citizen: citizen-portal
     external: external-system
   certificatesEndpoint: /protocol/openid-connect/certs
+
+kong:
+  clientName: trembita-invoker
+  secretName: keycloak-trembita-invoker-client-secret
+  ingressName: kong-set-timeouts
+  noPublicOidcPlugin: external-system-datafactory-nopublic-oidc
+  route:
+    rootPath: /api/gateway/data-factory
+
+stageName: ${stageName}

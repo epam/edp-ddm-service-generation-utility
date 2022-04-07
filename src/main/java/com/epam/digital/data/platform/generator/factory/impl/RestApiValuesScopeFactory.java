@@ -16,22 +16,29 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import com.epam.digital.data.platform.generator.factory.ScopeFactory;
+import com.epam.digital.data.platform.generator.factory.AbstractScope;
+import com.epam.digital.data.platform.generator.metadata.ExposeSearchConditionOption;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.RestApiValuesScope;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class RestApiValuesScopeFactory implements ScopeFactory<RestApiValuesScope> {
+public class RestApiValuesScopeFactory extends AbstractScope<RestApiValuesScope> {
 
   private final JsonNode values;
+  private final SearchConditionProvider searchConditionProvider;
 
-  public RestApiValuesScopeFactory(JsonNode values) {
+  public RestApiValuesScopeFactory(
+      JsonNode values, SearchConditionProvider searchConditionProvider) {
     this.values = values;
+    this.searchConditionProvider = searchConditionProvider;
   }
 
   @Override
@@ -46,7 +53,21 @@ public class RestApiValuesScopeFactory implements ScopeFactory<RestApiValuesScop
             .map(JsonNode::textValue)
             .orElse(null);
     scope.setS3Signer(signer);
+    scope.setExposedToPlatformPaths(
+        getExposedSearchConditionPaths(ExposeSearchConditionOption.PLATFORM));
+    scope.setExposedToExternalPaths(
+        getExposedSearchConditionPaths(ExposeSearchConditionOption.EXTERNAL_SYSTEM));
+
+    String stageName =
+        Optional.ofNullable(values.get("stageName")).map(JsonNode::textValue).orElse(null);
+    scope.setStageName(stageName);
     return List.of(scope);
+  }
+
+  private Set<String> getExposedSearchConditionPaths(ExposeSearchConditionOption option) {
+    return searchConditionProvider.getExposedSearchConditions(option).stream()
+            .map(this::getEndpoint)
+            .collect(Collectors.toSet());
   }
 
   @Override

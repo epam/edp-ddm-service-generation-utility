@@ -216,7 +216,7 @@ class SearchConditionProviderTest {
 
     @Test
     void shouldMapViewOnTablesAndColumns() {
-      var set = instance.getExposedSearchConditions();
+      var set = instance.getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA);
 
       assertThat(set).hasSize(1);
       assertThat(set.stream().findFirst().get()).isEqualTo(EXPOSED_VIEW);

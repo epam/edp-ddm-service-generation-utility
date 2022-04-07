@@ -16,6 +16,7 @@
 
 package com.epam.digital.data.platform.generator.factory;
 
+import com.epam.digital.data.platform.generator.metadata.ExposeSearchConditionOption;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.ControllerScope;
@@ -58,7 +59,7 @@ public abstract class AbstractSoapScopeFactory extends AbstractScope<SoapScope> 
 
   private boolean isApplicable(Table table) {
     return searchConditionProvider
-        .getExposedSearchConditions()
+        .getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA)
         .contains(getCutTableName(table));
   }
 }

@@ -1,23 +1,26 @@
+{{- range $serviceName := compact (list .Values.name ((.Values.externalService).name)) }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ .Values.name }}-{{ .Values.namespace }}
-  namespace: {{ .Values.monitoring.namespace }}
+  name: {{ $serviceName }}-{{ $.Values.namespace }}
+  namespace: {{ $.Values.monitoring.namespace }}
   labels:
-    app: {{ .Values.name }}
-    namespace: {{ .Values.namespace }}
-    relatedNamespace: {{ .Release.Namespace }}
+    app: {{ $serviceName }}
+    namespace: {{ $.Values.namespace }}
+    relatedNamespace: {{ $.Release.Namespace }}
 spec:
   endpoints:
     - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
       interval: 30s
-      path: {{ .Values.monitoring.prometheusScrapePath }}
+      path: {{ $.Values.monitoring.prometheusScrapePath }}
       scheme: http
-      targetPort: {{ .Values.port }}
-  jobLabel: {{ .Values.monitoring.jobLabel }}
+      targetPort: {{ $.Values.port }}
+  jobLabel: {{ $.Values.monitoring.jobLabel }}
   namespaceSelector:
     matchNames:
-      - {{ .Values.namespace }}
+      - {{ $.Values.namespace }}
   selector:
     matchLabels:
-      app: {{ .Values.name }}
+      app: {{ $serviceName }}
+---
+{{- end }}

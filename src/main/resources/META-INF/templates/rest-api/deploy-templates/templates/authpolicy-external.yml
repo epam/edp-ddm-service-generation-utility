@@ -1,0 +1,17 @@
+{{- if and (.Values.keycloak.rulesEnabled) (((.Values.externalService).name)) }}
+kind: RequestAuthentication
+apiVersion: security.istio.io/v1beta1
+metadata:
+  name: {{ .Values.externalService.name }}-request-auth
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.externalService.name }}
+  jwtRules:
+    - forwardOriginalToken: true
+      fromHeaders:
+        - name: X-Access-Token
+      issuer: {{ template "issuer.external" . }}
+      jwksUri: {{ template "jwksUri.external" . }}
+{{end}}

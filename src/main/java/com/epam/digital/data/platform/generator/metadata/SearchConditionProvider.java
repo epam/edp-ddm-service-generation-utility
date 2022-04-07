@@ -97,9 +97,9 @@ public class SearchConditionProvider {
                 toSet())));
   }
 
-  public Set<String> getExposedSearchConditions() {
+  public Set<String> getExposedSearchConditions(ExposeSearchConditionOption option) {
     return metadataFacade
-        .findByChangeTypeAndChangeNameAndName(EXPOSE, TREMBITA, EXPOSED_CHANGE_NAME)
+        .findByChangeTypeAndChangeNameAndName(EXPOSE, option.getValue(), EXPOSED_CHANGE_NAME)
         .map(Metadata::getValue)
         .collect(Collectors.toSet());
   }

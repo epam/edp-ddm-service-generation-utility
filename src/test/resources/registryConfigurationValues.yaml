@@ -6,3 +6,5 @@ s3:
   config:
     client:
       signerOverride: S3SignerType
+
+stageName: platform

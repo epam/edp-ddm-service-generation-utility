@@ -1,15 +1,16 @@
 {{- if not .Values.global.disableRequestsLimits }}
+{{- range $serviceName := compact (list .Values.name ((.Values.externalService).name)) }}
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
 metadata:
-  name: {{ .Chart.Name }}
+  name: {{ $serviceName }}
   labels:
-    app: {{ .Chart.Name }}
-    relatedNamespace: {{ .Release.Namespace }}
+    app: {{ $serviceName }}
+    relatedNamespace: {{ $.Release.Namespace }}
 spec:
   scaleTargetRef:
     kind: Deployment
-    name: {{ .Values.name }}-deployment
+    name: {{ $serviceName }}-deployment
     apiVersion: apps/v1
   minReplicas: 1
   maxReplicas: 1
@@ -20,4 +21,6 @@ spec:
         target:
           type: Utilization
           averageUtilization: 60
+---
+{{- end }}
 {{- end }}

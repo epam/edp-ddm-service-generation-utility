@@ -16,10 +16,15 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
+import java.util.Set;
+
 public class RestApiValuesScope {
 
   private int replicationFactor;
   private String s3Signer;
+  private Set<String> exposedToPlatformPaths;
+  private Set<String> exposedToExternalPaths;
+  private String stageName;
 
   public int getReplicationFactor() {
     return replicationFactor;
@@ -35,5 +40,29 @@ public class RestApiValuesScope {
 
   public void setS3Signer(String s3Signer) {
     this.s3Signer = s3Signer;
+  }
+
+  public Set<String> getExposedToPlatformPaths() {
+    return exposedToPlatformPaths;
+  }
+
+  public void setExposedToPlatformPaths(Set<String> exposedToPlatformPaths) {
+    this.exposedToPlatformPaths = exposedToPlatformPaths;
+  }
+
+  public Set<String> getExposedToExternalPaths() {
+    return exposedToExternalPaths;
+  }
+
+  public void setExposedToExternalPaths(Set<String> exposedToExternalPaths) {
+    this.exposedToExternalPaths = exposedToExternalPaths;
+  }
+
+  public String getStageName() {
+    return stageName;
+  }
+
+  public void setStageName(String stageName) {
+    this.stageName = stageName;
   }
 }
