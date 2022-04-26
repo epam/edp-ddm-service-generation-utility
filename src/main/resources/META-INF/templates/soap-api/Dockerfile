@@ -1,4 +1,4 @@
-FROM ${dockerProxyRegistry}/${globalNexusNamespace}/soap-api-core-base-image-master:1.5.0-SNAPSHOT.65 AS builder
+FROM ${dockerProxyRegistry}/${globalNexusNamespace}/soap-api-core-base-image-master:1.6.0.1 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild
@@ -12,7 +12,7 @@ COPY --from=builder /app/forbuild/target/soap-api*.jar application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
 FROM openjdk:11.0.7-jre-slim
-WORKDIR /app
+WORKDIR /appF
 COPY --from=soaplayer app/dependencies/ ./
 COPY --from=soaplayer app/spring-boot-loader/ ./
 COPY --from=soaplayer app/snapshot-dependencies/ ./
