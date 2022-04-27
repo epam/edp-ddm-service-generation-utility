@@ -13,7 +13,7 @@
     <description>REST API</description>
 
   <properties>
-      <rest.api.core.version>1.6.0</rest.api.core.version>
+      <rest.api.core.version>1.6.0.1</rest.api.core.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
       <java.version>11</java.version>
