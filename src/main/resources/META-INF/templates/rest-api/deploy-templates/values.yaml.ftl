@@ -134,3 +134,5 @@ kong:
     rootPath: /api/gateway/data-factory
 
 stageName: ${stageName}
+
+deployProfile: prod
