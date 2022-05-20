@@ -18,8 +18,9 @@ data:
           keystore-key: {{ .Values.kafka.sslUserKey }}
           truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
         topic-properties:
-          num-partitions: {{ .Values.kafka.numPartitions }}
-          replication-factor: {{ .Values.kafka.replicationFactor }}
+          creation:
+            num-partitions: {{ .Values.kafka.numPartitions }}
+            replication-factor: {{ .Values.kafka.replicationFactor }}
         consumer:
           custom-config: {{ .Values.kafka.consumerConfigs | toYaml | nindent 12 }}
         producer:

@@ -161,18 +161,15 @@ logbook:
 data-platform:
   kafka:
     producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      enabled: true
     consumer:
+      enabled: true
       group-id: ${register}-rest-api
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       trusted-packages:
         - com.epam.digital.data.platform.model.core.kafka
         - ${basePackage}.model.dto
     request-reply:
       enabled: true
-      timeout-in-seconds: 30
       topics:
       <#list rootsOfTopicNames as root>
         ${root}:
@@ -182,7 +179,7 @@ data-platform:
     topic-properties:
       creation:
         enabled: true
-        timeout-in-seconds: 60
+        enabled-dlq: true
       retention:
         policies:
           -
@@ -197,9 +194,4 @@ data-platform:
               - delete
               - upsert
             days: ${retentionPolicyDaysWrite?c}
-        default-in-days: 7
-    error-handler:
-      initial-interval: 1500
-      max-elapsed-time: 6000
-      multiplier: 2
 
