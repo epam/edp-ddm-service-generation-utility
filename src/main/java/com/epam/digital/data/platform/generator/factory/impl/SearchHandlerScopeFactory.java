@@ -26,7 +26,6 @@ import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.SearchConditionField;
 import com.epam.digital.data.platform.generator.scope.SearchHandlerScope;
 import com.epam.digital.data.platform.generator.utils.DbTypeConverter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.springframework.stereotype.Component;
@@ -36,11 +35,6 @@ import com.epam.digital.data.platform.generator.factory.SearchConditionsAbstract
 
 @Component
 public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<SearchHandlerScope> {
-
-  static final String OP_CONTAINS_IGNORE_CASE = "containsIgnoreCase";
-  static final String OP_STARTS_WITH_IGNORE_CASE = "startsWithIgnoreCase";
-  static final String OP_EQUAL_IGNORE_CASE = "equalIgnoreCase";
-  static final String OP_EQ = "eq";
 
   private final SearchConditionProvider searchConditionProvider;
   private final EnumProvider enumProvider;
@@ -55,23 +49,26 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
   protected SearchHandlerScope map(Table table, Context context) {
     var sc = searchConditionProvider.findFor(getCutTableName(table));
 
-    var searchConditionFields = new ArrayList<SearchConditionField>();
-
-    searchConditionFields.addAll(sc.getEqual().stream()
-        .map(x -> new SearchConditionField(getPropertyName(x), x, chooseEqOpFor(x, table)))
-        .collect(toList())
-    );
-
-    searchConditionFields.addAll(sc.getContains().stream()
-        .map(x -> new SearchConditionField(getPropertyName(x), x, OP_CONTAINS_IGNORE_CASE))
-        .collect(toList())
-    );
-
-    searchConditionFields.addAll(sc.getStartsWith().stream()
-        .map(x -> new SearchConditionField(getPropertyName(x), x, OP_STARTS_WITH_IGNORE_CASE))
-        .collect(toList())
-    );
-
+    var equalFields =
+        sc.getEqual().stream()
+            .map(
+                x ->
+                    new SearchConditionField(
+                        getPropertyName(x), x, isIgnoreCase(x, table)))
+            .collect(toList());
+    var containsFields =
+        sc.getContains().stream()
+            .map(x -> new SearchConditionField(getPropertyName(x), x, true))
+            .collect(toList());
+    var startsWithFields =
+        sc.getStartsWith().stream()
+            .map(x -> new SearchConditionField(getPropertyName(x), x, true))
+            .collect(toList());
+    var inFields =
+        sc.getIn().stream()
+            .map(
+                x -> new SearchConditionField(getPropertyName(x), x, isIgnoreCase(x, table)))
+            .collect(toList());
     Set<String> allEnums = enumProvider.findAllWithValues().keySet();
     List<String> enumSearchConditionFields = table.getColumns().stream()
         .filter(col -> allEnums.contains(col.getColumnDataType().getName()))
@@ -83,14 +80,17 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     scope.setSchemaName(getSchemaName(table));
     scope.setTableName(table.getName());
     scope.setLimit(sc.getLimit());
-    scope.setSearchConditionFields(searchConditionFields);
+    scope.setEqualFields(equalFields);
+    scope.setContainsFields(containsFields);
+    scope.setStartsWithFields(startsWithFields);
+    scope.setInFields(inFields);
     scope.setEnumSearchConditionFields(enumSearchConditionFields);
     scope.setOutputFields(getSelectableFields(table, sc.getReturningColumns(), context));
     scope.setPagination(sc.getPagination());
     return scope;
   }
 
-  private String chooseEqOpFor(String columnName, Table table) {
+  private boolean isIgnoreCase(String columnName, Table table) {
     var column = table.getColumns().stream()
         .filter(x -> x.getName().equals(columnName))
         .findFirst()
@@ -100,20 +100,20 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
                 table.getName(),
                 columnName)));
 
-    String s = OP_EQ;
+    boolean ignoreCase = false;
 
     String typeName = column.getColumnDataType().getName();
     boolean isEnum = !enumProvider.findFor(typeName).isEmpty();
     if (isEnum) {
-      return s;
+      return false;
     }
 
     var type = DbTypeConverter.convertToJavaTypeName(column);
     if (String.class.getCanonicalName().equals(type)) {
-      s = OP_EQUAL_IGNORE_CASE;
+      ignoreCase = true;
     }
 
-    return s;
+    return ignoreCase;
   }
 
   @Override

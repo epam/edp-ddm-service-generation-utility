@@ -73,27 +73,19 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
   private List<Field> getSearchConditionFields(Table table) {
     var searchConditions = searchConditionProvider.findFor(getCutTableName(table));
 
-    var fields = searchConditions.getAll().stream()
-        .map(sc -> {
-          var column = findColumn(sc, table);
-
-          var clazzName = DbTypeConverter.convertToJavaTypeName(column);
-
-          var constraints = constraintProviders.getFormattingConstraintProvider()
-              .getConstraintForProperty(column.getColumnDataType().getName(),
-                  clazzName);
-
-          constraints.addAll(constraintProviders.getMarshalingConstraintProvider()
-              .getConstraintForProperty(column.getColumnDataType().getName(),
-                  clazzName));
-
-          var field = new Field();
-          field.setName(getPropertyName(sc));
-          field.setType(typeToString(clazzName, column));
-          field.setConstraints(constraints);
-          return field;
-        })
-        .collect(toList());
+    List<Field> fields = new ArrayList<>();
+    fields.addAll(searchConditions.getEqual().stream()
+            .map(sc -> mapColumnConditionToField(table, sc, false))
+            .collect(toList()));
+    fields.addAll(searchConditions.getContains().stream()
+            .map(sc -> mapColumnConditionToField(table, sc, false))
+            .collect(toList()));
+    fields.addAll(searchConditions.getStartsWith().stream()
+            .map(sc -> mapColumnConditionToField(table, sc, false))
+            .collect(toList()));
+    fields.addAll(searchConditions.getIn().stream()
+            .map(sc -> mapColumnConditionToField(table, sc, true))
+            .collect(toList()));
 
     if (TRUE.equals(searchConditions.getPagination())) {
       fields.addAll(of(
@@ -102,6 +94,33 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
     }
 
     return fields;
+  }
+
+  private Field mapColumnConditionToField(
+      Table table, String columnName, boolean isCollectionSearch) {
+    var column = findColumn(columnName, table);
+
+    var clazzName = DbTypeConverter.convertToJavaTypeName(column);
+
+    var constraints =
+        constraintProviders
+            .getFormattingConstraintProvider()
+            .getConstraintForProperty(column.getColumnDataType().getName(), clazzName);
+
+    constraints.addAll(
+        constraintProviders
+            .getMarshalingConstraintProvider()
+            .getConstraintForProperty(column.getColumnDataType().getName(), clazzName));
+
+    var field = new Field();
+    field.setName(getPropertyName(columnName));
+    if (isCollectionSearch) {
+      field.setType(typeToStringForCollection(clazzName, column));
+    } else {
+      field.setType(typeToString(clazzName, column));
+    }
+    field.setConstraints(constraints);
+    return field;
   }
 
   private Field getAuxiliaryField(String name, Class<?> clazz) {

@@ -26,7 +26,10 @@ public class SearchHandlerScope extends ClassScope {
   private String schemaName;
   private Integer limit;
   private String tableName;
-  private List<SearchConditionField> searchConditionFields;
+  private List<SearchConditionField> equalFields;
+  private List<SearchConditionField> startsWithFields;
+  private List<SearchConditionField> containsFields;
+  private List<SearchConditionField> inFields;
   private List<String> enumSearchConditionFields;
   private List<SelectableField> selectableFields;
   private Boolean pagination;
@@ -55,12 +58,36 @@ public class SearchHandlerScope extends ClassScope {
     this.tableName = tableName;
   }
 
-  public List<SearchConditionField> getSearchConditionFields() {
-    return searchConditionFields;
+  public List<SearchConditionField> getEqualFields() {
+    return equalFields;
   }
 
-  public void setSearchConditionFields(List<SearchConditionField> searchConditionFields) {
-    this.searchConditionFields = searchConditionFields;
+  public void setEqualFields(List<SearchConditionField> equalFields) {
+    this.equalFields = equalFields;
+  }
+
+  public List<SearchConditionField> getStartsWithFields() {
+    return startsWithFields;
+  }
+
+  public void setStartsWithFields(List<SearchConditionField> startsWithFields) {
+    this.startsWithFields = startsWithFields;
+  }
+
+  public List<SearchConditionField> getContainsFields() {
+    return containsFields;
+  }
+
+  public void setContainsFields(List<SearchConditionField> containsFields) {
+    this.containsFields = containsFields;
+  }
+
+  public List<SearchConditionField> getInFields() {
+    return inFields;
+  }
+
+  public void setInFields(List<SearchConditionField> inFields) {
+    this.inFields = inFields;
   }
 
   public List<String> getEnumSearchConditionFields() {

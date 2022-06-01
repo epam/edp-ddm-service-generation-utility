@@ -20,12 +20,12 @@ public class SearchConditionField {
 
   private String name;
   private String columnName;
-  private String operation;
+  private boolean ignoreCase;
 
-  public SearchConditionField(String name, String columnName, String operation) {
+  public SearchConditionField(String name, String columnName, boolean ignoreCase) {
     this.name = name;
     this.columnName = columnName;
-    this.operation = operation;
+    this.ignoreCase = ignoreCase;
   }
 
   public String getName() {
@@ -44,11 +44,11 @@ public class SearchConditionField {
     this.columnName = columnName;
   }
 
-  public String getOperation() {
-    return operation;
+  public boolean isIgnoreCase() {
+    return ignoreCase;
   }
 
-  public void setOperation(String operation) {
-    this.operation = operation;
+  public void setIgnoreCase(boolean ignoreCase) {
+    this.ignoreCase = ignoreCase;
   }
 }

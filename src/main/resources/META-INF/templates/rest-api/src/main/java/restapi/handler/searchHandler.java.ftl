@@ -7,6 +7,7 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import ${basePackage}.model.dto.${schemaName};
 import ${basePackage}.model.dto.${schemaName}SearchConditions;
 
@@ -20,9 +21,31 @@ public class ${className}
   protected Condition whereClause(${schemaName}SearchConditions searchConditions) {
     var c = DSL.noCondition();
 
-  <#list searchConditionFields as field>
+  <#list equalFields as field>
     if (searchConditions.get${field.name?cap_first}() != null) {
-      c = c.and(DSL.field("${field.columnName}").${field.operation}(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
+      c = c.and(DSL.field("${field.columnName}").equal<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
+    }
+  </#list>
+  <#list startsWithFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      c = c.and(DSL.field("${field.columnName}").startsWith<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
+    }
+  </#list>
+  <#list containsFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      c = c.and(DSL.field("${field.columnName}").contains<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
+    }
+  </#list>
+  <#list inFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+    <#if field.ignoreCase>
+      c = c.and(DSL.lower(DSL.field("${field.columnName}", String.class))
+        .in(searchConditions.get${field.name?cap_first}().stream()
+        .map(DSL::lower)
+        .collect(Collectors.toList())));
+    <#else>
+      c = c.and(DSL.field("${field.columnName}").in(searchConditions.get${field.name?cap_first}()));
+    </#if>
     }
   </#list>
 
