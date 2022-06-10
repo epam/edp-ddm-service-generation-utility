@@ -48,7 +48,22 @@ public class ${className}
     </#if>
     }
   </#list>
-
+  <#list betweenFields as field>
+    if (searchConditions.get${field.name?cap_first}From() != null
+        && searchConditions.get${field.name?cap_first}To() != null) {
+    <#if field.ignoreCase>
+      c = c.and(DSL.lower(DSL.field("${field.columnName}", String.class))
+        .between(
+          DSL.lower(searchConditions.get${field.name?cap_first}From()),
+          DSL.lower(searchConditions.get${field.name?cap_first}To())));
+    <#else>
+      c = c.and(DSL.field("${field.columnName}")
+        .between(
+          searchConditions.get${field.name?cap_first}From(),
+          searchConditions.get${field.name?cap_first}To()));
+    </#if>
+    }
+  </#list>
     return c;
   }
 

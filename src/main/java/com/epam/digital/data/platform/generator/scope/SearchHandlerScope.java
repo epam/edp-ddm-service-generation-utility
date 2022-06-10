@@ -30,6 +30,7 @@ public class SearchHandlerScope extends ClassScope {
   private List<SearchConditionField> startsWithFields;
   private List<SearchConditionField> containsFields;
   private List<SearchConditionField> inFields;
+  private List<SearchConditionField> betweenFields;
   private List<String> enumSearchConditionFields;
   private List<SelectableField> selectableFields;
   private Boolean pagination;
@@ -88,6 +89,14 @@ public class SearchHandlerScope extends ClassScope {
 
   public void setInFields(List<SearchConditionField> inFields) {
     this.inFields = inFields;
+  }
+
+  public List<SearchConditionField> getBetweenFields() {
+    return betweenFields;
+  }
+
+  public void setBetweenFields(List<SearchConditionField> betweenFields) {
+    this.betweenFields = betweenFields;
   }
 
   public List<String> getEnumSearchConditionFields() {

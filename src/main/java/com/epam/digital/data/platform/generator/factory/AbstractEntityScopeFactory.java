@@ -48,17 +48,6 @@ public abstract class AbstractEntityScopeFactory<T> extends AbstractScope<T> {
     return clazzName;
   }
 
-  protected String typeToStringForCollection(String clazzName, Column column) {
-    String type = column.getColumnDataType().getName();
-
-    boolean isEnum = !enumProvider.findFor(type).isEmpty();
-    if (isEnum) {
-      return getGeneralizedListOfType(getSchemaName(type));
-    }
-
-    return getGeneralizedListOfType(clazzName);
-  }
-
   private String getGeneralizedListOfType(String clazzName) {
     return String.format("%s<%s>", List.class.getCanonicalName(), clazzName);
   }

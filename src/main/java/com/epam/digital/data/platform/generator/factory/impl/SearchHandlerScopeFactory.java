@@ -69,6 +69,10 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
             .map(
                 x -> new SearchConditionField(getPropertyName(x), x, isIgnoreCase(x, table)))
             .collect(toList());
+    var betweenFields =
+        sc.getBetween().stream()
+            .map(x -> new SearchConditionField(getPropertyName(x), x, isIgnoreCase(x, table)))
+            .collect(toList());
     Set<String> allEnums = enumProvider.findAllWithValues().keySet();
     List<String> enumSearchConditionFields = table.getColumns().stream()
         .filter(col -> allEnums.contains(col.getColumnDataType().getName()))
@@ -84,6 +88,7 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     scope.setContainsFields(containsFields);
     scope.setStartsWithFields(startsWithFields);
     scope.setInFields(inFields);
+    scope.setBetweenFields(betweenFields);
     scope.setEnumSearchConditionFields(enumSearchConditionFields);
     scope.setOutputFields(getSelectableFields(table, sc.getReturningColumns(), context));
     scope.setPagination(sc.getPagination());

@@ -31,7 +31,11 @@ import com.epam.digital.data.platform.generator.scope.ModelScope;
 import com.epam.digital.data.platform.generator.utils.DbTypeConverter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
+
 import org.springframework.stereotype.Component;
+import schemacrawler.schema.Column;
 import schemacrawler.schema.Table;
 
 @Component
@@ -75,16 +79,26 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
 
     List<Field> fields = new ArrayList<>();
     fields.addAll(searchConditions.getEqual().stream()
-            .map(sc -> mapColumnConditionToField(table, sc, false))
+            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
             .collect(toList()));
     fields.addAll(searchConditions.getContains().stream()
-            .map(sc -> mapColumnConditionToField(table, sc, false))
+            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
             .collect(toList()));
     fields.addAll(searchConditions.getStartsWith().stream()
-            .map(sc -> mapColumnConditionToField(table, sc, false))
+            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
             .collect(toList()));
     fields.addAll(searchConditions.getIn().stream()
-            .map(sc -> mapColumnConditionToField(table, sc, true))
+            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::getFieldTypeForIn))
+            .collect(toList()));
+    fields.addAll(
+        searchConditions.getBetween().stream()
+            .flatMap(
+                sc ->
+                    Stream.of(
+                        mapColumnConditionToField(
+                            table, sc, getPropertyName(sc) + "From", this::typeToString),
+                        mapColumnConditionToField(
+                            table, sc, getPropertyName(sc) + "To", this::typeToString)))
             .collect(toList()));
 
     if (TRUE.equals(searchConditions.getPagination())) {
@@ -97,7 +111,10 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
   }
 
   private Field mapColumnConditionToField(
-      Table table, String columnName, boolean isCollectionSearch) {
+      Table table,
+      String columnName,
+      String fieldName,
+      BiFunction<String, Column, String> conditionToStringTypeMapper) {
     var column = findColumn(columnName, table);
 
     var clazzName = DbTypeConverter.convertToJavaTypeName(column);
@@ -113,14 +130,14 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
             .getConstraintForProperty(column.getColumnDataType().getName(), clazzName));
 
     var field = new Field();
-    field.setName(getPropertyName(columnName));
-    if (isCollectionSearch) {
-      field.setType(typeToStringForCollection(clazzName, column));
-    } else {
-      field.setType(typeToString(clazzName, column));
-    }
+    field.setName(fieldName);
+    field.setType(conditionToStringTypeMapper.apply(clazzName, column));
     field.setConstraints(constraints);
     return field;
+  }
+
+  private String getFieldTypeForIn(String clazzName, Column column) {
+    return String.format("%s<%s>", List.class.getCanonicalName(), typeToString(clazzName, column));
   }
 
   private Field getAuxiliaryField(String name, Class<?> clazz) {

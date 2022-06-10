@@ -26,17 +26,26 @@ public class SearchConditions {
   private final List<String> startsWith;
   private final List<String> contains;
   private final List<String> in;
+  private final List<String> between;
   private final List<String> returningColumns;
   private final Integer limit;
   private final Boolean pagination;
 
-  SearchConditions(List<String> equal, List<String> startsWith,
-      List<String> contains, List<String> in, List<String> returningColumns, Integer limit, Boolean pagination) {
+  SearchConditions(
+      List<String> equal,
+      List<String> startsWith,
+      List<String> contains,
+      List<String> in,
+      List<String> between,
+      List<String> returningColumns,
+      Integer limit,
+      Boolean pagination) {
     this.equal = unmodifiableList(equal);
     this.startsWith = unmodifiableList(startsWith);
     this.contains = unmodifiableList(contains);
+    this.in = unmodifiableList(in);
+    this.between = unmodifiableList(between);
     this.returningColumns = unmodifiableList(returningColumns);
-    this.in = in;
     this.limit = limit;
     this.pagination = pagination;
   }
@@ -55,6 +64,10 @@ public class SearchConditions {
 
   public List<String> getIn() {
     return in;
+  }
+
+  public List<String> getBetween() {
+    return between;
   }
 
   public List<String> getReturningColumns() {return returningColumns;}

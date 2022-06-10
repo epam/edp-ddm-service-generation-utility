@@ -155,7 +155,7 @@ class SearchHandlerScopeFactoryTest {
   }
 
   @Test
-  void shouldCreateStartsInFields() {
+  void shouldCreateInFields() {
     // given
     var field = new SearchConditionField(FIELD, FIELD, true);
     var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
@@ -169,6 +169,26 @@ class SearchHandlerScopeFactoryTest {
 
     // then
     List<SearchConditionField> fields = resultList.get(0).getInFields();
+    assertThat(fields).hasSize(2);
+    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
+    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+  }
+
+  @Test
+  void shouldCreateBetweenFields() {
+    // given
+    var field = new SearchConditionField(FIELD, FIELD, true);
+    var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
+
+    setupSearchConditions("test_view", new SearchConditionsBuilder()
+            .between(List.of(field.getColumnName(), fieldToo.getColumnName()))
+            .build());
+
+    // when
+    List<SearchHandlerScope> resultList = instance.create(ctx);
+
+    // then
+    List<SearchConditionField> fields = resultList.get(0).getBetweenFields();
     assertThat(fields).hasSize(2);
     assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
     assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
@@ -317,6 +337,32 @@ class SearchHandlerScopeFactoryTest {
 
     //then
     List<SearchConditionField> fields = resultList.get(0).getInFields();
+    assertThat(fields).hasSize(1);
+    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
+  }
+
+  @Test
+  void shouldCreateBetweenFieldsForEnumColumns() {
+    // given
+    when(enumProvider.findFor("en_status")).thenReturn(Set.of("en_status"));
+    when(enumProvider.findAllWithValues())
+            .thenReturn(Map.of("en_status", List.of("ACCEPTED", "PENDING", "REJECTED")));
+
+    var field = new SearchConditionField("status", "status", false);
+
+    setupSearchConditions("find_by_enum", new SearchConditionsBuilder()
+            .between(List.of(field.getColumnName()))
+            .build());
+
+    override(ctx.getCatalog(),
+            withTable("some_table"),
+            withSearchConditionView("find_by_enum", withEnumColumn("status")));
+
+    // when
+    List<SearchHandlerScope> resultList = instance.create(ctx);
+
+    //then
+    List<SearchConditionField> fields = resultList.get(0).getBetweenFields();
     assertThat(fields).hasSize(1);
     assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
   }

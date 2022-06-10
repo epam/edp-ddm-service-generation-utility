@@ -155,6 +155,24 @@ class SearchConditionScopeFactoryTest {
   }
 
   @Test
+  void shouldCreateSearchConditionBetweenFieldsForSearchConditionViews() {
+    given(searchConditionProvider.findFor(any()))
+            .willReturn(new SearchConditionsBuilder().between(singletonList("test_between_search_col")).build());
+    override(
+            context.getCatalog(),
+            withSearchConditionView("test_table_search", withTextColumn("test_between_search_col")));
+
+    List<ModelScope> result = instance.create(context);
+
+    var fields = result.get(0).getFields();
+    assertThat(fields)
+        .hasSize(2)
+        .containsExactlyInAnyOrder(
+            new Field("java.lang.String", "testBetweenSearchColFrom", emptyList()),
+            new Field("java.lang.String", "testBetweenSearchColTo", emptyList()));
+  }
+
+  @Test
   void shouldCreateEnumFieldForSearchConditionView() {
     Field expected = new Field("EnStatus", "status", emptyList());
     override(
