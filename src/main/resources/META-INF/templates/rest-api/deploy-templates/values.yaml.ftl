@@ -27,7 +27,7 @@ kafka:
   sslClusterCertificate: ${KAFKA_CLUSTER_TRUSTSTORE}
 </#noparse>
   numPartitions: 3
-  replicationFactor: ${replicationFactor}
+  replicationFactor: ${replicationFactor?c}
   consumerConfigs:
     "[fetch.max.wait.ms]": 500
   producerConfigs:

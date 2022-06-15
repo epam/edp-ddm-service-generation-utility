@@ -75,14 +75,14 @@ public class ${className}
   public Integer limit(${schemaName}SearchConditions searchConditions) {
   <#if pagination?? && limit??>
     if (searchConditions.getLimit() != null) {
-      return Math.min(searchConditions.getLimit(), ${limit});
+      return Math.min(searchConditions.getLimit(), ${limit?c});
     }
 
-    return ${limit};
+    return ${limit?c};
   <#elseif pagination?? && !limit??>
     return searchConditions.getLimit();
   <#else>
-    return ${limit};
+    return ${limit?c};
   </#if>
   }
   </#if>
