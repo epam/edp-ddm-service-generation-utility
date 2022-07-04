@@ -135,4 +135,3 @@ kong:
 
 stageName: ${stageName}
 
-deployProfile: prod
