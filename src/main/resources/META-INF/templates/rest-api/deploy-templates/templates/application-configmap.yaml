@@ -82,3 +82,37 @@ data:
           keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
           keystore-key: {{ .Values.kafka.sslUserKey }}
           truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
+      
+    storage:
+      lowcode-form-form-data-storage:
+        type: ceph
+        backend:
+          ceph:
+            http-endpoint: ${ceph.http-endpoint}
+            access-key: ${ceph.access-key}
+            secret-key: ${ceph.secret-key}
+            bucket: ${ceph.bucket}
+      lowcode-file-storage:
+        type: ceph
+        backend:
+          ceph:
+            http-endpoint: ${lowcode-file-ceph.http-endpoint}
+            access-key: ${lowcode-file-ceph.access-key}
+            secret-key: ${lowcode-file-ceph.secret-key}
+            bucket: ${lowcode-file-ceph.bucket}
+      datafactory-form-data-storage:
+        type: ceph
+        backend:
+          ceph:
+            http-endpoint: ${datafactoryceph.http-endpoint}
+            access-key: ${datafactoryceph.access-key}
+            secret-key: ${datafactoryceph.secret-key}
+            bucket: ${datafactoryceph.bucket}
+      datafactory-file-storage:
+        type: ceph
+        backend:
+          ceph:
+            http-endpoint: ${datafactory-file-ceph.http-endpoint}
+            access-key: ${datafactory-file-ceph.access-key}
+            secret-key: ${datafactory-file-ceph.secret-key}
+            bucket: ${datafactory-file-ceph.bucket}
