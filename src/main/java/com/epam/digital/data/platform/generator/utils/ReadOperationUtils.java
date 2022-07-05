@@ -21,6 +21,8 @@ import com.epam.digital.data.platform.generator.model.template.SelectableField;
 import schemacrawler.schema.Column;
 import schemacrawler.schema.Table;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -33,12 +35,17 @@ public class ReadOperationUtils {
   private ReadOperationUtils() {
   }
 
-  public static List<SelectableField> getSelectableFields(String tableName, List<Column> columns,
-      Context context) {
+  public static List<SelectableField> getSelectableFields(
+      String tableName, List<Column> columns, Context context) {
     return columns.stream()
-        .map(column -> new SelectableField(column.getName(),
-            EntityFieldConverter.getConverterCode(column.getColumnDataType().getName(),
-                defineReadType(tableName, context)))).collect(toList());
+        .map(
+            column ->
+                new SelectableField(
+                    column.getName(),
+                    tableName,
+                    EntityFieldConverter.getConverterCode(
+                        column, defineReadType(tableName, context))))
+        .collect(toList());
   }
 
   public static List<SelectableField> getSelectableFields(Table table, List<String> allowedColumns,
@@ -46,6 +53,10 @@ public class ReadOperationUtils {
     List<Column> columns = table.getColumns().stream()
         .filter(column -> allowedColumns.contains(column.getName())).collect(toList());
     return getSelectableFields(table.getName(), columns, context);
+  }
+
+  public static List<SelectableField> getSelectableFields(Table table, Context context) {
+    return getSelectableFields(table.getName(), table.getColumns(), context);
   }
 
   private static String defineReadType(String tableName, Context context) {

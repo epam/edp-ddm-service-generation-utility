@@ -36,6 +36,7 @@ public class SearchListenerScopeFactory extends SearchConditionsAbstractScope<Li
     scope.setOperation("search");
     scope.setRootOfTopicName(toHyphenTableName(table));
     scope.setOutputType(scope.getSchemaName());
+    scope.setHandlerName(getSchemaName(table) + "SearchHandler");
 
     return scope;
   }

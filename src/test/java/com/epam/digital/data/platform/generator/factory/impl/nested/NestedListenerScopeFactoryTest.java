@@ -18,7 +18,7 @@ package com.epam.digital.data.platform.generator.factory.impl.nested;
 
 import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.scope.CommandListenerScope;
+import com.epam.digital.data.platform.generator.scope.ListenerScope;
 import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,13 +56,13 @@ class NestedListenerScopeFactoryTest {
 
     var actualScope = nestedListenerScopeFactory.create(context).get(0);
 
-    var expectedScope = new CommandListenerScope();
+    var expectedScope = new ListenerScope();
     expectedScope.setClassName("NestingFlowApplicationNestedUpsertListener");
     expectedScope.setSchemaName("NestingFlowApplicationNested");
     expectedScope.setRootOfTopicName("nesting-flow-application-nested");
     expectedScope.setOperation("upsert");
     expectedScope.setOutputType(UPSERT_OUTPUT_TYPE);
-    expectedScope.setCommandHandler("NestingFlowApplicationNestedUpsertCommandHandler");
+    expectedScope.setHandlerName("NestingFlowApplicationNestedUpsertCommandHandler");
 
     assertThat(actualScope)
             .usingRecursiveComparison()

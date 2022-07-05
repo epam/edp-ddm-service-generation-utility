@@ -13,7 +13,7 @@
 
   <groupId>com.epam.digital.data.platform</groupId>
   <artifactId>service-generation-utility</artifactId>
-  <version>1.7.0.${buildNumber}</version>
+  <version>1.8.0.${buildNumber}</version>
 
   <name>service-generation-utility</name>
 

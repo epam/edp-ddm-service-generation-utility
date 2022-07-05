@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ${basePackage}.model.dto.${schemaName};
 import ${basePackage}.model.dto.${schemaName}SearchConditions;
-import ${basePackage}.restapi.service.${schemaName}SearchService;
+import ${basePackage}.restapi.service.${serviceName};
 
 @RestController
 @RequestMapping("${endpoint}")
@@ -28,10 +28,10 @@ public class ${className} {
 
   private final Logger log = LoggerFactory.getLogger(${className}.class);
 
-  private final ${schemaName}SearchService searchService;
+  private final ${serviceName} searchService;
 
   public ${className}(
-    ${schemaName}SearchService searchService) {
+        ${serviceName} searchService) {
       this.searchService = searchService;
   }
 

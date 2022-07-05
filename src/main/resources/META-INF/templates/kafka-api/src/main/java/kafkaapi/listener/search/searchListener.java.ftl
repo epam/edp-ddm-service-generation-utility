@@ -13,7 +13,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
-import ${basePackage}.kafkaapi.searchhandler.${schemaName}SearchHandler;
+import ${basePackage}.kafkaapi.searchhandler.${handlerName};
 import ${basePackage}.model.dto.${schemaName};
 import ${basePackage}.model.dto.${schemaName}SearchConditions;
 
@@ -26,7 +26,7 @@ public class ${schemaName}Listener extends
   private final Logger log = LoggerFactory.getLogger(${className}.class);
 
   public ${schemaName}Listener(
-      ${schemaName}SearchHandler searchHandler) {
+        ${handlerName} searchHandler) {
     super(searchHandler);
   }
 

@@ -3,7 +3,7 @@ package ${basePackage}.kafkaapi.commandhandler.impl;
 import com.epam.digital.data.platform.kafkaapi.core.commandhandler.Abstract${operation?capitalize}CommandHandler;
 import com.epam.digital.data.platform.kafkaapi.core.commandhandler.util.EntityConverter;
 import org.springframework.stereotype.Service;
-import ${basePackage}.kafkaapi.commandhandler.tabledata.${providerName};
+import ${basePackage}.kafkaapi.tabledata.${providerName};
 import ${basePackage}.model.dto.${schemaName};
 
 @Service

@@ -41,4 +41,12 @@ public class DbUtils {
                                     String.format(
                                             "Can not find in %s the column with name: %s", table.getName(), name)));
   }
+
+  public static boolean isColumnOfArrayType(Column column) {
+    return column.getColumnDataType().getName().startsWith("_");
+  }
+
+  public static boolean isColumnOfArrayType(String columnName, Table table) {
+    return isColumnOfArrayType(findColumn(columnName, table));
+  }
 }

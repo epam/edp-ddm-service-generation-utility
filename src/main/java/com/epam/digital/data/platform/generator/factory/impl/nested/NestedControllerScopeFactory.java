@@ -22,7 +22,7 @@ import com.epam.digital.data.platform.generator.metadata.NestedStructure;
 import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
-import com.epam.digital.data.platform.generator.scope.ControllerScope;
+import com.epam.digital.data.platform.generator.scope.ModifyControllerScope;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @Component
-public class NestedControllerScopeFactory extends AbstractScope<ControllerScope> {
+public class NestedControllerScopeFactory extends AbstractScope<ModifyControllerScope> {
 
   private final NestedStructureProvider nestedStructureProvider;
   private final PermissionMap permissionMap;
@@ -46,13 +46,13 @@ public class NestedControllerScopeFactory extends AbstractScope<ControllerScope>
   }
 
   @Override
-  public List<ControllerScope> create(Context context) {
+  public List<ModifyControllerScope> create(Context context) {
     return nestedStructureProvider.findAll().stream()
         .map(
             nestedStructure -> {
               var tableName = nestedStructure.getRoot().getTableName();
               var schemaName = getSchemaName(nestedStructure.getName(), tableName) + "Nested";
-              var scope = new ControllerScope();
+              var scope = new ModifyControllerScope();
               scope.setClassName(schemaName + "Controller");
               scope.setSchemaName(schemaName);
               scope.setEndpoint(getEndpoint(nestedStructure.getName()));

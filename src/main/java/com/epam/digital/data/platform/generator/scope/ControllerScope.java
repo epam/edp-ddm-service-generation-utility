@@ -16,21 +16,12 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
-import static java.util.Collections.emptyList;
-
-import java.util.List;
-
 public class ControllerScope extends ClassScope {
 
   private String schemaName;
   private String endpoint;
   private String pkName;
   private String pkType;
-
-  private List<String> readRoles = emptyList();
-  private List<String> createRoles = emptyList();
-  private List<String> updateRoles = emptyList();
-  private List<String> deleteRoles = emptyList();
 
   public String getSchemaName() {
     return schemaName;
@@ -62,37 +53,5 @@ public class ControllerScope extends ClassScope {
 
   public void setPkType(String pkType) {
     this.pkType = pkType;
-  }
-
-  public List<String> getReadRoles() {
-    return readRoles;
-  }
-
-  public void setReadRoles(List<String> readRoles) {
-    this.readRoles = readRoles;
-  }
-
-  public List<String> getCreateRoles() {
-    return createRoles;
-  }
-
-  public void setCreateRoles(List<String> createRoles) {
-    this.createRoles = createRoles;
-  }
-
-  public List<String> getUpdateRoles() {
-    return updateRoles;
-  }
-
-  public void setUpdateRoles(List<String> updateRoles) {
-    this.updateRoles = updateRoles;
-  }
-
-  public List<String> getDeleteRoles() {
-    return deleteRoles;
-  }
-
-  public void setDeleteRoles(List<String> deleteRoles) {
-    this.deleteRoles = deleteRoles;
   }
 }

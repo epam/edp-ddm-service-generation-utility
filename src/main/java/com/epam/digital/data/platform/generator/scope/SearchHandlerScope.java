@@ -17,7 +17,9 @@
 package com.epam.digital.data.platform.generator.scope;
 
 import java.util.List;
+import java.util.Map;
 
+import com.epam.digital.data.platform.generator.model.template.NestedSelectableFieldsGroup;
 import com.epam.digital.data.platform.generator.model.template.SelectableField;
 import com.epam.digital.data.platform.generator.model.template.SearchConditionField;
 
@@ -32,8 +34,10 @@ public class SearchHandlerScope extends ClassScope {
   private List<SearchConditionField> inFields;
   private List<SearchConditionField> betweenFields;
   private List<String> enumSearchConditionFields;
-  private List<SelectableField> selectableFields;
+  private List<SelectableField> simpleSelectableFields;
   private Boolean pagination;
+  private Map<String, NestedSelectableFieldsGroup> nestedSingleSelectableGroups;
+  private Map<String, NestedSelectableFieldsGroup> nestedListSelectableGroups;
 
   public String getSchemaName() {
     return schemaName;
@@ -107,12 +111,12 @@ public class SearchHandlerScope extends ClassScope {
     this.enumSearchConditionFields = enumSearchConditionFields;
   }
 
-  public List<SelectableField> getOutputFields() {
-    return selectableFields;
+  public List<SelectableField> getSimpleSelectableFields() {
+    return simpleSelectableFields;
   }
 
-  public void setOutputFields(List<SelectableField> selectableFields) {
-    this.selectableFields = selectableFields;
+  public void setSimpleSelectableFields(List<SelectableField> selectableFields) {
+    this.simpleSelectableFields = selectableFields;
   }
 
   public Boolean getPagination() {
@@ -121,5 +125,21 @@ public class SearchHandlerScope extends ClassScope {
 
   public void setPagination(Boolean pagination) {
     this.pagination = pagination;
+  }
+
+  public Map<String, NestedSelectableFieldsGroup> getNestedSingleSelectableGroups() {
+    return nestedSingleSelectableGroups;
+  }
+
+  public void setNestedSingleSelectableGroups(Map<String, NestedSelectableFieldsGroup> nestedSingleSelectableGroups) {
+    this.nestedSingleSelectableGroups = nestedSingleSelectableGroups;
+  }
+
+  public Map<String, NestedSelectableFieldsGroup> getNestedListSelectableGroups() {
+    return nestedListSelectableGroups;
+  }
+
+  public void setNestedListSelectableGroups(Map<String, NestedSelectableFieldsGroup> nestedListSelectableGroups) {
+    this.nestedListSelectableGroups = nestedListSelectableGroups;
   }
 }

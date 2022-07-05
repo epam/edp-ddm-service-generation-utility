@@ -19,6 +19,7 @@ package com.epam.digital.data.platform.generator.factory.impl;
 import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;
 
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
+import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import org.springframework.stereotype.Component;
@@ -28,8 +29,10 @@ import schemacrawler.schema.Table;
 public class AsyncSearchHandlerScopeFactory extends SearchHandlerScopeFactory {
 
   public AsyncSearchHandlerScopeFactory(
-      SearchConditionProvider searchConditionProvider, EnumProvider enumProvider) {
-    super(searchConditionProvider, enumProvider);
+      SearchConditionProvider searchConditionProvider,
+      EnumProvider enumProvider,
+      NestedReadProvider nestedReadProvider) {
+    super(searchConditionProvider, enumProvider, nestedReadProvider);
   }
 
   @Override

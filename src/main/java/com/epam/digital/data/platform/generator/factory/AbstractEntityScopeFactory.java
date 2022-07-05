@@ -48,7 +48,11 @@ public abstract class AbstractEntityScopeFactory<T> extends AbstractScope<T> {
     return clazzName;
   }
 
-  private String getGeneralizedListOfType(String clazzName) {
+  protected String getArrayOfType(String clazzName) {
+    return String.format("%s[]", clazzName);
+  }
+
+  protected String getGeneralizedListOfType(String clazzName) {
     return String.format("%s<%s>", List.class.getCanonicalName(), clazzName);
   }
 }

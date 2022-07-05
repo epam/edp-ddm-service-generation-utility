@@ -31,8 +31,6 @@ import static org.mockito.Mockito.lenient;
 import com.epam.digital.data.platform.generator.constraints.impl.CompositeConstraintProvider;
 import com.epam.digital.data.platform.generator.constraints.impl.FormattingConstraintProvider;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
-import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
-import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
 import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.Field;
@@ -56,9 +54,6 @@ class EntityScopeFactoryTest {
   private CompositeConstraintProvider constraintProviders;
 
   @Mock
-  private SearchConditionProvider searchConditionProvider;
-
-  @Mock
   private FormattingConstraintProvider formattingConstraintProvider;
 
   private EntityScopeFactory instance;
@@ -67,7 +62,7 @@ class EntityScopeFactoryTest {
 
   @BeforeEach
   public void init() {
-    instance = new EntityScopeFactory(enumProvider, constraintProviders, searchConditionProvider);
+    instance = new EntityScopeFactory(enumProvider, constraintProviders);
 
     lenient().when(constraintProviders.getFormattingConstraintProvider())
         .thenReturn(formattingConstraintProvider);
@@ -142,37 +137,14 @@ class EntityScopeFactoryTest {
   }
 
   @Test
-  void shouldCreateEntityScopesForSearchConditionViews() {
+  void shouldNotCreateEntityScopesForSearchConditionViews() {
     override(
         context.getCatalog(),
-        withSearchConditionView("test_table_search"),
-        withSearchConditionView("second_test_table_search"));
+        withSearchConditionView("test_table_search"));
 
     List<String> result = toNamesList(instance.create(context));
 
-    assertThat(result).contains("TestTableSearch", "SecondTestTableSearch");
-  }
-
-  @Test
-  void shouldCreateFieldsForSearchConditionViews() {
-    Field expected1 = new Field(String.class.getCanonicalName(), "myCol", emptyList());
-    Field expected2 = new Field(String.class.getCanonicalName(), "anotherCol", emptyList());
-    override(
-        context.getCatalog(),
-        withSearchConditionView("test_table_search",
-            withTextColumn("my_col"),
-            withTextColumn("another_col"),
-            withTextColumn("not_returning_column")));
-    given(searchConditionProvider.findFor("test_table_search"))
-        .willReturn(new SearchConditionsBuilder().returningColumns(List.of("my_col", "another_col"))
-            .build());
-
-    List<ModelScope> scopes = instance.create(context);
-
-    ModelScope scope = scopes.get(0);
-    assertThat(scope.getFields())
-        .usingFieldByFieldElementComparator()
-        .containsExactlyInAnyOrder(expected1, expected2);
+    assertThat(result).isEmpty();
   }
 
   private List<String> toNamesList(List<ModelScope> modelScopes) {

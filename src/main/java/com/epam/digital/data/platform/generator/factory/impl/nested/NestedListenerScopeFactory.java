@@ -19,7 +19,7 @@ package com.epam.digital.data.platform.generator.factory.impl.nested;
 import com.epam.digital.data.platform.generator.factory.AbstractScope;
 import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.scope.CommandListenerScope;
+import com.epam.digital.data.platform.generator.scope.ListenerScope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Component
-public class NestedListenerScopeFactory extends AbstractScope<CommandListenerScope> {
+public class NestedListenerScopeFactory extends AbstractScope<ListenerScope> {
 
   static final String UPSERT_OUTPUT_TYPE =
       "com.epam.digital.data.platform.model.core.kafka.EntityId";
@@ -39,13 +39,13 @@ public class NestedListenerScopeFactory extends AbstractScope<CommandListenerSco
   }
 
   @Override
-  public List<CommandListenerScope> create(Context context) {
+  public List<ListenerScope> create(Context context) {
     return nestedStructureProvider.findAll().stream()
         .map(
             nestedStructure -> {
               var tableName = nestedStructure.getRoot().getTableName();
               var schemaName = getSchemaName(nestedStructure.getName(), tableName) + "Nested";
-              var scope = new CommandListenerScope();
+              var scope = new ListenerScope();
               scope.setClassName(schemaName + "UpsertListener");
               scope.setSchemaName(schemaName);
 
@@ -57,7 +57,7 @@ public class NestedListenerScopeFactory extends AbstractScope<CommandListenerSco
               scope.setRootOfTopicName(rootOfTopicName);
               scope.setOperation("upsert");
               scope.setOutputType(UPSERT_OUTPUT_TYPE);
-              scope.setCommandHandler(schemaName + "UpsertCommandHandler");
+              scope.setHandlerName(schemaName + "UpsertCommandHandler");
 
               return scope;
             })

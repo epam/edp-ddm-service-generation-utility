@@ -22,8 +22,7 @@ import com.epam.digital.data.platform.generator.scope.TableDataProviderScope;
 import org.springframework.stereotype.Component;
 import schemacrawler.schema.Table;
 
-@Component
-public class TableDataProviderScopeFactory extends CrudAbstractScope<TableDataProviderScope> {
+public abstract class TableDataProviderScopeFactory extends CrudAbstractScope<TableDataProviderScope> {
 
   @Override
   protected TableDataProviderScope map(Table table, Context context) {
@@ -32,10 +31,5 @@ public class TableDataProviderScopeFactory extends CrudAbstractScope<TableDataPr
     scope.setTableName(table.getName());
     scope.setPkColumnName(getPkColumn(table).getName());
     return scope;
-  }
-
-  @Override
-  public String getPath() {
-    return "kafka-api/src/main/java/kafkaapi/commandhandler/tabledata/tableDataProvider.java.ftl";
   }
 }

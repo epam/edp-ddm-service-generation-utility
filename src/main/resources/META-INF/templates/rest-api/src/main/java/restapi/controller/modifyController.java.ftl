@@ -16,7 +16,6 @@ import com.epam.digital.data.platform.restapi.core.audit.AuditableController;
 import com.epam.digital.data.platform.restapi.core.utils.ResponseResolverUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ${basePackage}.model.dto.${schemaName};
 import ${basePackage}.restapi.service.${schemaName}CreateService;
 import ${basePackage}.restapi.service.${schemaName}DeleteService;
-import ${basePackage}.restapi.service.${schemaName}ReadService;
 import ${basePackage}.restapi.service.${schemaName}UpdateService;
 
 @RestController
@@ -37,32 +35,16 @@ public class ${className} {
   private final Logger log = LoggerFactory.getLogger(${className}.class);
 
   private final ${schemaName}CreateService createService;
-  private final ${schemaName}ReadService readService;
   private final ${schemaName}UpdateService updateService;
   private final ${schemaName}DeleteService deleteService;
 
   public ${className}(
     ${schemaName}CreateService createService,
-    ${schemaName}ReadService readService,
     ${schemaName}UpdateService updateService,
     ${schemaName}DeleteService deleteService) {
       this.createService = createService;
-      this.readService = readService;
       this.updateService = updateService;
       this.deleteService = deleteService;
-  }
-
-  @AuditableController
-<@PreAuthorize roles=readRoles />
-  @GetMapping("/{id}")
-  public ResponseEntity<${schemaName}> findById${schemaName}(
-      @PathVariable("id") ${pkType} id,
-      @HttpRequestContext RequestContext context,
-      @HttpSecurityContext SecurityContext securityContext) {
-    log.info("GET ${endpoint}/{id} called");
-    Request<${pkType}> request = new Request<>(id, context, securityContext);
-    var response = readService.request(request);
-    return ResponseResolverUtil.getHttpResponseFromKafka(response);
   }
 
   @AuditableController

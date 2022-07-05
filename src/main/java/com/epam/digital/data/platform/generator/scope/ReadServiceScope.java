@@ -18,4 +18,13 @@ package com.epam.digital.data.platform.generator.scope;
 
 public class ReadServiceScope extends ServiceScope {
 
+  private String handlerName;
+
+  public String getHandlerName() {
+    return handlerName;
+  }
+
+  public void setHandlerName(String handlerName) {
+    this.handlerName = handlerName;
+  }
 }

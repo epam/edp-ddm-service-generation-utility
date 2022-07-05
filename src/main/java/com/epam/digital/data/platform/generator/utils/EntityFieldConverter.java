@@ -16,6 +16,8 @@
 
 package com.epam.digital.data.platform.generator.utils;
 
+import schemacrawler.schema.Column;
+
 import java.util.Map;
 
 public class EntityFieldConverter {
@@ -26,7 +28,7 @@ public class EntityFieldConverter {
   private static final String TYPE_FILE_ASYNC = "type_file_async";
   private static final String ARRAY_ASYNC = "array_async";
   private static final String TYPE_FILE_ARRAY_ASYNC = "type_file_array_async";
-  
+
   private static final String TYPE_FILE_ARRAY = "type_file_array";
   private static final String ARRAY = "array";
   private static final String UNDERSCORE = "_";
@@ -50,13 +52,17 @@ public class EntityFieldConverter {
   private EntityFieldConverter() {
   }
 
-  public static String getConverterCode(String dbType, String readType) {
-    var str = dbType + UNDERSCORE + readType;
-    if(str.startsWith("_type_file")) {
-      str = TYPE_FILE_ARRAY + UNDERSCORE + readType;
-    } else if (str.startsWith("_")) {
-      str = ARRAY + UNDERSCORE + readType;
+  public static String getConverterCode(Column column, String readType) {
+    String type;
+    if (DbUtils.isColumnOfArrayType(column)) {
+      if (column.getColumnDataType().getName().startsWith("_type_file")) {
+        type = TYPE_FILE_ARRAY + UNDERSCORE + readType;
+      } else {
+        type = ARRAY + UNDERSCORE + readType;
+      }
+    } else {
+      type = column.getColumnDataType().getName() + UNDERSCORE + readType;
     }
-    return CUSTOM_DB_TYPE_TO_CONVERTER.get(str);
+    return CUSTOM_DB_TYPE_TO_CONVERTER.get(type);
   }
 }

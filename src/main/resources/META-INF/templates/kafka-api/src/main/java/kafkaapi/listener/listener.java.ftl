@@ -12,7 +12,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
-import ${basePackage}.kafkaapi.commandhandler.impl.${commandHandler};
+import ${basePackage}.kafkaapi.commandhandler.impl.${handlerName};
 import ${basePackage}.model.dto.${schemaName};
 
 import static com.epam.digital.data.platform.kafkaapi.core.util.Header.DIGITAL_SEAL;
@@ -23,7 +23,7 @@ public class ${className} extends
 
   private final Logger log = LoggerFactory.getLogger(${className}.class);
 
-  public ${className}(${commandHandler} commandHandler) {
+  public ${className}(${handlerName} commandHandler) {
     super(commandHandler);
   }
 

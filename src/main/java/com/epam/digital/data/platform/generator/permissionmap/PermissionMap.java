@@ -70,34 +70,40 @@ public class PermissionMap {
     this.rows = unmodifiableMap(map);
   }
 
-  public List<String> getReadExpressionsFor(String tableName) {
+  public Set<String> getReadExpressionsFor(String tableName) {
     return filterExpressions(tableName,
         READ_PREDICATE.and(COLUMN_NULL_PREDICATE))
-        .collect(toList());
+        .collect(Collectors.toSet());
   }
 
-  public List<String> getUpdateExpressionsFor(String tableName) {
+  public Set<String> getReadExpressionsFor(Set<String> tableNames) {
+    return tableNames.stream()
+        .flatMap(tableName -> getReadExpressionsFor(tableName).stream())
+        .collect(Collectors.toSet());
+  }
+
+  public Set<String> getUpdateExpressionsFor(String tableName) {
     return filterExpressions(tableName,
         UPDATE_PREDICATE.and(COLUMN_NULL_PREDICATE))
-        .collect(toList());
+        .collect(Collectors.toSet());
   }
 
-  public List<String> getReadExpressionsFor(String tableName, String columnName) {
+  public Set<String> getReadExpressionsFor(String tableName, String columnName) {
     return filterExpressions(tableName,
         READ_PREDICATE.and(COLUMN_NULL_OR_SAME_NAME_PREDICATE.apply(columnName)))
-        .collect(toList());
+        .collect(Collectors.toSet());
   }
 
-  public List<String> getUpdateExpressionsFor(String tableName, String columnName) {
+  public Set<String> getUpdateExpressionsFor(String tableName, String columnName) {
     return filterExpressions(tableName,
         UPDATE_PREDICATE.and(COLUMN_NULL_OR_SAME_NAME_PREDICATE.apply(columnName)))
-        .collect(toList());
+        .collect(Collectors.toSet());
   }
 
-  public List<String> getCreateExpressionsFor(String tableName) {
+  public Set<String> getCreateExpressionsFor(String tableName) {
     return filterExpressions(tableName,
         CREATE_PREDICATE)
-        .collect(toList());
+        .collect(Collectors.toSet());
   }
 
   public Set<String> getCreateExpressionsFor(Set<String> tableNames) {
@@ -106,10 +112,10 @@ public class PermissionMap {
         .collect(Collectors.toSet());
   }
 
-  public List<String> getDeleteExpressionsFor(String tableName) {
+  public Set<String> getDeleteExpressionsFor(String tableName) {
     return filterExpressions(tableName,
         DELETE_PREDICATE)
-        .collect(toList());
+        .collect(Collectors.toSet());
   }
 
   private Stream<String> filterExpressions(String tableName, Predicate<Permission> predicate) {

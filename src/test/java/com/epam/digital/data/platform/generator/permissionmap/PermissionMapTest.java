@@ -187,6 +187,14 @@ class PermissionMapTest {
         assertThat(instance.getReadExpressionsFor(COMPOSITE_ROLE_TABLE_NAME, SOME_COLUMN_NAME))
             .containsExactly(IS_AUTHENTICATED);
       }
+
+      @Test
+      void shouldJoinExpressionsForMultipleTables() {
+        assertThat(
+                instance.getReadExpressionsFor(
+                    Set.of(NO_ACCESS_MAP_TABLE_NAME, SOME_TABLE_NAME, ONE_ROLE_ACCESS_TABLE_NAME)))
+            .containsExactlyInAnyOrder(DENY_ALL, CITIZEN_ROLE_EXPRESSION);
+      }
     }
   }
 

@@ -59,7 +59,7 @@ class PartialUpdateControllerScopeFactoryTest {
 
   private Context context = getContext();
 
-  private void setupUpdateExpressions(String columnName, List<String> expressions) {
+  private void setupUpdateExpressions(String columnName, Set<String> expressions) {
     given(permissionMap.getUpdateExpressionsFor(TABLE_1, columnName)).willReturn(expressions);
   }
 
@@ -107,8 +107,8 @@ class PartialUpdateControllerScopeFactoryTest {
     setupTableColumns(
         Set.of("field_1", "field_2")
     );
-    setupUpdateExpressions("field_1", List.of("a", "b"));
-    setupUpdateExpressions("field_2", List.of("b", "c"));
+    setupUpdateExpressions("field_1", Set.of("a", "b"));
+    setupUpdateExpressions("field_2", Set.of("b", "c"));
 
     // when
     var roles = instance.create(context).get(0).getUpdateRoles();

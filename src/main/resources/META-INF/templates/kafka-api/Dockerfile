@@ -1,4 +1,4 @@
-FROM ${dockerProxyRegistry}/${globalNexusNamespace}/kafka-api-core-base-image-master:1.6.0.4 AS builder
+FROM ${dockerProxyRegistry}/${globalNexusNamespace}/kafka-api-core-base-image-master:1.8.0.1 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild
@@ -18,4 +18,3 @@ COPY --from=layerbuilder app/spring-boot-loader/ ./
 COPY --from=layerbuilder app/snapshot-dependencies/ ./
 COPY --from=layerbuilder app/application/ ./
 ENTRYPOINT ["/bin/sh", "-c", "java \$JAVA_OPTS org.springframework.boot.loader.JarLauncher"]
-

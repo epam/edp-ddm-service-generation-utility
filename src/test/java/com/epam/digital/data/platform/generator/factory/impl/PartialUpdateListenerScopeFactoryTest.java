@@ -87,6 +87,6 @@ public class PartialUpdateListenerScopeFactoryTest {
     assertThat(resultScope.getOperation()).isEqualTo("update");
     assertThat(resultScope.getRootOfTopicName()).isEqualTo("my-table-my-table-upd");
     assertThat(resultScope.getOutputType()).isEqualTo("Void");
-    assertThat(resultScope.getCommandHandler()).isEqualTo("MyTableMyTableUpdCommandHandler");
+    assertThat(resultScope.getHandlerName()).isEqualTo("MyTableMyTableUpdCommandHandler");
   }
 }

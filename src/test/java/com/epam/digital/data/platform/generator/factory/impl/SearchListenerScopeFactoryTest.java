@@ -57,6 +57,7 @@ class SearchListenerScopeFactoryTest {
     assertThat(resultScope.getOperation()).isEqualTo("search");
     assertThat(resultScope.getRootOfTopicName()).isEqualTo(ROOT_OF_TOPIC_NAME);
     assertThat(resultScope.getOutputType()).isEqualTo(SEARCH_SCHEMA_NAME);
+    assertThat(resultScope.getHandlerName()).isEqualTo(SEARCH_SCHEMA_NAME + "SearchHandler");
   }
 
   @Test

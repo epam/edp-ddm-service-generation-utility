@@ -24,17 +24,18 @@ import com.epam.digital.data.platform.generator.metadata.PartialUpdate;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
-import com.epam.digital.data.platform.generator.scope.ControllerScope;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+
+import com.epam.digital.data.platform.generator.scope.ModifyControllerScope;
 import org.springframework.stereotype.Component;
 import schemacrawler.schema.Table;
 
 @Component
-public class PartialUpdateControllerScopeFactory extends AbstractScope<ControllerScope> {
+public class PartialUpdateControllerScopeFactory extends AbstractScope<ModifyControllerScope> {
 
   private final PartialUpdateProvider partialUpdateProvider;
   private final PermissionMap permissionMap;
@@ -47,12 +48,12 @@ public class PartialUpdateControllerScopeFactory extends AbstractScope<Controlle
   }
 
   @Override
-  public List<ControllerScope> create(Context context) {
+  public List<ModifyControllerScope> create(Context context) {
     return partialUpdateProvider.findAll().stream()
         .map(upd -> {
           var table = findTable(upd.getTableName(), context);
 
-          var scope = new ControllerScope();
+          var scope = new ModifyControllerScope();
           scope.setClassName(getSchemaName(table, upd.getName()) + "Controller");
           scope.setSchemaName(getSchemaName(table, upd.getName()));
           scope.setEndpoint("/partial" + getEndpoint(upd.getName()));
@@ -67,7 +68,7 @@ public class PartialUpdateControllerScopeFactory extends AbstractScope<Controlle
   }
 
   private Set<String> findRolesFor(PartialUpdate update, Table table) {
-    Function<String, List<String>> getUpdateExpressionsForColumn =
+    Function<String, Set<String>> getUpdateExpressionsForColumn =
         column -> permissionMap.getUpdateExpressionsFor(table.getName(), column);
 
     return update.getColumns().stream()

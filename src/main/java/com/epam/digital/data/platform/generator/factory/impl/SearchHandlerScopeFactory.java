@@ -16,33 +16,48 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.getSelectableFields;
-import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;
-import static java.util.stream.Collectors.toList;
-
+import com.epam.digital.data.platform.generator.factory.SearchConditionsAbstractScope;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
+import com.epam.digital.data.platform.generator.metadata.NestedReadEntity;
+import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
+import com.epam.digital.data.platform.generator.model.template.NestedSelectableFieldsGroup;
 import com.epam.digital.data.platform.generator.model.template.SearchConditionField;
 import com.epam.digital.data.platform.generator.scope.SearchHandlerScope;
 import com.epam.digital.data.platform.generator.utils.DbTypeConverter;
-import java.util.List;
-import java.util.Set;
+import com.epam.digital.data.platform.generator.utils.DbUtils;
 import org.springframework.stereotype.Component;
 import schemacrawler.schema.NamedObject;
 import schemacrawler.schema.Table;
-import com.epam.digital.data.platform.generator.factory.SearchConditionsAbstractScope;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.getSelectableFields;
+import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Component
 public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<SearchHandlerScope> {
 
   private final SearchConditionProvider searchConditionProvider;
   private final EnumProvider enumProvider;
+  private final NestedReadProvider nestedReadProvider;
 
   public SearchHandlerScopeFactory(
-      SearchConditionProvider searchConditionProvider, EnumProvider enumProvider) {
+      SearchConditionProvider searchConditionProvider,
+      EnumProvider enumProvider,
+      NestedReadProvider nestedReadProvider) {
     this.searchConditionProvider = searchConditionProvider;
     this.enumProvider = enumProvider;
+    this.nestedReadProvider = nestedReadProvider;
   }
 
   @Override
@@ -79,6 +94,30 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
         .map(NamedObject::getName)
         .collect(toList());
 
+    var nestedEntitiesMap = nestedReadProvider.findFor(getCutTableName(table));
+    var simpleColumnNames =
+        sc.getReturningColumns().stream()
+            .filter(columnName -> !nestedEntitiesMap.containsKey(columnName))
+            .collect(toList());
+    var nestedColumnNames =
+        sc.getReturningColumns().stream()
+            .filter(columnName -> !simpleColumnNames.contains(columnName))
+            .collect(toList());
+    var singleElementNestedGroups =
+        collectStreamToNestedGroup(
+            nestedColumnNames.stream()
+                .filter(columnName -> !DbUtils.isColumnOfArrayType(columnName, table))
+                .collect(toList()),
+            nestedEntitiesMap,
+            context);
+    var listElementNestedGroups =
+        collectStreamToNestedGroup(
+            nestedColumnNames.stream()
+                .filter(columnName -> DbUtils.isColumnOfArrayType(columnName, table))
+                .collect(toList()),
+            nestedEntitiesMap,
+            context);
+
     var scope = new SearchHandlerScope();
     scope.setClassName(getSchemaName(table) + "SearchHandler");
     scope.setSchemaName(getSchemaName(table));
@@ -90,7 +129,9 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     scope.setInFields(inFields);
     scope.setBetweenFields(betweenFields);
     scope.setEnumSearchConditionFields(enumSearchConditionFields);
-    scope.setOutputFields(getSelectableFields(table, sc.getReturningColumns(), context));
+    scope.setSimpleSelectableFields(getSelectableFields(table, simpleColumnNames, context));
+    scope.setNestedSingleSelectableGroups(singleElementNestedGroups);
+    scope.setNestedListSelectableGroups(listElementNestedGroups);
     scope.setPagination(sc.getPagination());
     return scope;
   }
@@ -119,6 +160,27 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     }
 
     return ignoreCase;
+  }
+
+  private NestedSelectableFieldsGroup getNestedGroupSelectables(
+      NestedReadEntity nestedReadEntity, Context context) {
+    var group = new NestedSelectableFieldsGroup();
+    var relatedTable = findTable(nestedReadEntity.getRelatedTable(), context);
+    group.setTableName(relatedTable.getName());
+    group.setPkName(getPkColumn(relatedTable).getName());
+    group.setFields(getSelectableFields(relatedTable, context));
+    return group;
+  }
+
+  private Map<String, NestedSelectableFieldsGroup> collectStreamToNestedGroup(
+      List<String> columnNames,
+      Map<String, NestedReadEntity> nestedEntitiesMap,
+      Context context) {
+    return columnNames.stream().collect(
+        toMap(
+            Function.identity(),
+            columnName -> getNestedGroupSelectables(nestedEntitiesMap.get(columnName), context),
+            (el1, el2) -> el2));
   }
 
   @Override

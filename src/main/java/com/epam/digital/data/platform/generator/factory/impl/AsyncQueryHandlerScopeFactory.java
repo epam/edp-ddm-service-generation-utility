@@ -18,6 +18,7 @@ package com.epam.digital.data.platform.generator.factory.impl;
 
 import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncTable;
 
+import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import org.springframework.stereotype.Component;
 import schemacrawler.schema.Table;
@@ -25,6 +26,9 @@ import schemacrawler.schema.Table;
 @Component
 public class AsyncQueryHandlerScopeFactory extends QueryHandlerScopeFactory {
 
+  public AsyncQueryHandlerScopeFactory(NestedReadProvider nestedReadProvider) {
+    super(nestedReadProvider);
+  }
 
   @Override
   protected boolean isApplicable(Table table, Context context) {

@@ -17,19 +17,19 @@
 package com.epam.digital.data.platform.generator.factory;
 
 import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.scope.CommandListenerScope;
+import com.epam.digital.data.platform.generator.scope.ListenerScope;
 import org.apache.commons.lang3.StringUtils;
 import schemacrawler.schema.Table;
 
-public abstract class AbstractCommandListenerScopeFactory extends CrudAbstractScope<CommandListenerScope> {
+public abstract class AbstractCommandListenerScopeFactory extends CrudAbstractScope<ListenerScope> {
 
   protected abstract String getOperation();
 
   protected abstract String getOutputType();
 
   @Override
-  protected CommandListenerScope map(Table table, Context context) {
-    var scope = new CommandListenerScope();
+  protected ListenerScope map(Table table, Context context) {
+    var scope = new ListenerScope();
     scope.setClassName(getSchemaName(table) + StringUtils.capitalize(getOperation()) + "Listener");
     scope.setSchemaName(getSchemaName(table));
     scope.setPkType(getPkTypeName(table));
@@ -37,7 +37,7 @@ public abstract class AbstractCommandListenerScopeFactory extends CrudAbstractSc
     scope.setOperation(getOperation());
     scope.setRootOfTopicName(toHyphenTableName(table));
     scope.setOutputType(getOutputType());
-    scope.setCommandHandler(getSchemaName(table) + StringUtils.capitalize(getOperation()) + "CommandHandler");
+    scope.setHandlerName(getSchemaName(table) + StringUtils.capitalize(getOperation()) + "CommandHandler");
 
     return scope;
   }

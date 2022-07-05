@@ -19,7 +19,7 @@ package com.epam.digital.data.platform.generator.factory.impl;
 import com.epam.digital.data.platform.generator.factory.AbstractScope;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.scope.CommandListenerScope;
+import com.epam.digital.data.platform.generator.scope.ListenerScope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Component
-public class PartialUpdateListenerScopeFactory extends AbstractScope<CommandListenerScope> {
+public class PartialUpdateListenerScopeFactory extends AbstractScope<ListenerScope> {
 
   private final PartialUpdateProvider provider;
 
@@ -37,21 +37,21 @@ public class PartialUpdateListenerScopeFactory extends AbstractScope<CommandList
   }
 
   @Override
-  public List<CommandListenerScope> create(Context context) {
+  public List<ListenerScope> create(Context context) {
     return provider.findAll().stream()
         .map(upd -> {
           var table = findTable(upd.getTableName(), context);
           var schemaName = getSchemaName(table, upd.getName());
           var rootOfTopicName = toHyphenTableName(table) + "-" + toHyphenTableName(upd.getName());
 
-          var scope = new CommandListenerScope();
+          var scope = new ListenerScope();
           scope.setClassName(schemaName + "Listener");
           scope.setSchemaName(schemaName);
           scope.setPkType(getPkTypeName(table));
           scope.setOperation("update");
           scope.setRootOfTopicName(rootOfTopicName);
           scope.setOutputType("Void");
-          scope.setCommandHandler(schemaName + "CommandHandler");
+          scope.setHandlerName(schemaName + "CommandHandler");
 
           return scope;
         })

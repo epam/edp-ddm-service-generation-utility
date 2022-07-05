@@ -23,6 +23,7 @@ public class ListenerScope extends ClassScope {
   private String operation;
   private String rootOfTopicName;
   private String outputType;
+  private String handlerName;
 
   public String getSchemaName() {
     return schemaName;
@@ -62,5 +63,13 @@ public class ListenerScope extends ClassScope {
 
   public void setOutputType(String outputType) {
     this.outputType = outputType;
+  }
+
+  public String getHandlerName() {
+    return handlerName;
+  }
+
+  public void setHandlerName(String handlerName) {
+    this.handlerName = handlerName;
   }
 }

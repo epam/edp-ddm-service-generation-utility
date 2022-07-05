@@ -19,43 +19,63 @@ package com.epam.digital.data.platform.generator.factory.impl;
 import static java.util.stream.Collectors.toSet;
 
 import com.epam.digital.data.platform.generator.factory.SearchConditionsAbstractScope;
+import com.epam.digital.data.platform.generator.metadata.NestedReadEntity;
+import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
-import com.epam.digital.data.platform.generator.scope.ControllerScope;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.epam.digital.data.platform.generator.scope.ReadControllerScope;
 import org.springframework.stereotype.Component;
 import schemacrawler.schema.Table;
 
 @Component
-public class SearchControllerScopeFactory extends SearchConditionsAbstractScope<ControllerScope> {
+public class SearchControllerScopeFactory extends SearchConditionsAbstractScope<ReadControllerScope> {
 
   private final SearchConditionProvider provider;
   private final PermissionMap permissionMap;
+  private final NestedReadProvider nestedReadProvider;
 
   public SearchControllerScopeFactory(
       SearchConditionProvider provider,
-      PermissionMap permissionMap) {
+      PermissionMap permissionMap,
+      NestedReadProvider nestedReadProvider) {
     this.provider = provider;
     this.permissionMap = permissionMap;
+    this.nestedReadProvider = nestedReadProvider;
   }
 
   @Override
-  protected ControllerScope map(Table table, Context context) {
-    var controllerScope = new ControllerScope();
+  protected ReadControllerScope map(Table table, Context context) {
+    var controllerScope = new ReadControllerScope();
 
     controllerScope.setClassName(getSchemaName(table) + "SearchController");
     controllerScope.setSchemaName(getSchemaName(table));
     controllerScope.setEndpoint(getEndpoint(table.getName()));
-
-    controllerScope.setReadRoles(new ArrayList<>(findRolesForView(table)));
+    controllerScope.setServiceName(getSchemaName(table) + "SearchService");
+    controllerScope.setReadRoles(new ArrayList<>(findReadRoles(table)));
 
     return controllerScope;
+  }
+
+  private Set<String> findReadRoles(Table table) {
+    var nestedTables =
+        nestedReadProvider.findFor(getCutTableName(table.getName())).values().stream()
+            .map(NestedReadEntity::getRelatedTable)
+            .collect(Collectors.toSet());
+    var nestedTablesPermissions = permissionMap.getReadExpressionsFor(nestedTables);
+    var viewPermissions = findRolesForView(table);
+    return Stream.of(viewPermissions, nestedTablesPermissions)
+        .flatMap(Collection::stream)
+        .collect(Collectors.toSet());
   }
 
   private Set<String> findRolesForView(Table view) {
@@ -69,7 +89,7 @@ public class SearchControllerScopeFactory extends SearchConditionsAbstractScope<
   }
 
   private Set<String> findRolesForTable(String tableName, Set<String> columns) {
-    Function<String, List<String>> getReadExpressionsForColumn =
+    Function<String, Set<String>> getReadExpressionsForColumn =
         column -> permissionMap.getReadExpressionsFor(tableName, column);
 
     return columns.stream()

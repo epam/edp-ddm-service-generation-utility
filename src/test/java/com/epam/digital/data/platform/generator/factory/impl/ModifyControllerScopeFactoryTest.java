@@ -28,7 +28,10 @@ import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
 import com.epam.digital.data.platform.generator.scope.ControllerScope;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+
+import com.epam.digital.data.platform.generator.scope.ModifyControllerScope;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,31 +39,31 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ControllerScopeFactoryTest {
+class ModifyControllerScopeFactoryTest {
 
   @Mock
   private PermissionMap permissionMap;
 
-  private ControllerScopeFactory instance;
+  private ModifyControllerScopeFactory instance;
 
-  private Context context = getContext();
+  private static final Context context = getContext();
 
-  private List<String> DENY_ALL_LIST = List.of("denyAll");
-  private List<String> ROLE_LIST = List.of("hasRole('role1')", "hasRole('role2')");
+  private static final Set<String> DENY_ALL_LIST = Set.of("denyAll");
+  private static final Set<String> ROLE_LIST = Set.of("hasRole('role1')", "hasRole('role2')");
 
   @BeforeEach
   void setup() {
-    instance = new ControllerScopeFactory(permissionMap);
+    instance = new ModifyControllerScopeFactory(permissionMap);
   }
 
   @Test
   void shouldCreateControllerScope() {
-    List<ControllerScope> resultList = instance.create(context);
+    List<ModifyControllerScope> resultList = instance.create(context);
 
     assertThat(resultList).hasSize(1);
 
     ControllerScope resultScope = resultList.get(0);
-    assertThat(resultScope.getClassName()).isEqualTo(SCHEMA_NAME + "Controller");
+    assertThat(resultScope.getClassName()).isEqualTo(SCHEMA_NAME + "ModifyController");
     assertThat(resultScope.getSchemaName()).isEqualTo(SCHEMA_NAME);
     assertThat(resultScope.getPkName()).isEqualTo(PK_NAME);
     assertThat(resultScope.getEndpoint()).isEqualTo(ENDPOINT);
@@ -69,15 +72,13 @@ class ControllerScopeFactoryTest {
 
   @Test
   void shouldAddRolesToControllerScope() {
-    given(permissionMap.getReadExpressionsFor(TABLE_NAME)).willReturn(DENY_ALL_LIST);
     given(permissionMap.getUpdateExpressionsFor(TABLE_NAME)).willReturn(DENY_ALL_LIST);
     given(permissionMap.getCreateExpressionsFor(TABLE_NAME)).willReturn(ROLE_LIST);
     given(permissionMap.getDeleteExpressionsFor(TABLE_NAME)).willReturn(ROLE_LIST);
 
-    List<ControllerScope> resultList = instance.create(context);
+    List<ModifyControllerScope> resultList = instance.create(context);
 
-    ControllerScope resultScope = resultList.get(0);
-    assertThat(resultScope.getReadRoles()).containsAll(DENY_ALL_LIST);
+    ModifyControllerScope resultScope = resultList.get(0);
     assertThat(resultScope.getUpdateRoles()).containsAll(DENY_ALL_LIST);
     assertThat(resultScope.getCreateRoles()).containsAll(ROLE_LIST);
     assertThat(resultScope.getDeleteRoles()).containsAll(ROLE_LIST);

@@ -137,7 +137,7 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
   }
 
   private String getFieldTypeForIn(String clazzName, Column column) {
-    return String.format("%s<%s>", List.class.getCanonicalName(), typeToString(clazzName, column));
+    return getGeneralizedListOfType(typeToString(clazzName, column));
   }
 
   private Field getAuxiliaryField(String name, Class<?> clazz) {

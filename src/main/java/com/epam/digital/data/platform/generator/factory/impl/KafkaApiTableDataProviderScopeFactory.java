@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2022 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.epam.digital.data.platform.generator.scope;
+package com.epam.digital.data.platform.generator.factory.impl;
 
-public class CommandListenerScope extends ListenerScope {
-  private String commandHandler;
+import com.epam.digital.data.platform.generator.factory.TableDataProviderScopeFactory;
+import org.springframework.stereotype.Component;
 
-  public String getCommandHandler() {
-    return commandHandler;
-  }
+@Component
+public class KafkaApiTableDataProviderScopeFactory extends TableDataProviderScopeFactory {
 
-  public void setCommandHandler(String commandHandler) {
-    this.commandHandler = commandHandler;
+  @Override
+  public String getPath() {
+    return "kafka-api/src/main/java/kafkaapi/tabledata/tableDataProvider.java.ftl";
   }
 }

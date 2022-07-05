@@ -16,7 +16,7 @@
 
 package com.epam.digital.data.platform.generator.factory;
 
-import com.epam.digital.data.platform.generator.scope.CommandListenerScope;
+import com.epam.digital.data.platform.generator.scope.ListenerScope;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AbstractCommandListenerScopeFactoryTest {
 
-  class TestScope extends AbstractCommandListenerScopeFactory {
+  static class TestScope extends AbstractCommandListenerScopeFactory {
 
     @Override
     protected String getOperation() {
@@ -61,11 +61,11 @@ class AbstractCommandListenerScopeFactoryTest {
   void listenerScopeFactoryTest() {
     String expectedPkType = UUID.class.getCanonicalName();
 
-    List<CommandListenerScope> resultList = instance.create(getContext());
+    List<ListenerScope> resultList = instance.create(getContext());
 
     assertThat(resultList).hasSize(1);
 
-    CommandListenerScope resultScope = resultList.get(0);
+    ListenerScope resultScope = resultList.get(0);
     assertThat(resultScope.getClassName()).isEqualTo(SCHEMA_NAME + "UpdateListener");
     assertThat(resultScope.getSchemaName()).isEqualTo(SCHEMA_NAME);
     assertThat(resultScope.getPkType()).isEqualTo(expectedPkType);
@@ -73,6 +73,6 @@ class AbstractCommandListenerScopeFactoryTest {
     assertThat(resultScope.getOperation()).isEqualTo("update");
     assertThat(resultScope.getOutputType()).isEqualTo("Void");
     assertThat(resultScope.getRootOfTopicName()).isEqualTo(ROOT_OF_TOPIC_NAME);
-    assertThat(resultScope.getCommandHandler()).isEqualTo(SCHEMA_NAME + "UpdateCommandHandler");
+    assertThat(resultScope.getHandlerName()).isEqualTo(SCHEMA_NAME + "UpdateCommandHandler");
   }
 }

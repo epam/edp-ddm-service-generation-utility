@@ -19,7 +19,7 @@ package com.epam.digital.data.platform.generator.factory.impl.nested;
 import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
-import com.epam.digital.data.platform.generator.scope.ControllerScope;
+import com.epam.digital.data.platform.generator.scope.ModifyControllerScope;
 import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,7 +67,7 @@ class NestedControllerScopeFactoryTest {
 
     var actualScope = nestedControllerScopeFactory.create(context).get(0);
 
-    var expectedScope = new ControllerScope();
+    var expectedScope = new ModifyControllerScope();
     expectedScope.setClassName("NestingFlowApplicationNestedController");
     expectedScope.setEndpoint("/nesting-flow");
     expectedScope.setSchemaName("NestingFlowApplicationNested");

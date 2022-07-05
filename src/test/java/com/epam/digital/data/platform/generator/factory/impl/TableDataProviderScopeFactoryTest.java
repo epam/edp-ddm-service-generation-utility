@@ -16,6 +16,7 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
+import com.epam.digital.data.platform.generator.factory.TableDataProviderScopeFactory;
 import org.junit.jupiter.api.Test;
 
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.PK_COLUMN_NAME;
@@ -26,7 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TableDataProviderScopeFactoryTest {
 
-  private final TableDataProviderScopeFactory scopeFactory = new TableDataProviderScopeFactory();
+  private final TableDataProviderScopeFactory scopeFactory =
+      new RestApiTableDataProviderScopeFactory();
 
   @Test
   void tableDataProviderScopeFactoryTest() {

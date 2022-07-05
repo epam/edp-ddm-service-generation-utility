@@ -19,40 +19,40 @@ package com.epam.digital.data.platform.generator.factory.impl;
 import com.epam.digital.data.platform.generator.factory.CrudAbstractScope;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
-import com.epam.digital.data.platform.generator.scope.ControllerScope;
+import com.epam.digital.data.platform.generator.scope.ModifyControllerScope;
 import org.springframework.stereotype.Component;
 import schemacrawler.schema.Table;
 
+import java.util.ArrayList;
+
 @Component
-public class ControllerScopeFactory extends CrudAbstractScope<ControllerScope> {
+public class ModifyControllerScopeFactory extends CrudAbstractScope<ModifyControllerScope> {
 
   private final PermissionMap permissionMap;
 
-  public ControllerScopeFactory(
-      PermissionMap permissionMap) {
+  public ModifyControllerScopeFactory(PermissionMap permissionMap) {
     this.permissionMap = permissionMap;
   }
 
   @Override
-  protected ControllerScope map(Table table, Context context) {
-    var scope = new ControllerScope();
-    scope.setClassName(getSchemaName(table) + "Controller");
+  protected ModifyControllerScope map(Table table, Context context) {
+    var scope = new ModifyControllerScope();
+    scope.setClassName(getSchemaName(table) + "ModifyController");
     scope.setSchemaName(getSchemaName(table));
     scope.setEndpoint(getEndpoint(table.getName()));
     scope.setPkName(getPkName(table));
     scope.setPkType(getPkTypeName(table));
 
     var tableName = table.getName();
-    scope.setReadRoles(permissionMap.getReadExpressionsFor(tableName));
-    scope.setUpdateRoles(permissionMap.getUpdateExpressionsFor(tableName));
-    scope.setCreateRoles(permissionMap.getCreateExpressionsFor(tableName));
-    scope.setDeleteRoles(permissionMap.getDeleteExpressionsFor(tableName));
+    scope.setUpdateRoles(new ArrayList<>(permissionMap.getUpdateExpressionsFor(tableName)));
+    scope.setCreateRoles(new ArrayList<>(permissionMap.getCreateExpressionsFor(tableName)));
+    scope.setDeleteRoles(new ArrayList<>(permissionMap.getDeleteExpressionsFor(tableName)));
 
     return scope;
   }
 
   @Override
   public String getPath() {
-    return "rest-api/src/main/java/restapi/controller/controller.java.ftl";
+    return "rest-api/src/main/java/restapi/controller/modifyController.java.ftl";
   }
 }

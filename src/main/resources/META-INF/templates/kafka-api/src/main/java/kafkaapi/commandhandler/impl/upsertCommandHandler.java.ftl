@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.epam.digital.data.platform.kafkaapi.core.commandhandler.AbstractUpsertCommandHandler;
 import com.epam.digital.data.platform.kafkaapi.core.commandhandler.util.EntityConverter;
-import ${basePackage}.kafkaapi.commandhandler.tabledata.${providerName};
+import ${basePackage}.kafkaapi.tabledata.${providerName};
 import ${basePackage}.model.dto.${schemaName};
 
 @Service

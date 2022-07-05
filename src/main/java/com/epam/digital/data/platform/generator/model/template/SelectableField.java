@@ -19,10 +19,12 @@ package com.epam.digital.data.platform.generator.model.template;
 public class SelectableField {
 
   private String name;
+  private String table;
   private String converter;
 
-  public SelectableField(String name, String converter) {
+  public SelectableField(String name, String table, String converter) {
     this.name = name;
+    this.table = table;
     this.converter = converter;
   }
 
@@ -32,6 +34,14 @@ public class SelectableField {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getTable() {
+    return table;
+  }
+
+  public void setTable(String table) {
+    this.table = table;
   }
 
   public String getConverter() {
