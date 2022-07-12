@@ -22,8 +22,12 @@ public class EntityFieldConverter {
 
   private static final String TYPE_FILE_SYNC = "type_file_sync";
   private static final String ARRAY_SYNC = "array_sync";
+  private static final String TYPE_FILE_ARRAY_SYNC = "type_file_array_sync";
   private static final String TYPE_FILE_ASYNC = "type_file_async";
   private static final String ARRAY_ASYNC = "array_async";
+  private static final String TYPE_FILE_ARRAY_ASYNC = "type_file_array_async";
+  
+  private static final String TYPE_FILE_ARRAY = "type_file_array";
   private static final String ARRAY = "array";
   private static final String UNDERSCORE = "_";
 
@@ -33,17 +37,24 @@ public class EntityFieldConverter {
           "com.epam.digital.data.platform.restapi.core.utils.JooqDataTypes.FILE_DATA_TYPE",
           ARRAY_SYNC,
           "com.epam.digital.data.platform.restapi.core.utils.JooqDataTypes.ARRAY_DATA_TYPE",
+          TYPE_FILE_ARRAY_SYNC,
+          "com.epam.digital.data.platform.restapi.core.utils.JooqDataTypes.FILE_ARRAY_DATA_TYPE",
           TYPE_FILE_ASYNC,
           "com.epam.digital.data.platform.kafkaapi.core.util.JooqDataTypes.FILE_DATA_TYPE",
           ARRAY_ASYNC,
-          "com.epam.digital.data.platform.kafkaapi.core.util.JooqDataTypes.ARRAY_DATA_TYPE");
+          "com.epam.digital.data.platform.kafkaapi.core.util.JooqDataTypes.ARRAY_DATA_TYPE",
+          TYPE_FILE_ARRAY_ASYNC,
+          "com.epam.digital.data.platform.restapi.core.utils.JooqDataTypes.FILE_ARRAY_DATA_TYPE"
+          );
 
   private EntityFieldConverter() {
   }
 
   public static String getConverterCode(String dbType, String readType) {
     var str = dbType + UNDERSCORE + readType;
-    if (str.startsWith("_")) {
+    if(str.startsWith("_type_file")) {
+      str = TYPE_FILE_ARRAY + UNDERSCORE + readType;
+    } else if (str.startsWith("_")) {
       str = ARRAY + UNDERSCORE + readType;
     }
     return CUSTOM_DB_TYPE_TO_CONVERTER.get(str);

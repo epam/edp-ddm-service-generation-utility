@@ -1,4 +1,4 @@
-FROM ${dockerProxyRegistry}/${globalNexusNamespace}/kafka-api-core-base-image-master:1.6.0.3 AS builder
+FROM ${dockerProxyRegistry}/${globalNexusNamespace}/kafka-api-core-base-image-master:1.6.0.4 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild
