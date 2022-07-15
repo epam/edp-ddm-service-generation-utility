@@ -92,7 +92,7 @@ class ReadControllerScopeFactoryTest {
 
     ReadControllerScope resultScope1 = resultList.get(0);
     assertThat(resultScope1.getClassName()).isEqualTo(SCHEMA_NAME + "ReadController");
-    assertThat(resultScope1.getSchemaName()).isEqualTo(SCHEMA_NAME);
+    assertThat(resultScope1.getSchemaName()).isEqualTo(SCHEMA_NAME + "Read");
     assertThat(resultScope1.getPkName()).isEqualTo(PK_NAME);
     assertThat(resultScope1.getEndpoint()).isEqualTo(ENDPOINT);
     assertThat(resultScope1.getPkType()).isEqualTo(UUID.class.getCanonicalName());
@@ -101,7 +101,7 @@ class ReadControllerScopeFactoryTest {
 
     ReadControllerScope resultScope2 = resultList.get(1);
     assertThat(resultScope2.getClassName()).isEqualTo(RELATED_SCHEMA_NAME + "ReadController");
-    assertThat(resultScope2.getSchemaName()).isEqualTo(RELATED_SCHEMA_NAME);
+    assertThat(resultScope2.getSchemaName()).isEqualTo(RELATED_SCHEMA_NAME + "Read");
     assertThat(resultScope2.getPkName()).isEqualTo(PK_NAME);
     assertThat(resultScope2.getEndpoint()).isEqualTo("/related-table");
     assertThat(resultScope2.getPkType()).isEqualTo(UUID.class.getCanonicalName());
@@ -124,7 +124,7 @@ class ReadControllerScopeFactoryTest {
 
     ReadControllerScope resultScope1 = resultList.get(0);
     assertThat(resultScope1.getClassName()).isEqualTo(SCHEMA_NAME + "ReadController");
-    assertThat(resultScope1.getSchemaName()).isEqualTo(SCHEMA_NAME + "ReadNested");
+    assertThat(resultScope1.getSchemaName()).isEqualTo(SCHEMA_NAME + "Read");
     assertThat(resultScope1.getPkName()).isEqualTo(PK_NAME);
     assertThat(resultScope1.getEndpoint()).isEqualTo(ENDPOINT);
     assertThat(resultScope1.getPkType()).isEqualTo(UUID.class.getCanonicalName());
@@ -133,7 +133,7 @@ class ReadControllerScopeFactoryTest {
 
     ReadControllerScope resultScope2 = resultList.get(1);
     assertThat(resultScope2.getClassName()).isEqualTo(RELATED_SCHEMA_NAME + "ReadController");
-    assertThat(resultScope2.getSchemaName()).isEqualTo(RELATED_SCHEMA_NAME);
+    assertThat(resultScope2.getSchemaName()).isEqualTo(RELATED_SCHEMA_NAME + "Read");
     assertThat(resultScope2.getPkName()).isEqualTo(PK_NAME);
     assertThat(resultScope2.getEndpoint()).isEqualTo("/related-table");
     assertThat(resultScope2.getPkType()).isEqualTo(UUID.class.getCanonicalName());

@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.GEOMETRY_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.PK_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SCHEMA_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.TABLE_NAME;
@@ -47,7 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ReadNestedEntityScopeFactoryTest {
+class ReadEntityScopeFactoryTest {
 
   private static final String RELATED_TABLE_NAME = "related_table";
   private static final String RELATED_SCHEMA_NAME = "RelatedTable";
@@ -64,16 +65,16 @@ class ReadNestedEntityScopeFactoryTest {
 
   private Context context;
 
-  private ReadNestedEntityScopeFactory instance;
+  private ReadEntityScopeFactory instance;
 
   @BeforeEach
   void beforeEach() {
     instance =
-        new ReadNestedEntityScopeFactory(enumProvider, nestedReadProvider, constraintProviders);
+        new ReadEntityScopeFactory(enumProvider, nestedReadProvider, constraintProviders);
   }
 
   @Test
-  void expectReadNestedEntityIsCreatedIfExistsInReadProvider() {
+  void expectReadEntityIsCreatedWithNestedColumns() {
     context =
         new Context(
             getSettings(),
@@ -98,21 +99,46 @@ class ReadNestedEntityScopeFactoryTest {
     var uuidConstraints = Collections.singletonList(new Constraint());
     when(constraintProviders.getConstraintForProperty("uuid", UUID.class.getCanonicalName()))
         .thenReturn(uuidConstraints);
-    when(constraintProviders.getConstraintForProperty("uuid", RELATED_SCHEMA_NAME))
-            .thenReturn(Collections.emptyList());
+    when(constraintProviders.getConstraintForProperty("uuid", RELATED_SCHEMA_NAME + "ReadNested"))
+        .thenReturn(Collections.emptyList());
     var nestedReadConstraints = Collections.singletonList(new Constraint());
-    when(constraintProviders.getConstraintForProperty("_uuid", RELATED_SCHEMA_NAME))
+    when(constraintProviders.getConstraintForProperty("_uuid", RELATED_SCHEMA_NAME + "ReadNested"))
         .thenReturn(nestedReadConstraints);
 
     var actual = instance.create(context);
-    assertThat(actual).hasSize(1);
+
     var actualScope = actual.get(0);
-    assertThat(actualScope.getClassName()).isEqualTo(SCHEMA_NAME + "ReadNested");
+    assertThat(actualScope.getClassName()).isEqualTo(SCHEMA_NAME + "Read");
     assertThat(actualScope.getFields())
         .usingRecursiveFieldByFieldElementComparator()
         .containsExactlyInAnyOrder(
             new Field(UUID.class.getCanonicalName(), "pkName", uuidConstraints),
-            new Field(RELATED_SCHEMA_NAME, "o2mColumn", Collections.emptyList()),
-            new Field(RELATED_SCHEMA_NAME + "[]", "m2mColumn", nestedReadConstraints));
+            new Field(RELATED_SCHEMA_NAME + "ReadNested", "o2mColumn", Collections.emptyList()),
+            new Field(RELATED_SCHEMA_NAME + "ReadNested[]", "m2mColumn", nestedReadConstraints));
+  }
+
+  @Test
+  void expectReadEntityIsCreatedWithoutNonReadableColumns() {
+    context =
+        new Context(
+            getSettings(),
+            newCatalog(
+                withTable(
+                    TABLE_NAME,
+                    withUuidPk(PK_COLUMN_NAME),
+                    withColumn(GEOMETRY_COLUMN_NAME, Object.class, "geometry"))),
+            emptyAsyncData());
+    when(nestedReadProvider.findFor(TABLE_NAME)).thenReturn(Collections.emptyMap());
+    when(constraintProviders.getConstraintForProperty("uuid", "java.util.UUID"))
+        .thenReturn(Collections.emptyList());
+
+    var actual = instance.create(context);
+    assertThat(actual).hasSize(1);
+    var actualScope = actual.get(0);
+    assertThat(actualScope.getClassName()).isEqualTo(SCHEMA_NAME + "Read");
+    assertThat(actualScope.getFields())
+        .usingRecursiveFieldByFieldElementComparator()
+        .containsExactlyInAnyOrder(
+            new Field(UUID.class.getCanonicalName(), "pkName", Collections.emptyList()));
   }
 }

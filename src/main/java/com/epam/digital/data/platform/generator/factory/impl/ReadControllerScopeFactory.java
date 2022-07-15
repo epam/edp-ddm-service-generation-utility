@@ -46,12 +46,11 @@ public class ReadControllerScopeFactory extends CrudAbstractScope<ReadController
   protected ReadControllerScope map(Table table, Context context) {
     var scope = new ReadControllerScope();
     scope.setClassName(getSchemaName(table) + "ReadController");
+    scope.setSchemaName(getSchemaName(table) + "Read");
     var nestedEntitiesMap = nestedReadProvider.findFor(table.getName());
     if (nestedEntitiesMap.isEmpty()) {
-      scope.setSchemaName(getSchemaName(table));
       scope.setReadRoles(new ArrayList<>(permissionMap.getReadExpressionsFor(table.getName())));
     } else {
-      scope.setSchemaName(getSchemaName(table) + "ReadNested");
       var nestedTables =
           nestedEntitiesMap.values().stream()
               .map(NestedReadEntity::getRelatedTable)

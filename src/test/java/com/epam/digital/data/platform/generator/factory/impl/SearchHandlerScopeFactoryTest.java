@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.GEOMETRY_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.PK_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.emptyAsyncData;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.newCatalog;
@@ -87,7 +88,8 @@ class SearchHandlerScopeFactoryTest {
     Catalog catalog = newCatalog(
         withTable(TABLE_NAME),
         withSearchConditionView(VIEW_NAME,
-            withTextColumn(FIELD), withTextColumn(FIELD_TOO_COLUMN_NAME)),
+            withTextColumn(FIELD), withTextColumn(FIELD_TOO_COLUMN_NAME),
+            withColumn(GEOMETRY_COLUMN_NAME, Object.class, "geometry")),
         withSearchConditionView("view_without_fields"),
         withSearchConditionView("find_by_enum", withEnumColumn("status"))
     );

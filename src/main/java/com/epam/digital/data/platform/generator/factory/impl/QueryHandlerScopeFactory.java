@@ -55,11 +55,7 @@ public class QueryHandlerScopeFactory extends CrudAbstractScope<QueryHandlerScop
 
     QueryHandlerScope scope = new QueryHandlerScope();
     scope.setClassName(getSchemaName(table) + "QueryHandler");
-    if (nestedEntitiesMap.isEmpty()) {
-      scope.setSchemaName(getSchemaName(table));
-    } else {
-      scope.setSchemaName(getSchemaName(table) + "ReadNested");
-    }
+    scope.setSchemaName(getSchemaName(table) + "Read");
     scope.setPkColumnName(getPkColumn(table).getName());
     scope.setTableName(table.getName());
     scope.setPkType(getPkTypeName(table));
@@ -94,19 +90,14 @@ public class QueryHandlerScopeFactory extends CrudAbstractScope<QueryHandlerScop
 
   private Map<String, List<String>> getPermissionCheckTableColumns(
       Collection<NestedReadEntity> nestedReadEntities, Table table, Context context) {
-    var mainTableColumns =
-        Map.of(
-            table.getName(),
-            table.getColumns().stream().map(NamedObject::getName).collect(toList()));
+    var mainTableColumns = Map.of(table.getName(), getReadColumnNames(table));
     var joinedTableColumns =
         nestedReadEntities.stream()
             .collect(
                 toMap(
                     NestedReadEntity::getRelatedTable,
                     nestedReadEntity ->
-                        findTable(nestedReadEntity.getRelatedTable(), context).getColumns().stream()
-                            .map(NamedObject::getName)
-                            .collect(toList()),
+                        getReadColumnNames(findTable(nestedReadEntity.getRelatedTable(), context)),
                     (el1, el2) -> el2));
     return Stream.of(mainTableColumns, joinedTableColumns)
         .flatMap(map -> map.entrySet().stream())
@@ -137,6 +128,13 @@ public class QueryHandlerScopeFactory extends CrudAbstractScope<QueryHandlerScop
   private boolean isManyToManyNestedColumn(NestedReadEntity nestedEntity, Table table) {
     var column = findColumn(nestedEntity.getColumn(), table);
     return DbUtils.isColumnOfArrayType(column);
+  }
+
+  private List<String> getReadColumnNames(Table table) {
+    return table.getColumns().stream()
+        .filter(DbUtils::isReadableColumn)
+        .map(NamedObject::getName)
+        .collect(toList());
   }
 
   @Override

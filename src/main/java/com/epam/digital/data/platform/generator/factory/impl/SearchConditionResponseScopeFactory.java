@@ -31,7 +31,6 @@ import org.springframework.stereotype.Component;
 import schemacrawler.schema.Column;
 import schemacrawler.schema.Table;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -101,7 +100,9 @@ public class SearchConditionResponseScopeFactory extends AbstractEntityScopeFact
     return columns.stream()
         .map(
             column -> {
-              var clazzName = getSchemaName(nestedEntities.get(column.getName()).getRelatedTable());
+              var clazzName =
+                  getSchemaName(nestedEntities.get(column.getName()).getRelatedTable())
+                      + "ReadNested";
 
               var field = new Field();
               field.setName(getPropertyName(column));
@@ -121,7 +122,10 @@ public class SearchConditionResponseScopeFactory extends AbstractEntityScopeFact
   private List<Column> identifyAllowedColumns(Table table) {
     var sc = searchConditionProvider.findFor(getCutTableName(table));
     return table.getColumns().stream()
-        .filter(column -> sc.getReturningColumns().contains(column.getName()))
+        .filter(
+            column ->
+                sc.getReturningColumns().contains(column.getName())
+                    && DbUtils.isReadableColumn(column))
         .collect(toList());
   }
 

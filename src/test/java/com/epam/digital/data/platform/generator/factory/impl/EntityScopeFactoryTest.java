@@ -53,9 +53,6 @@ class EntityScopeFactoryTest {
   @Mock
   private CompositeConstraintProvider constraintProviders;
 
-  @Mock
-  private FormattingConstraintProvider formattingConstraintProvider;
-
   private EntityScopeFactory instance;
 
   private Context context;
@@ -63,9 +60,6 @@ class EntityScopeFactoryTest {
   @BeforeEach
   public void init() {
     instance = new EntityScopeFactory(enumProvider, constraintProviders);
-
-    lenient().when(constraintProviders.getFormattingConstraintProvider())
-        .thenReturn(formattingConstraintProvider);
 
     context = new Context(null,
         newCatalog(withTable("test_table"), withTable("second_test_table")),

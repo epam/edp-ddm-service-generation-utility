@@ -21,8 +21,6 @@ import com.epam.digital.data.platform.generator.model.template.SelectableField;
 import schemacrawler.schema.Column;
 import schemacrawler.schema.Table;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -38,6 +36,7 @@ public class ReadOperationUtils {
   public static List<SelectableField> getSelectableFields(
       String tableName, List<Column> columns, Context context) {
     return columns.stream()
+        .filter(DbUtils::isReadableColumn)
         .map(
             column ->
                 new SelectableField(

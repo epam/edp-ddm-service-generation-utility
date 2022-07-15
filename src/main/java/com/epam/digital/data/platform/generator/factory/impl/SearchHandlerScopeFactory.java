@@ -34,10 +34,7 @@ import schemacrawler.schema.Table;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.getSelectableFields;
 import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;

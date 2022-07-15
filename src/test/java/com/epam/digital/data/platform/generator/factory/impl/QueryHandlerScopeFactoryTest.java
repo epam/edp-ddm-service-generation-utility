@@ -18,6 +18,7 @@ package com.epam.digital.data.platform.generator.factory.impl;
 
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.FILE_COLUMN_NAME;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.GEOMETRY_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.PK_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SCHEMA_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.TABLE_NAME;
@@ -78,7 +79,8 @@ class QueryHandlerScopeFactoryTest {
                     withTextColumn(COLUMN_NAME),
                     withColumn(MANY_TO_MANY_COLUMN, Object.class, "_uuid"),
                     withColumn(ONE_TO_MANY_COLUMN, UUID.class, "uuid"),
-                    withColumn(FILE_COLUMN_NAME, Struct.class, "type_file")),
+                    withColumn(FILE_COLUMN_NAME, Struct.class, "type_file"),
+                    withColumn(GEOMETRY_COLUMN_NAME, Object.class, "geometry")),
                 withTable(RELATED_TABLE,
                         withUuidPk(PK_COLUMN_NAME),
                         withTextColumn(RELATED_TABLE_COLUMN))),
@@ -97,7 +99,7 @@ class QueryHandlerScopeFactoryTest {
     assertThat(resultList).hasSize(2);
     QueryHandlerScope nestedResultScope = resultList.get(0);
     assertThat(nestedResultScope.getClassName()).isEqualTo(SCHEMA_NAME + "QueryHandler");
-    assertThat(nestedResultScope.getSchemaName()).isEqualTo(SCHEMA_NAME + "ReadNested");
+    assertThat(nestedResultScope.getSchemaName()).isEqualTo(SCHEMA_NAME + "Read");
     assertThat(nestedResultScope.getTableName()).isEqualTo(TABLE_NAME);
     assertThat(nestedResultScope.getPkColumnName()).isEqualTo(PK_COLUMN_NAME);
     assertThat(nestedResultScope.getPkType()).isEqualTo(UUID.class.getCanonicalName());
@@ -145,7 +147,7 @@ class QueryHandlerScopeFactoryTest {
 
     QueryHandlerScope simpleResultScope = resultList.get(1);
     assertThat(simpleResultScope.getClassName()).isEqualTo(RELATED_TABLE_SCHEMA + "QueryHandler");
-    assertThat(simpleResultScope.getSchemaName()).isEqualTo(RELATED_TABLE_SCHEMA);
+    assertThat(simpleResultScope.getSchemaName()).isEqualTo(RELATED_TABLE_SCHEMA + "Read");
     assertThat(simpleResultScope.getTableName()).isEqualTo(RELATED_TABLE);
     assertThat(simpleResultScope.getPkColumnName()).isEqualTo(PK_COLUMN_NAME);
     assertThat(simpleResultScope.getPkType()).isEqualTo(UUID.class.getCanonicalName());

@@ -18,7 +18,6 @@ package com.epam.digital.data.platform.generator.factory.impl;
 
 import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncTable;
 
-import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.ReadServiceScope;
 import org.apache.commons.lang3.StringUtils;
@@ -28,12 +27,6 @@ import schemacrawler.schema.Table;
 
 @Component
 public class ReadServiceScopeFactory extends AbstractServiceScope<ReadServiceScope> {
-
-  private final NestedReadProvider nestedReadProvider;
-
-  public ReadServiceScopeFactory(NestedReadProvider nestedReadProvider) {
-    this.nestedReadProvider = nestedReadProvider;
-  }
 
   @Override
   protected ReadServiceScope instantiate() {
@@ -47,11 +40,7 @@ public class ReadServiceScopeFactory extends AbstractServiceScope<ReadServiceSco
     ReadServiceScope scope = instantiate();
 
     scope.setClassName(modelName + StringUtils.capitalize(getOperation()) + "Service");
-    if (nestedReadProvider.findFor(table.getName()).isEmpty()) {
-      scope.setSchemaName(modelName);
-    } else {
-      scope.setSchemaName(modelName + "ReadNested");
-    }
+    scope.setSchemaName(modelName + "Read");
     scope.setPkName(getPkName(table));
     scope.setPkType(getPkTypeName(table));
 

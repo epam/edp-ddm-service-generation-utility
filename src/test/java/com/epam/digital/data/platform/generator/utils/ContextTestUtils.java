@@ -53,6 +53,7 @@ public class ContextTestUtils {
   public static final String PK_NAME = "pkName";
   public static final String COLUMN_NAME = "column";
   public static final String FILE_COLUMN_NAME = "column_file";
+  public static final String GEOMETRY_COLUMN_NAME = "column_geometry";
   public static final String ENDPOINT = "/test-schema";
   public static final String VERSION = "1.2.3";
   public static final String BASE_PACKAGE_NAME = "my.fav.registry";

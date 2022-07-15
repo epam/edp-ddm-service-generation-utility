@@ -163,16 +163,16 @@ class SearchConditionResponseScopeFactoryTest {
     given(nestedReadProvider.findFor("test_table_search"))
             .willReturn(Map.of("my_col", m2mNestedReadEntity,
                     "another_col", o2mNestedReadEntity));
-    given(constraintProviders.getConstraintForProperty("uuid", "RelatedTable"))
+    given(constraintProviders.getConstraintForProperty("uuid", "RelatedTableReadNested"))
             .willReturn(emptyList());
     var nestedReadConstraints = Collections.singletonList(new Constraint());
-    when(constraintProviders.getConstraintForProperty("_uuid", "RelatedTable"))
+    when(constraintProviders.getConstraintForProperty("_uuid", "RelatedTableReadNested"))
             .thenReturn(nestedReadConstraints);
 
     List<ModelScope> scopes = instance.create(context);
 
-    Field expected1 = new Field("RelatedTable[]", "myCol", nestedReadConstraints);
-    Field expected2 = new Field("RelatedTable", "anotherCol", emptyList());
+    Field expected1 = new Field("RelatedTableReadNested[]", "myCol", nestedReadConstraints);
+    Field expected2 = new Field("RelatedTableReadNested", "anotherCol", emptyList());
 
     ModelScope scope = scopes.get(0);
     assertThat(scope.getFields())

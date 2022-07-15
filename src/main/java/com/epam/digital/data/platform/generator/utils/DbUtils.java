@@ -20,7 +20,12 @@ import com.epam.digital.data.platform.generator.model.Context;
 import schemacrawler.schema.Column;
 import schemacrawler.schema.Table;
 
+import java.util.Collections;
+import java.util.List;
+
 public class DbUtils {
+
+  private static final List<String> NON_READABLE_TYPES = Collections.singletonList("geometry");
 
   private DbUtils() {}
 
@@ -48,5 +53,9 @@ public class DbUtils {
 
   public static boolean isColumnOfArrayType(String columnName, Table table) {
     return isColumnOfArrayType(findColumn(columnName, table));
+  }
+
+  public static boolean isReadableColumn(Column column) {
+    return !NON_READABLE_TYPES.contains(column.getColumnDataType().getName());
   }
 }

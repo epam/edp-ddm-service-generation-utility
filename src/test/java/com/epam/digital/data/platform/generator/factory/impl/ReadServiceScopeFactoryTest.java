@@ -48,8 +48,6 @@ class ReadServiceScopeFactoryTest {
 
   private static final String RELATED_TABLE_NAME = "related_table";
 
-  @Mock
-  private NestedReadProvider nestedReadProvider;
   private Context context;
 
   private ReadServiceScopeFactory instance;
@@ -66,7 +64,7 @@ class ReadServiceScopeFactoryTest {
                                     withTextColumn("related_column"))),
                     emptyAsyncData());
 
-    instance = new ReadServiceScopeFactory(nestedReadProvider);
+    instance = new ReadServiceScopeFactory();
   }
 
   @Test
@@ -75,7 +73,7 @@ class ReadServiceScopeFactoryTest {
 
     assertThat(actual).hasSize(2);
     assertThat(actual.get(0).getClassName()).isEqualTo(SCHEMA_NAME + "ReadService");
-    assertThat(actual.get(0).getSchemaName()).isEqualTo(SCHEMA_NAME);
+    assertThat(actual.get(0).getSchemaName()).isEqualTo(SCHEMA_NAME + "Read");
     assertThat(actual.get(0).getPkName()).isEqualTo(PK_NAME);
     assertThat(actual.get(0).getPkType()).isEqualTo(UUID.class.getCanonicalName());
     assertThat(actual.get(0).getHandlerName()).isEqualTo(SCHEMA_NAME + "QueryHandler");
@@ -83,14 +81,12 @@ class ReadServiceScopeFactoryTest {
 
   @Test
   void expectReadServiceScopeForNestedReadIsCreated() {
-    when(nestedReadProvider.findFor(TABLE_NAME))
-            .thenReturn(Map.of(COLUMN_NAME, new NestedReadEntity()));
 
     var actual = instance.create(context);
 
     assertThat(actual).hasSize(2);
     assertThat(actual.get(0).getClassName()).isEqualTo(SCHEMA_NAME + "ReadService");
-    assertThat(actual.get(0).getSchemaName()).isEqualTo(SCHEMA_NAME + "ReadNested");
+    assertThat(actual.get(0).getSchemaName()).isEqualTo(SCHEMA_NAME + "Read");
     assertThat(actual.get(0).getPkName()).isEqualTo(PK_NAME);
     assertThat(actual.get(0).getPkType()).isEqualTo(UUID.class.getCanonicalName());
     assertThat(actual.get(0).getHandlerName()).isEqualTo(SCHEMA_NAME + "QueryHandler");

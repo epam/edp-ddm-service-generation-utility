@@ -36,12 +36,12 @@ import java.util.function.Predicate;
 import static java.util.stream.Collectors.toList;
 
 @Component
-public class ReadNestedEntityScopeFactory extends AbstractEntityScopeFactory<ModelScope> {
+public class ReadEntityScopeFactory extends AbstractEntityScopeFactory<ModelScope> {
 
   private final NestedReadProvider nestedReadProvider;
   private final CompositeConstraintProvider constraintProviders;
 
-  public ReadNestedEntityScopeFactory(
+  public ReadEntityScopeFactory(
       EnumProvider enumProvider,
       NestedReadProvider nestedReadProvider,
       CompositeConstraintProvider constraintProviders) {
@@ -53,14 +53,12 @@ public class ReadNestedEntityScopeFactory extends AbstractEntityScopeFactory<Mod
   @Override
   public List<ModelScope> create(Context context) {
     return context.getCatalog().getTables().stream()
-        .filter(
-            table ->
-                isRecentDataTable(table) && !nestedReadProvider.findFor(table.getName()).isEmpty())
+        .filter(this::isRecentDataTable)
         .map(
             table -> {
               var nestedEntitiesMap = nestedReadProvider.findFor(table.getName());
               var scope = new ModelScope();
-              scope.setClassName(getSchemaName(table) + "ReadNested");
+              scope.setClassName(getSchemaName(table) + "Read");
               var nestedColumns =
                   table.getColumns().stream()
                       .filter(column -> nestedEntitiesMap.containsKey(column.getName()))
@@ -78,6 +76,7 @@ public class ReadNestedEntityScopeFactory extends AbstractEntityScopeFactory<Mod
 
   private List<Field> getSimpleFields(List<Column> columns) {
     return columns.stream()
+        .filter(DbUtils::isReadableColumn)
         .map(
             column -> {
               var clazzName = DbTypeConverter.convertToJavaTypeName(column);
@@ -98,7 +97,9 @@ public class ReadNestedEntityScopeFactory extends AbstractEntityScopeFactory<Mod
     return columns.stream()
         .map(
             column -> {
-              var clazzName = getSchemaName(nestedEntities.get(column.getName()).getRelatedTable());
+              var clazzName =
+                  getSchemaName(nestedEntities.get(column.getName()).getRelatedTable())
+                      + "ReadNested";
 
               var field = new Field();
               field.setName(getPropertyName(column));

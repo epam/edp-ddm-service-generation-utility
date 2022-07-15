@@ -19,7 +19,6 @@ package com.epam.digital.data.platform.generator.factory.impl;
 import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncTable;
 
 import com.epam.digital.data.platform.generator.factory.CrudAbstractScope;
-import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.ListenerScope;
 import org.springframework.stereotype.Component;
@@ -28,26 +27,15 @@ import schemacrawler.schema.Table;
 @Component
 public class QueryListenerScopeFactory extends CrudAbstractScope<ListenerScope> {
 
-  private final NestedReadProvider nestedReadProvider;
-
-  public QueryListenerScopeFactory(NestedReadProvider nestedReadProvider) {
-    this.nestedReadProvider = nestedReadProvider;
-  }
-
   @Override
   protected ListenerScope map(Table table, Context context) {
     var scope = new ListenerScope();
     scope.setClassName(getSchemaName(table) + "QueryListener");
-    if (nestedReadProvider.findFor(table.getName()).isEmpty()) {
-      scope.setSchemaName(getSchemaName(table));
-    } else {
-      scope.setSchemaName(getSchemaName(table) + "ReadNested");
-    }
+    scope.setSchemaName(getSchemaName(table) + "Read");
     scope.setPkType(getPkTypeName(table));
 
     scope.setOperation("read");
     scope.setRootOfTopicName(toHyphenTableName(table));
-    scope.setOutputType(scope.getSchemaName());
     scope.setHandlerName(getSchemaName(table) + "QueryHandler");
 
     return scope;
