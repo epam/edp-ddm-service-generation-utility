@@ -134,5 +134,3 @@ kong:
     rootPath: /api/gateway/data-factory
 
 stageName: ${stageName}
-
-nexusPullSecret: nexus-docker-registry-namespaced
