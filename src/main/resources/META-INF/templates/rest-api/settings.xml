@@ -9,7 +9,7 @@
     </servers>
     <mirrors>
         <mirror>
-            <id>maven-releases-mirror</id>
+            <id>nexus</id>
             <mirrorOf>maven-releases</mirrorOf>
             <url>${artifactory.baseUrl}/repository/${artifactory.releasesPath}</url>
             <blocked>false</blocked>

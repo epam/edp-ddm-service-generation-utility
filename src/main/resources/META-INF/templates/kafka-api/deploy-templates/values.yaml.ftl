@@ -80,3 +80,5 @@ audit:
   kafka:
     topic: audit-events
     schemaRegistryUrl: http://kafka-schema-registry:8081
+
+nexusPullSecret: nexus-docker-registry-namespaced

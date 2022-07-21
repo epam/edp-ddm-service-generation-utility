@@ -23,6 +23,8 @@ spec:
         version: {{ $.Values.version | squote }}
     spec:
       serviceAccountName: {{ $.Values.name }}
+      imagePullSecrets:
+        - name: {{ .Values.nexusPullSecret }}
       containers:
         - name: {{ $.Values.name }}
           image: "{{ $.Values.image.name }}:{{ $.Values.image.version }}"

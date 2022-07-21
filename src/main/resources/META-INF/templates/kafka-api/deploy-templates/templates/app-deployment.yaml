@@ -22,6 +22,8 @@ spec:
         traffic.sidecar.istio.io/excludeOutboundPorts: '8080,5432'
     spec:
       serviceAccountName: {{.Values.name }}
+      imagePullSecrets:
+        - name: {{ .Values.nexusPullSecret }}
       containers:
         - name: {{.Values.name }}
           image: "{{ .Values.image.name }}:{{ .Values.image.version }}"

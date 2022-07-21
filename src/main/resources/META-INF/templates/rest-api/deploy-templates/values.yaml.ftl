@@ -135,3 +135,4 @@ kong:
 
 stageName: ${stageName}
 
+nexusPullSecret: nexus-docker-registry-namespaced

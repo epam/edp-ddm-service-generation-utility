@@ -55,4 +55,5 @@ keycloak:
   serviceAccount:
     secretName: keycloak-trembita-user-client-secret
     clientId: trembita-user
-    
+
+nexusPullSecret: nexus-docker-registry-namespaced
