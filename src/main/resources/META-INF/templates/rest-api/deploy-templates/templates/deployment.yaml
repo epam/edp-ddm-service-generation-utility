@@ -24,7 +24,7 @@ spec:
     spec:
       serviceAccountName: {{ $.Values.name }}
       imagePullSecrets:
-        - name: {{ .Values.nexusPullSecret }}
+        - name: {{ $.Values.nexusPullSecret }}
       containers:
         - name: {{ $.Values.name }}
           image: "{{ $.Values.image.name }}:{{ $.Values.image.version }}"
