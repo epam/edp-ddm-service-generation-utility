@@ -1,4 +1,4 @@
-FROM ${dockerProxyRegistry}/${globalNexusNamespace}/soap-api-core-base-image-master:1.6.0.1 AS builder
+FROM ${dockerProxyRegistry}/${globalNexusNamespace}/soap-api-core-base-image-master:1.6.0.5 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild
@@ -6,12 +6,12 @@ COPY pom.xml settings.xml ./
 COPY src src
 RUN mvn deploy -B --settings settings.xml -npu -nsu -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus:8081/nexus/repository/edp-maven-releases -Dartifactory.username=\$NEXUS_USR -Dartifactory.password=\$NEXUS_PASS -Dartifactory.baseUrl=http://nexus:8081/nexus -Dartifactory.releasesPath=edp-maven-releases
 
-FROM openjdk:11.0.7-jre-slim AS soaplayer
+FROM nexus-docker-registry.apps.cicd2.mdtu-ddm.projects.epam.com/mdtu-ddm-edp-cicd/openjdk:11.0.16-jre-slim AS soaplayer
 WORKDIR /app
 COPY --from=builder /app/forbuild/target/soap-api*.jar application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
-FROM openjdk:11.0.7-jre-slim
+FROM nexus-docker-registry.apps.cicd2.mdtu-ddm.projects.epam.com/mdtu-ddm-edp-cicd/openjdk:11.0.16-jre-slim
 WORKDIR /appF
 COPY --from=soaplayer app/dependencies/ ./
 COPY --from=soaplayer app/spring-boot-loader/ ./
