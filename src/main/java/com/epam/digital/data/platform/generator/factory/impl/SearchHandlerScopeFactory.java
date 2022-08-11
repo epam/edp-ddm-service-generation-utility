@@ -81,6 +81,11 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
             .map(
                 x -> new SearchConditionField(getPropertyName(x), x, isIgnoreCase(x, table)))
             .collect(toList());
+    var notInFields =
+        sc.getNotIn().stream()
+            .map(
+                x -> new SearchConditionField(getPropertyName(x), x, isIgnoreCase(x, table)))
+            .collect(toList());
     var betweenFields =
         sc.getBetween().stream()
             .map(x -> new SearchConditionField(getPropertyName(x), x, isIgnoreCase(x, table)))
@@ -124,6 +129,7 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     scope.setContainsFields(containsFields);
     scope.setStartsWithFields(startsWithFields);
     scope.setInFields(inFields);
+    scope.setNotInFields(notInFields);
     scope.setBetweenFields(betweenFields);
     scope.setEnumSearchConditionFields(enumSearchConditionFields);
     scope.setSimpleSelectableFields(getSelectableFields(table, simpleColumnNames, context));

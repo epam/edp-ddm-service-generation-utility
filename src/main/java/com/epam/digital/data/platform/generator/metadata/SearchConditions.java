@@ -26,6 +26,7 @@ public class SearchConditions {
   private final List<String> startsWith;
   private final List<String> contains;
   private final List<String> in;
+  private final List<String> notIn;
   private final List<String> between;
   private final List<String> returningColumns;
   private final Integer limit;
@@ -36,6 +37,7 @@ public class SearchConditions {
       List<String> startsWith,
       List<String> contains,
       List<String> in,
+      List<String> notIn,
       List<String> between,
       List<String> returningColumns,
       Integer limit,
@@ -44,6 +46,7 @@ public class SearchConditions {
     this.startsWith = unmodifiableList(startsWith);
     this.contains = unmodifiableList(contains);
     this.in = unmodifiableList(in);
+    this.notIn = unmodifiableList(notIn);
     this.between = unmodifiableList(between);
     this.returningColumns = unmodifiableList(returningColumns);
     this.limit = limit;
@@ -64,6 +67,10 @@ public class SearchConditions {
 
   public List<String> getIn() {
     return in;
+  }
+
+  public List<String> getNotIn() {
+    return notIn;
   }
 
   public List<String> getBetween() {

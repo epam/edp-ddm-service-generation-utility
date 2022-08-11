@@ -26,6 +26,7 @@ public class SearchConditionsBuilder {
   private List<String> startsWith = emptyList();
   private List<String> contains = emptyList();
   private List<String> in = emptyList();
+  private List<String> notIn = emptyList();
   private List<String> between = emptyList();
   private List<String> returningColumns = emptyList();
   private Integer limit;
@@ -51,6 +52,11 @@ public class SearchConditionsBuilder {
     return this;
   }
 
+  public SearchConditionsBuilder notIn(List<String> notIn) {
+    this.notIn = notIn;
+    return this;
+  }
+
   public SearchConditionsBuilder between(List<String> between) {
     this.between = between;
     return this;
@@ -73,6 +79,6 @@ public class SearchConditionsBuilder {
 
   public SearchConditions build() {
     return new SearchConditions(
-        equal, startsWith, contains, in, between, returningColumns, limit, pagination);
+        equal, startsWith, contains, in, notIn, between, returningColumns, limit, pagination);
   }
 }

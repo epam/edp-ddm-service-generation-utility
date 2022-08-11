@@ -37,6 +37,7 @@ public class SearchConditionProvider {
   static final String STARTS_WITH_ATTRIBUTE_NAME = "startsWithColumn";
   static final String CONTAINS_ATTRIBUTE_NAME = "containsColumn";
   static final String IN_ATTRIBUTE_NAME = "inColumn";
+  static final String NOT_IN_ATTRIBUTE_NAME = "notInColumn";
   static final String BETWEEN_ATTRIBUTE_NAME = "betweenColumn";
   static final String LIMIT_ATTRIBUTE_NAME = "limit";
   static final String PAGINATION_ATTRIBUTE_NAME = "pagination";
@@ -67,6 +68,7 @@ public class SearchConditionProvider {
         .startsWith(groupedByName.getOrDefault(STARTS_WITH_ATTRIBUTE_NAME, emptyList()))
         .contains(groupedByName.getOrDefault(CONTAINS_ATTRIBUTE_NAME, emptyList()))
         .in(groupedByName.getOrDefault(IN_ATTRIBUTE_NAME, emptyList()))
+        .notIn(groupedByName.getOrDefault(NOT_IN_ATTRIBUTE_NAME, emptyList()))
         .between(groupedByName.getOrDefault(BETWEEN_ATTRIBUTE_NAME, emptyList()))
         .returningColumns(returningColumns);
 

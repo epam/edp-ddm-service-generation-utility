@@ -32,6 +32,7 @@ public class SearchHandlerScope extends ClassScope {
   private List<SearchConditionField> startsWithFields;
   private List<SearchConditionField> containsFields;
   private List<SearchConditionField> inFields;
+  private List<SearchConditionField> notInFields;
   private List<SearchConditionField> betweenFields;
   private List<String> enumSearchConditionFields;
   private List<SelectableField> simpleSelectableFields;
@@ -93,6 +94,14 @@ public class SearchHandlerScope extends ClassScope {
 
   public void setInFields(List<SearchConditionField> inFields) {
     this.inFields = inFields;
+  }
+
+  public List<SearchConditionField> getNotInFields() {
+    return notInFields;
+  }
+
+  public void setNotInFields(List<SearchConditionField> notInFields) {
+    this.notInFields = notInFields;
   }
 
   public List<SearchConditionField> getBetweenFields() {

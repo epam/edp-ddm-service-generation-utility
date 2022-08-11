@@ -49,6 +49,18 @@ public class ${className}
     </#if>
     }
   </#list>
+  <#list notInFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+    <#if field.ignoreCase>
+      c = c.and(DSL.lower(DSL.field("${field.columnName}", String.class))
+        .notIn(searchConditions.get${field.name?cap_first}().stream()
+        .map(DSL::lower)
+        .collect(Collectors.toList())));
+    <#else>
+      c = c.and(DSL.field("${field.columnName}").notIn(searchConditions.get${field.name?cap_first}()));
+    </#if>
+    }
+  </#list>
   <#list betweenFields as field>
     if (searchConditions.get${field.name?cap_first}From() != null
         && searchConditions.get${field.name?cap_first}To() != null) {

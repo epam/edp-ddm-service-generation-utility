@@ -90,6 +90,9 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
     fields.addAll(searchConditions.getIn().stream()
             .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::getFieldTypeForIn))
             .collect(toList()));
+    fields.addAll(searchConditions.getNotIn().stream()
+            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::getFieldTypeForIn))
+            .collect(toList()));
     fields.addAll(
         searchConditions.getBetween().stream()
             .flatMap(
