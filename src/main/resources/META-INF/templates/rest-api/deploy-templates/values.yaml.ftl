@@ -120,6 +120,7 @@ audit:
 keycloak:
   rulesEnabled: true
   realms:
+    admin: admin
     officer: officer-portal
     citizen: citizen-portal
     external: external-system
