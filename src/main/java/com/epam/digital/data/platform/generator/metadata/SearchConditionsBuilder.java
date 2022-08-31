@@ -23,6 +23,7 @@ import java.util.List;
 public class SearchConditionsBuilder {
 
   private List<String> equal = emptyList();
+  private List<String> notEqual = emptyList();
   private List<String> startsWith = emptyList();
   private List<String> contains = emptyList();
   private List<String> in = emptyList();
@@ -34,6 +35,11 @@ public class SearchConditionsBuilder {
 
   public SearchConditionsBuilder equal(List<String> equal) {
     this.equal = equal;
+    return this;
+  }
+
+  public SearchConditionsBuilder notEqual(List<String> notEqual) {
+    this.notEqual = notEqual;
     return this;
   }
 
@@ -79,6 +85,6 @@ public class SearchConditionsBuilder {
 
   public SearchConditions build() {
     return new SearchConditions(
-        equal, startsWith, contains, in, notIn, between, returningColumns, limit, pagination);
+        equal, notEqual, startsWith, contains, in, notIn, between, returningColumns, limit, pagination);
   }
 }

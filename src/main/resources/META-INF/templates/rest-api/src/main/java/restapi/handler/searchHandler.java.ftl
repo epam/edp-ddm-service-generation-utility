@@ -27,6 +27,11 @@ public class ${className}
       c = c.and(DSL.field("${field.columnName}").equal<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
     }
   </#list>
+  <#list notEqualFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      c = c.and(DSL.field("${field.columnName}").notEqual<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
+    }
+  </#list>
   <#list startsWithFields as field>
     if (searchConditions.get${field.name?cap_first}() != null) {
       c = c.and(DSL.field("${field.columnName}").startsWith<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));

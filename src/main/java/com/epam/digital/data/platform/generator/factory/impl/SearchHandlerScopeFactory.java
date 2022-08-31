@@ -68,6 +68,10 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
                     new SearchConditionField(
                         getPropertyName(x), x, isIgnoreCase(x, table)))
             .collect(toList());
+    var notEqualFields =
+        sc.getNotEqual().stream()
+            .map(x -> new SearchConditionField(getPropertyName(x), x, isIgnoreCase(x, table)))
+            .collect(toList());
     var containsFields =
         sc.getContains().stream()
             .map(x -> new SearchConditionField(getPropertyName(x), x, true))
@@ -126,6 +130,7 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     scope.setTableName(table.getName());
     scope.setLimit(sc.getLimit());
     scope.setEqualFields(equalFields);
+    scope.setNotEqualFields(notEqualFields);
     scope.setContainsFields(containsFields);
     scope.setStartsWithFields(startsWithFields);
     scope.setInFields(inFields);

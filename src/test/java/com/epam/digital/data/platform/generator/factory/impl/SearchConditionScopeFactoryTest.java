@@ -173,6 +173,24 @@ class SearchConditionScopeFactoryTest {
   }
 
   @Test
+  void shouldCreateSearchConditionNotEqualFieldsForSearchConditionViews() {
+    given(searchConditionProvider.findFor(any()))
+        .willReturn(new SearchConditionsBuilder().notIn(singletonList("test_not_equal_search_col")).build());
+    override(
+        context.getCatalog(),
+        withSearchConditionView("test_table_search", withTextColumn("test_not_equal_search_col")));
+
+    List<ModelScope> result = instance.create(context);
+
+    var fields = result.get(0).getFields();
+    assertThat(fields).hasSize(1);
+
+    var field = fields.iterator().next();
+    assertThat(field.getName()).isEqualTo("testNotEqualSearchCol");
+    assertThat(field.getType()).isEqualTo("java.util.List<java.lang.String>");
+  }
+
+  @Test
   void shouldCreateSearchConditionBetweenFieldsForSearchConditionViews() {
     given(searchConditionProvider.findFor(any()))
             .willReturn(new SearchConditionsBuilder().between(singletonList("test_between_search_col")).build());

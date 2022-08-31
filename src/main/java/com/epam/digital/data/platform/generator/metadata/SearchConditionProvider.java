@@ -34,6 +34,7 @@ public class SearchConditionProvider {
   static final String SEARCH_CONDITION_COLUMN_ATTRIBUTE = "column";
 
   static final String EQUAL_ATTRIBUTE_NAME = "equalColumn";
+  static final String NOT_EQUAL_ATTRIBUTE_NAME = "notEqualColumn";
   static final String STARTS_WITH_ATTRIBUTE_NAME = "startsWithColumn";
   static final String CONTAINS_ATTRIBUTE_NAME = "containsColumn";
   static final String IN_ATTRIBUTE_NAME = "inColumn";
@@ -65,6 +66,7 @@ public class SearchConditionProvider {
 
     var b = new SearchConditionsBuilder()
         .equal(groupedByName.getOrDefault(EQUAL_ATTRIBUTE_NAME, emptyList()))
+        .notEqual(groupedByName.getOrDefault(NOT_EQUAL_ATTRIBUTE_NAME, emptyList()))
         .startsWith(groupedByName.getOrDefault(STARTS_WITH_ATTRIBUTE_NAME, emptyList()))
         .contains(groupedByName.getOrDefault(CONTAINS_ATTRIBUTE_NAME, emptyList()))
         .in(groupedByName.getOrDefault(IN_ATTRIBUTE_NAME, emptyList()))
