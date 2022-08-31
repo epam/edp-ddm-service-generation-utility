@@ -29,6 +29,7 @@ public class SearchHandlerScope extends ClassScope {
   private Integer limit;
   private String tableName;
   private List<SearchConditionField> equalFields;
+  private List<SearchConditionField> notEqualFields;
   private List<SearchConditionField> startsWithFields;
   private List<SearchConditionField> containsFields;
   private List<SearchConditionField> inFields;
@@ -70,6 +71,15 @@ public class SearchHandlerScope extends ClassScope {
 
   public void setEqualFields(List<SearchConditionField> equalFields) {
     this.equalFields = equalFields;
+  }
+
+  public List<SearchConditionField> getNotEqualFields() {
+    return notEqualFields;
+  }
+
+  public void setNotEqualFields(
+      List<SearchConditionField> notEqualFields) {
+    this.notEqualFields = notEqualFields;
   }
 
   public List<SearchConditionField> getStartsWithFields() {

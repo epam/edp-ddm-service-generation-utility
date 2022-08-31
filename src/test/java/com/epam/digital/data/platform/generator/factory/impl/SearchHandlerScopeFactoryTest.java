@@ -326,6 +326,26 @@ class SearchHandlerScopeFactoryTest {
   }
 
   @Test
+  void shouldCreateNotEqualFields() {
+    // given
+    var field = new SearchConditionField(FIELD, FIELD, true);
+    var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
+
+    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder()
+        .notEqual(List.of(field.getColumnName(), fieldToo.getColumnName()))
+        .build());
+
+    // when
+    List<SearchHandlerScope> resultList = instance.create(ctx);
+
+    // then
+    List<SearchConditionField> fields = resultList.get(0).getNotEqualFields();
+    assertThat(fields).hasSize(2);
+    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
+    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+  }
+
+  @Test
   void shouldCreateEqualFieldsForTextColumns() {
     // given
     var field = new SearchConditionField(FIELD, FIELD, true);

@@ -23,6 +23,7 @@ import static java.util.Collections.unmodifiableList;
 public class SearchConditions {
 
   private final List<String> equal;
+  private final List<String> notEqual;
   private final List<String> startsWith;
   private final List<String> contains;
   private final List<String> in;
@@ -34,6 +35,7 @@ public class SearchConditions {
 
   SearchConditions(
       List<String> equal,
+      List<String> notEqual,
       List<String> startsWith,
       List<String> contains,
       List<String> in,
@@ -43,6 +45,7 @@ public class SearchConditions {
       Integer limit,
       Boolean pagination) {
     this.equal = unmodifiableList(equal);
+    this.notEqual = unmodifiableList(notEqual);
     this.startsWith = unmodifiableList(startsWith);
     this.contains = unmodifiableList(contains);
     this.in = unmodifiableList(in);
@@ -55,6 +58,10 @@ public class SearchConditions {
 
   public List<String> getEqual() {
     return equal;
+  }
+
+  public List<String> getNotEqual() {
+    return notEqual;
   }
 
   public List<String> getStartsWith() {
@@ -77,7 +84,9 @@ public class SearchConditions {
     return between;
   }
 
-  public List<String> getReturningColumns() {return returningColumns;}
+  public List<String> getReturningColumns() {
+    return returningColumns;
+  }
 
   public Integer getLimit() {
     return limit;
