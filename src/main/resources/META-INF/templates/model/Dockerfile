@@ -1,4 +1,4 @@
-FROM ${dockerProxyRegistry}/${globalNexusNamespace}/model-core-base-image-master:1.8.0.2 AS builder
+FROM ${dockerProxyRegistry}/${globalNexusNamespace}/model-core-base-image-master:1.8.0.4 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild
