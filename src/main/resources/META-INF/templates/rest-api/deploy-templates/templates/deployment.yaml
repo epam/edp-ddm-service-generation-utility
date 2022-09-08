@@ -53,11 +53,11 @@ spec:
           {{- if not $.Values.global.disableRequestsLimits }}
           resources:
             limits:
-              cpu: 400m
-              memory: 900Mi
+              cpu: '1'
+              memory: 2Gi
             requests:
-              cpu: 400m
-              memory: 900Mi
+              cpu: '1'
+              memory: 2Gi
           {{- end }}
           volumeMounts:
             - mountPath: /app/config/config.yaml

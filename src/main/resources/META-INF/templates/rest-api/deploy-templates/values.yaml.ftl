@@ -9,7 +9,7 @@ service:
   port: 8080
 
 java:
-  javaOpts: -Xms380m -Xmx380m -Xmn230m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent
+  javaOpts: -Xms1200m -Xmx1200m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent
 
 ingress:
   required: true
