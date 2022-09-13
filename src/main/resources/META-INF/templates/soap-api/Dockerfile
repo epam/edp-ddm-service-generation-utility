@@ -6,12 +6,12 @@ COPY pom.xml settings.xml ./
 COPY src src
 RUN mvn deploy -B --settings settings.xml -npu -nsu -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus:8081/nexus/repository/edp-maven-releases -Dartifactory.username=\$NEXUS_USR -Dartifactory.password=\$NEXUS_PASS -Dartifactory.baseUrl=http://nexus:8081/nexus -Dartifactory.releasesPath=edp-maven-releases
 
-FROM nexus-docker-registry.apps.cicd2.mdtu-ddm.projects.epam.com/mdtu-ddm-edp-cicd/openjdk:11.0.16-jre-slim AS soaplayer
+FROM openjdk:11.0.16-jre-slim AS soaplayer
 WORKDIR /app
 COPY --from=builder /app/forbuild/target/soap-api*.jar application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
-FROM nexus-docker-registry.apps.cicd2.mdtu-ddm.projects.epam.com/mdtu-ddm-edp-cicd/openjdk:11.0.16-jre-slim
+FROM openjdk:11.0.16-jre-slim
 WORKDIR /appF
 COPY --from=soaplayer app/dependencies/ ./
 COPY --from=soaplayer app/spring-boot-loader/ ./
