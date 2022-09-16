@@ -1,7 +1,21 @@
 global:
   disableRequestsLimits: false
+  registry:
+    soapApi:
+      istio:
+        sidecar:
+          enabled: true
+          resources:
+            requests: {}
+            limits: {}
+      container:
+        resources: {}
+        envVars:
+          JAVA_OPTS: "-Xms128m -Xmx128m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent"
   
 name: ${register}-soap-api
+
+podAnnotations: {}
 
 version: 1.1.0
 
@@ -9,9 +23,6 @@ port: 8080
 
 service:
   port: 8080
-
-java:
-  javaOpts: -Xms128m -Xmx128m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent
 
 ingress:
   required: true

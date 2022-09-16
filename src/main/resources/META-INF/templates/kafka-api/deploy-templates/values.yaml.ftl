@@ -1,7 +1,21 @@
 global:
   disableRequestsLimits: false
+  registry:
+    kafkaApi:
+      istio:
+        sidecar:
+          enabled: true
+          resources:
+            requests: {}
+            limits: {}
+      container:
+        resources: {}
+        envVars:
+          JAVA_OPTS: "-Xms1200m -Xmx1200m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent"
 
 name: ${register}-kafka-api
+
+podAnnotations: {}
 
 port: 8080
 
@@ -12,9 +26,6 @@ restApi:
   service:
     name: ${register}-rest-api
     port: 8080
-
-java:
-  javaOpts: -Xms1200m -Xmx1200m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent
 
 kafka:
   service: kafka-cluster-kafka-bootstrap:9093
