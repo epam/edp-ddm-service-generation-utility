@@ -1,15 +1,26 @@
 global:
   disableRequestsLimits: false
+  registry:
+    restApi:
+      istio:
+        sidecar:
+          enabled: true
+          resources:
+            requests: {}
+            limits: {}
+      container:
+        resources: {}
+        envVars:
+          JAVA_OPTS: "-Xms1200m -Xmx1200m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent"
   
 name: ${register}-rest-api
+
+podAnnotations: {}
 
 port: 8080
 
 service:
   port: 8080
-
-java:
-  javaOpts: -Xms1200m -Xmx1200m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent
 
 ingress:
   required: true

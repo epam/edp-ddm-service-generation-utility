@@ -15,9 +15,17 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      {{- if or $.Values.podAnnotations $.Values.global.registry.restApi.istio.sidecar.enabled }}
       annotations:
-        sidecar.istio.io/inject: "true"
+        {{- range $key, $value := $.Values.podAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+        {{- if $.Values.global.registry.restApi.istio.sidecar.enabled }}
         traffic.sidecar.istio.io/excludeOutboundPorts: '5432,6379'
+        sidecar.istio.io/inject: 'true'
+        {{- include "restApi.istioResources" $ | nindent 8 }}
+        {{- end }}
+      {{- end }}
       labels:
         app: {{ $serviceName }}
         version: {{ $.Values.version | squote }}
@@ -52,12 +60,7 @@ spec:
             timeoutSeconds: 5
           {{- if not $.Values.global.disableRequestsLimits }}
           resources:
-            limits:
-              cpu: '1'
-              memory: 2Gi
-            requests:
-              cpu: '1'
-              memory: 2Gi
+            {{- toYaml $.Values.global.registry.restApi.container.resources | nindent 12 }}
           {{- end }}
           volumeMounts:
             - mountPath: /app/config/config.yaml
@@ -86,8 +89,10 @@ spec:
               mountPath: /app/secrets/redis
               readOnly: true
           env:
-            - name: JAVA_OPTS
-              value: {{ $.Values.java.javaOpts }}
+            {{- range $name, $value := $.Values.global.registry.restApi.container.envVars }}
+            - name: {{ $name }}
+              value: {{ $value | quote}}
+            {{- end }}
             - name: DB_URL
               value: {{ $.Values.db.url }}
             - name: DB_NAME
