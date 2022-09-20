@@ -4,6 +4,11 @@ metadata:
   name: soap-api-properties
 data:
   config.yaml: |-
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: 'health, prometheus'    
     rest-api:
       url: {{ .Values.restApi.url }}.{{ .Values.ciProject }}.svc:8080
 

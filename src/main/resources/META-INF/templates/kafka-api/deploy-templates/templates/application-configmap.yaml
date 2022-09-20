@@ -4,6 +4,11 @@ metadata:
   name: kafka-api-properties
 data:
   config.yaml: |-
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: 'health, prometheus'
     data-platform:
       datasource:
         url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}
