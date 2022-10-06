@@ -23,6 +23,7 @@
     <java.version>11</java.version>
     <schemacrawler.version>16.11.5</schemacrawler.version>
     <apache.commons.text.version>1.9</apache.commons.text.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
     <sonar.coverage.exclusions>
       <!-- do not calc coverage for the classes without BL: -->
       **/config/**/*,
@@ -38,6 +39,11 @@
         <version>13.1.0</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${snakeyaml.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
