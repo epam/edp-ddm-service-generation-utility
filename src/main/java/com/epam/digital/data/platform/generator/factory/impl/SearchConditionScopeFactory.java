@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 import com.epam.digital.data.platform.generator.constraints.impl.CompositeConstraintProvider;
 import com.epam.digital.data.platform.generator.factory.AbstractEntityScopeFactory;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
+import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.Field;
@@ -90,6 +91,9 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
     fields.addAll(searchConditions.getStartsWith().stream()
             .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
             .collect(toList()));
+    fields.addAll(searchConditions.getStartsWithArray().stream()
+            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
+            .collect(toList()));
     fields.addAll(searchConditions.getIn().stream()
             .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::getFieldTypeForIn))
             .collect(toList()));
@@ -106,7 +110,6 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
                         mapColumnConditionToField(
                             table, sc, getPropertyName(sc) + "To", this::typeToString)))
             .collect(toList()));
-
     if (TRUE.equals(searchConditions.getPagination())) {
       fields.addAll(of(
           getAuxiliaryField("limit", Integer.class),

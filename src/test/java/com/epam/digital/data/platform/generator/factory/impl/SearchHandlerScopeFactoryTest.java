@@ -266,6 +266,26 @@ class SearchHandlerScopeFactoryTest {
   }
 
   @Test
+  void shouldCreateStartsWithArrayFields() {
+    // given
+    var field = new SearchConditionField(FIELD, FIELD, true);
+    var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
+
+    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder()
+            .startsWithArray(List.of(field.getColumnName(), fieldToo.getColumnName()))
+            .build());
+
+    // when
+    List<SearchHandlerScope> resultList = instance.create(ctx);
+
+    // then
+    List<SearchConditionField> fields = resultList.get(0).getStartsWithArrayFields();
+    assertThat(fields).hasSize(2);
+    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
+    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+  }
+
+  @Test
   void shouldCreateInFields() {
     // given
     var field = new SearchConditionField(FIELD, FIELD, true);

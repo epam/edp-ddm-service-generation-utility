@@ -25,6 +25,7 @@ public class SearchConditions {
   private final List<String> equal;
   private final List<String> notEqual;
   private final List<String> startsWith;
+  private final List<String> startsWithArray;
   private final List<String> contains;
   private final List<String> in;
   private final List<String> notIn;
@@ -37,6 +38,7 @@ public class SearchConditions {
       List<String> equal,
       List<String> notEqual,
       List<String> startsWith,
+      List<String> startsWithArray,
       List<String> contains,
       List<String> in,
       List<String> notIn,
@@ -47,6 +49,7 @@ public class SearchConditions {
     this.equal = unmodifiableList(equal);
     this.notEqual = unmodifiableList(notEqual);
     this.startsWith = unmodifiableList(startsWith);
+    this.startsWithArray = unmodifiableList(startsWithArray);
     this.contains = unmodifiableList(contains);
     this.in = unmodifiableList(in);
     this.notIn = unmodifiableList(notIn);
@@ -66,6 +69,10 @@ public class SearchConditions {
 
   public List<String> getStartsWith() {
     return startsWith;
+  }
+
+  public List<String> getStartsWithArray() {
+    return startsWithArray;
   }
 
   public List<String> getContains() {

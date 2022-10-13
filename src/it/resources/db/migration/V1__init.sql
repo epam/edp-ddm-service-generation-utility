@@ -34,7 +34,28 @@ values (1, 'searchCondition', 'pd_processing_consent_2',
         ),
         (7, 'anotherType', 'withoutLimit',
         'equalColumn', 'person_pass_number'
-        );
+        ),
+       (8, 'searchCondition', 'pd_processing_consent_2',
+        'startsWithArrayColumn', 'person_full_name'
+       );
+
+--changeset platform:table-ddm_rls_metadata
+CREATE TABLE ddm_rls_metadata
+(
+    rls_id          INTEGER NOT NULL,
+    name            TEXT                                     NOT NULL,
+    type            TEXT                                     NOT NULL,
+    jwt_attribute   TEXT                                     NOT NULL,
+    check_column    TEXT                                     NOT NULL,
+    check_table     TEXT                                     NOT NULL,
+    created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()   NOT NULL,
+    CONSTRAINT pk_ddm_rls_metadata PRIMARY KEY (rls_id)
+);
+
+insert into ddm_rls_metadata (rls_id, name, type, jwt_attribute, check_table, check_column)
+values (1, 'name1', 'read', 'katottg', 'table1', 'col1'),
+       (2, 'name2', 'read', 'katottg', 'table2', 'col2'),
+       (3, 'name3', 'write', 'katottg', 'table3', 'col3');
 
 --- ddm_role:
 CREATE TYPE type_perm AS ENUM ('S','I','U','D');

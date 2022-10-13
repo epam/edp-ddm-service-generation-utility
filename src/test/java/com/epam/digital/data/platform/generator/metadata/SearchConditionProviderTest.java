@@ -16,15 +16,7 @@
 
 package com.epam.digital.data.platform.generator.metadata;
 
-import static com.epam.digital.data.platform.generator.metadata.SearchConditionProvider.CONTAINS_ATTRIBUTE_NAME;
-import static com.epam.digital.data.platform.generator.metadata.SearchConditionProvider.EQUAL_ATTRIBUTE_NAME;
-import static com.epam.digital.data.platform.generator.metadata.SearchConditionProvider.EXPOSE;
-import static com.epam.digital.data.platform.generator.metadata.SearchConditionProvider.EXPOSED_CHANGE_NAME;
-import static com.epam.digital.data.platform.generator.metadata.SearchConditionProvider.LIMIT_ATTRIBUTE_NAME;
-import static com.epam.digital.data.platform.generator.metadata.SearchConditionProvider.SEARCH_CONDITION_CHANGE_TYPE;
-import static com.epam.digital.data.platform.generator.metadata.SearchConditionProvider.SEARCH_CONDITION_COLUMN_ATTRIBUTE;
-import static com.epam.digital.data.platform.generator.metadata.SearchConditionProvider.STARTS_WITH_ATTRIBUTE_NAME;
-import static com.epam.digital.data.platform.generator.metadata.SearchConditionProvider.TREMBITA;
+import static com.epam.digital.data.platform.generator.metadata.SearchConditionProvider.*;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -45,6 +37,9 @@ class SearchConditionProviderTest {
   @Mock
   private MetadataRepository metadataRepository;
 
+  @Mock
+  private RlsMetadataRepository rlsMetadataRepository;
+
   @Nested
   class FindFor {
 
@@ -53,12 +48,13 @@ class SearchConditionProviderTest {
 
     @BeforeEach
     public void setUp() {
-      setupSearchConditionsFound(generateMetadata());
+      setupSearchConditionsFound(generateMetadata(), generateRlsMetadata());
     }
 
-    private void setupSearchConditionsFound(List<Metadata> metadata) {
+    private void setupSearchConditionsFound(List<Metadata> metadata, List<RlsMetadata> rlsMetadata) {
       given(metadataRepository.findAll()).willReturn(metadata);
-      instance = new SearchConditionProvider(new MetadataFacade(metadataRepository));
+      given(rlsMetadataRepository.findAll()).willReturn(rlsMetadata);
+      instance = new SearchConditionProvider(new MetadataFacade(metadataRepository), new RlsMetadataFacade(rlsMetadataRepository));
     }
 
     private List<Metadata> generateMetadata() {
@@ -77,7 +73,16 @@ class SearchConditionProviderTest {
               "whatever6"),
           new Metadata(7L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, LIMIT_ATTRIBUTE_NAME, "7"),
           new Metadata(8L, CHANGE_NAME, TABLE_NAME, SEARCH_CONDITION_COLUMN_ATTRIBUTE, "alias1"),
-          new Metadata(9L, CHANGE_NAME, TABLE_NAME, SEARCH_CONDITION_COLUMN_ATTRIBUTE, "alias2")
+          new Metadata(9L, CHANGE_NAME, TABLE_NAME, SEARCH_CONDITION_COLUMN_ATTRIBUTE, "alias2"),
+          new Metadata(10L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, STARTS_WITH_ARRAY_ATTRIBUTE_NAME,
+                      "whatever10")
+      );
+    }
+
+    private List<RlsMetadata> generateRlsMetadata() {
+      return List.of(
+              new RlsMetadata(1L, "test1", "read", "katottg", "col1", "table1"),
+              new RlsMetadata(2L, "test2", "read", "katottg", "col2", "table2")
       );
     }
 
@@ -97,6 +102,14 @@ class SearchConditionProviderTest {
       assertThat(list).hasSize(2);
       assertThat(list.get(0)).isEqualTo("whatever3");
       assertThat(list.get(1)).isEqualTo("whatever4");
+    }
+
+    @Test
+    void shouldCollectStartsWithArraySCByChangeName() {
+      var list = instance.findFor(CHANGE_NAME).getStartsWithArray();
+
+      assertThat(list).hasSize(1);
+      assertThat(list.get(0)).isEqualTo("whatever10");
     }
 
     @Test
@@ -124,7 +137,7 @@ class SearchConditionProviderTest {
 
     @Test
     void shouldReturnEmptyListWhenNoSCDefined() {
-      setupSearchConditionsFound(emptyList());
+      setupSearchConditionsFound(emptyList(), emptyList());
 
       assertThat(instance.findFor(CHANGE_NAME).getEqual()).isEmpty();
       assertThat(instance.findFor(CHANGE_NAME).getStartsWith()).isEmpty();
@@ -133,7 +146,7 @@ class SearchConditionProviderTest {
 
     @Test
     void shouldReturnLimitNullWhenNoLimitInSCDefined() {
-      setupSearchConditionsFound(emptyList());
+      setupSearchConditionsFound(emptyList(), emptyList());
 
       assertThat(instance.findFor(CHANGE_NAME).getLimit()).isNull();
     }
@@ -154,12 +167,13 @@ class SearchConditionProviderTest {
 
     @BeforeEach
     public void setUp() {
-      setupSearchConditionsFound(generateMetadata());
+      setupSearchConditionsFound(generateMetadata(), generateRlsMetadata());
     }
 
-    private void setupSearchConditionsFound(List<Metadata> metadata) {
+    private void setupSearchConditionsFound(List<Metadata> metadata, List<RlsMetadata> rlsMetadata) {
       given(metadataRepository.findAll()).willReturn(metadata);
-      instance = new SearchConditionProvider(new MetadataFacade(metadataRepository));
+      given(rlsMetadataRepository.findAll()).willReturn(rlsMetadata);
+      instance = new SearchConditionProvider(new MetadataFacade(metadataRepository), new RlsMetadataFacade(rlsMetadataRepository));
     }
 
     private List<Metadata> generateMetadata() {
@@ -177,6 +191,13 @@ class SearchConditionProviderTest {
           new Metadata(1L, VIEW_NAME, TABLE_1_NAME, COLUMN_2, COLUMN_2),
           new Metadata(1L, VIEW_NAME, TABLE_2_NAME, COLUMN_1, VIEW_COLUMN_1),
           new Metadata(1L, VIEW_NAME, TABLE_2_NAME, COLUMN_2, VIEW_COLUMN_2)
+      );
+    }
+
+    private List<RlsMetadata> generateRlsMetadata() {
+      return List.of(
+              new RlsMetadata(1L, "test1", "read", "katottg", "col1", "table1"),
+              new RlsMetadata(2L, "test2", "read", "katottg", "col2", "table2")
       );
     }
 
@@ -198,18 +219,26 @@ class SearchConditionProviderTest {
 
     @BeforeEach
     public void setUp() {
-      setupSearchConditionsFound(generateMetadata());
+      setupSearchConditionsFound(generateMetadata(), generateRlsMetadata());
     }
 
-    private void setupSearchConditionsFound(List<Metadata> metadata) {
+    private void setupSearchConditionsFound(List<Metadata> metadata, List<RlsMetadata> rlsMetadata) {
       given(metadataRepository.findAll()).willReturn(metadata);
-      instance = new SearchConditionProvider(new MetadataFacade(metadataRepository));
+      given(rlsMetadataRepository.findAll()).willReturn(rlsMetadata);
+      instance = new SearchConditionProvider(new MetadataFacade(metadataRepository), new RlsMetadataFacade(rlsMetadataRepository));
     }
 
     private List<Metadata> generateMetadata() {
       return List.of(
           new Metadata(1L, EXPOSE, TREMBITA, EXPOSED_CHANGE_NAME, EXPOSED_VIEW),
           new Metadata(2L, EXPOSE, "not_" + TREMBITA, EXPOSED_CHANGE_NAME, SOME_VIEW_NAME)
+      );
+    }
+
+    private List<RlsMetadata> generateRlsMetadata() {
+      return List.of(
+              new RlsMetadata(1L, "test1", "read", "katottg", "col1", "table1"),
+              new RlsMetadata(2L, "test2", "read", "katottg", "col2", "table2")
       );
     }
 

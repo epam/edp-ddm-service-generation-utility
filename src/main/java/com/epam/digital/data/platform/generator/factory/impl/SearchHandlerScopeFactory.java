@@ -80,6 +80,10 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
         sc.getStartsWith().stream()
             .map(x -> new SearchConditionField(getPropertyName(x), x, true))
             .collect(toList());
+    var startsWithArrayFields =
+            sc.getStartsWithArray().stream()
+                    .map(x -> new SearchConditionField(getPropertyName(x), x, true))
+                    .collect(toList());
     var inFields =
         sc.getIn().stream()
             .map(
@@ -133,6 +137,7 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     scope.setNotEqualFields(notEqualFields);
     scope.setContainsFields(containsFields);
     scope.setStartsWithFields(startsWithFields);
+    scope.setStartsWithArrayFields(startsWithArrayFields);
     scope.setInFields(inFields);
     scope.setNotInFields(notInFields);
     scope.setBetweenFields(betweenFields);
@@ -141,6 +146,7 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     scope.setNestedSingleSelectableGroups(singleElementNestedGroups);
     scope.setNestedListSelectableGroups(listElementNestedGroups);
     scope.setPagination(sc.getPagination());
+    scope.setRls(searchConditionProvider.getRlsMetadata(table.getName()));
     return scope;
   }
 

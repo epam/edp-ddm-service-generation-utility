@@ -85,6 +85,7 @@ public class QueryHandlerScopeFactory extends CrudAbstractScope<QueryHandlerScop
         groupColumnsWithSelectableFields(singleElementNestedColumns, nestedEntitiesMap, context));
     scope.setNestedListSelectableGroups(
         groupColumnsWithSelectableFields(listElementNestedColumns, nestedEntitiesMap, context));
+    scope.setRls(nestedReadProvider.getRlsMetadata(table.getName()));
     return scope;
   }
 

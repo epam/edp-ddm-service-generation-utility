@@ -18,6 +18,7 @@ package com.epam.digital.data.platform.generator.factory.impl;
 
 import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;
 
+import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.ServiceScope;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,12 @@ import com.epam.digital.data.platform.generator.scope.SearchServiceScope;
 
 @Component
 public class SearchServiceScopeFactory extends SearchConditionsAbstractScope<ServiceScope> {
+
+  private final SearchConditionProvider searchConditionProvider;
+
+  public SearchServiceScopeFactory(SearchConditionProvider searchConditionProvider) {
+    this.searchConditionProvider = searchConditionProvider;
+  }
 
   @Override
   protected ServiceScope map(Table table, Context context) {

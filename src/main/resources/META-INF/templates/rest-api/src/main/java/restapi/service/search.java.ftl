@@ -12,8 +12,10 @@ public class ${className}
             ${schemaName}SearchConditions,
             ${schemaName}> {
 
+
   public ${schemaName}SearchService(
       ${schemaName}SearchHandler handler) {
     super(handler);
   }
+
 }

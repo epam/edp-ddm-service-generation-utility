@@ -36,6 +36,7 @@ public class SearchConditionProvider {
   static final String EQUAL_ATTRIBUTE_NAME = "equalColumn";
   static final String NOT_EQUAL_ATTRIBUTE_NAME = "notEqualColumn";
   static final String STARTS_WITH_ATTRIBUTE_NAME = "startsWithColumn";
+  static final String STARTS_WITH_ARRAY_ATTRIBUTE_NAME = "startsWithArrayColumn";
   static final String CONTAINS_ATTRIBUTE_NAME = "containsColumn";
   static final String IN_ATTRIBUTE_NAME = "inColumn";
   static final String NOT_IN_ATTRIBUTE_NAME = "notInColumn";
@@ -49,8 +50,11 @@ public class SearchConditionProvider {
 
   private final MetadataFacade metadataFacade;
 
-  public SearchConditionProvider(MetadataFacade metadataFacade) {
+  private final RlsMetadataFacade rlsMetadataFacade;
+
+  public SearchConditionProvider(MetadataFacade metadataFacade, RlsMetadataFacade rlsMetadataFacade) {
     this.metadataFacade = metadataFacade;
+    this.rlsMetadataFacade = rlsMetadataFacade;
   }
 
   public SearchConditions findFor(String name) {
@@ -68,6 +72,7 @@ public class SearchConditionProvider {
         .equal(groupedByName.getOrDefault(EQUAL_ATTRIBUTE_NAME, emptyList()))
         .notEqual(groupedByName.getOrDefault(NOT_EQUAL_ATTRIBUTE_NAME, emptyList()))
         .startsWith(groupedByName.getOrDefault(STARTS_WITH_ATTRIBUTE_NAME, emptyList()))
+        .startsWithArray(groupedByName.getOrDefault(STARTS_WITH_ARRAY_ATTRIBUTE_NAME, emptyList()))
         .contains(groupedByName.getOrDefault(CONTAINS_ATTRIBUTE_NAME, emptyList()))
         .in(groupedByName.getOrDefault(IN_ATTRIBUTE_NAME, emptyList()))
         .notIn(groupedByName.getOrDefault(NOT_IN_ATTRIBUTE_NAME, emptyList()))
@@ -108,5 +113,10 @@ public class SearchConditionProvider {
         .findByChangeTypeAndChangeNameAndName(EXPOSE, option.getValue(), EXPOSED_CHANGE_NAME)
         .map(Metadata::getValue)
         .collect(Collectors.toSet());
+  }
+
+  public RlsMetadata getRlsMetadata(String tableName) {
+    return rlsMetadataFacade.findByTypeAndCheckTable(RlsMetadataFacade.METADATA_TYPE_READ, tableName)
+            .findFirst().orElse(null);
   }
 }

@@ -11,12 +11,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 import ${basePackage}.model.dto.${schemaName};
 import ${basePackage}.model.dto.${schemaName}SearchConditions;
+<#if rls??>
+import com.epam.digital.data.platform.model.core.kafka.Request;
+import com.epam.digital.data.platform.restapi.core.exception.ForbiddenOperationException;
+import com.epam.digital.data.platform.restapi.core.service.JwtInfoProvider;
+import com.epam.digital.data.platform.starter.security.exception.JwtClaimIncorrectAttributeException;
+import com.epam.digital.data.platform.starter.security.jwt.JwtClaimsUtils;
+</#if>
 
 @Component
 public class ${className}
     extends AbstractSearchHandler<
         ${schemaName}SearchConditions,
         ${schemaName}> {
+
+
+<#if rls??>
+
+    protected JwtInfoProvider jwtInfoProvider;
+
+    public ${className}(
+    JwtInfoProvider jwtInfoProvider) {
+    super();
+        this.jwtInfoProvider =  jwtInfoProvider;
+    }
+</#if>
 
   @Override
   protected Condition whereClause(${schemaName}SearchConditions searchConditions) {
@@ -35,6 +54,20 @@ public class ${className}
   <#list startsWithFields as field>
     if (searchConditions.get${field.name?cap_first}() != null) {
       c = c.and(DSL.field("${field.columnName}").startsWith<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
+    }
+  </#list>
+  <#list startsWithArrayFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      var s = searchConditions.get${field.name?cap_first}().split(",");
+
+      var inner = DSL.noCondition();
+      for (String e: s) {
+        inner = inner.or(DSL.field("${field.columnName}")
+            .startsWith<#if field.ignoreCase>IgnoreCase</#if>(e)
+            .toString());
+      }
+
+      c = c.and(inner);
     }
   </#list>
   <#list containsFields as field>
@@ -169,6 +202,23 @@ public class ${className}
   @Override
   public Integer offset(${schemaName}SearchConditions searchConditions) {
     return searchConditions.getOffset();
+  }
+  </#if>
+
+  <#if rls??>
+  @Override
+  public Condition getCommonCondition(Request<${schemaName}SearchConditions> input) {
+    var condition = DSL.noCondition();
+      try {
+            for (String d : JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")) {
+              condition = condition.or(DSL.field("${rls.checkColumn}").startsWith(d));
+            }
+      } catch (JwtClaimIncorrectAttributeException e) {
+        var claims = jwtInfoProvider.getUserClaims(input);
+        throw new ForbiddenOperationException("User <" + claims.getDrfo() + ":" + claims.getEdrpou() +
+          "> dont have the required security attribute ${rls.jwtAttribute}");
+      }
+    return condition;
   }
   </#if>
 }
