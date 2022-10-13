@@ -26,4 +26,5 @@ public class ${schemaName}SearchService extends GenericService<Request<${schemaN
   protected TypeReference type() {
       return new TypeReference<Response<List<${schemaName}>>>() {};
   }
+
 }

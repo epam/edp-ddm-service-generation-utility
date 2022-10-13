@@ -16,9 +16,12 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
+import com.epam.digital.data.platform.generator.model.Context;
+import com.epam.digital.data.platform.generator.scope.CreateServiceScope;
 import com.epam.digital.data.platform.generator.scope.UpdateServiceScope;
 import org.springframework.stereotype.Component;
 import com.epam.digital.data.platform.generator.factory.AbstractServiceScope;
+import schemacrawler.schema.Table;
 
 @Component
 public class UpdateServiceScopeFactory extends AbstractServiceScope<UpdateServiceScope> {
@@ -26,6 +29,13 @@ public class UpdateServiceScopeFactory extends AbstractServiceScope<UpdateServic
   @Override
   protected UpdateServiceScope instantiate() {
     return new UpdateServiceScope();
+  }
+
+  @Override
+  protected UpdateServiceScope map(Table table, Context context) {
+    var scope = super.map(table, context);
+    scope.setRls(getRlsMetadata(table.getName()));
+    return scope;
   }
 
   @Override

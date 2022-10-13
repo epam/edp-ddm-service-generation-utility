@@ -25,6 +25,7 @@ public class SearchConditionsBuilder {
   private List<String> equal = emptyList();
   private List<String> notEqual = emptyList();
   private List<String> startsWith = emptyList();
+  private List<String> startsWithArray = emptyList();
   private List<String> contains = emptyList();
   private List<String> in = emptyList();
   private List<String> notIn = emptyList();
@@ -45,6 +46,10 @@ public class SearchConditionsBuilder {
 
   public SearchConditionsBuilder startsWith(List<String> startsWith) {
     this.startsWith = startsWith;
+    return this;
+  }
+  public SearchConditionsBuilder startsWithArray(List<String> startsWithArray) {
+    this.startsWithArray = startsWithArray;
     return this;
   }
 
@@ -85,6 +90,6 @@ public class SearchConditionsBuilder {
 
   public SearchConditions build() {
     return new SearchConditions(
-        equal, notEqual, startsWith, contains, in, notIn, between, returningColumns, limit, pagination);
+        equal, notEqual, startsWith, startsWithArray, contains, in, notIn, between, returningColumns, limit, pagination);
   }
 }

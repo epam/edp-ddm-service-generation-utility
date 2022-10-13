@@ -37,6 +37,20 @@ public class ${className}
       c = c.and(DSL.field("${field.columnName}").startsWith<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
     }
   </#list>
+  <#list startsWithArrayFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      var s = searchConditions.get${field.name?cap_first}().split(",");
+
+      var inner = DSL.noCondition();
+      for (String e: s) {
+        inner = inner.or(DSL.field("${field.columnName}")
+          .startsWith<#if field.ignoreCase>IgnoreCase</#if>(e)
+          .toString());
+      }
+
+      c = c.and(inner);
+    }
+  </#list>
   <#list containsFields as field>
     if (searchConditions.get${field.name?cap_first}() != null) {
       c = c.and(DSL.field("${field.columnName}").contains<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));

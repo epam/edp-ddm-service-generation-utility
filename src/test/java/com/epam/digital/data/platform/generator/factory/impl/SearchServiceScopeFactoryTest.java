@@ -20,18 +20,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SEARCH_SCHEMA_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getContext;
 
+import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.scope.ServiceScope;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 class SearchServiceScopeFactoryTest {
 
   private SearchServiceScopeFactory instance;
 
+  @Mock
+  private SearchConditionProvider searchConditionProvider;
+
   @BeforeEach
   void setup() {
-    instance = new SearchServiceScopeFactory();
+    instance = new SearchServiceScopeFactory(searchConditionProvider);
   }
 
   @Test

@@ -16,12 +16,18 @@
 
 package com.epam.digital.data.platform.generator.factory;
 
+import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
+import com.epam.digital.data.platform.generator.metadata.RlsMetadataFacade;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.ServiceScope;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import schemacrawler.schema.Table;
 
 public abstract class AbstractServiceScope<T extends ServiceScope> extends CrudAbstractScope<T> {
+
+  @Autowired
+  private RlsMetadataFacade rlsMetadataFacade;
 
   protected abstract T instantiate();
 
@@ -41,5 +47,10 @@ public abstract class AbstractServiceScope<T extends ServiceScope> extends CrudA
     String requestType = getOperation() + "-" + toHyphenTableName(table);
     scope.setRequestType(requestType);
     return scope;
+  }
+
+  protected RlsMetadata getRlsMetadata(String tableName) {
+    return rlsMetadataFacade.findByTypeAndCheckTable(RlsMetadataFacade.METADATA_TYPE_WRITE, tableName)
+            .findFirst().orElse(null);
   }
 }

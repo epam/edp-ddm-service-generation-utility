@@ -16,6 +16,7 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
+import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.model.template.NestedSelectableFieldsGroup;
 import com.epam.digital.data.platform.generator.model.template.SelectableField;
 
@@ -33,6 +34,8 @@ public class QueryHandlerScope extends ClassScope {
   private List<SelectableField> simpleSelectableFields;
   private Map<String, NestedSelectableFieldsGroup> nestedSingleSelectableGroups;
   private Map<String, NestedSelectableFieldsGroup> nestedListSelectableGroups;
+
+  private RlsMetadata rls;
 
   public String getSchemaName() {
     return schemaName;
@@ -106,5 +109,13 @@ public class QueryHandlerScope extends ClassScope {
   public void setNestedListSelectableGroups(
       Map<String, NestedSelectableFieldsGroup> nestedListSelectableGroups) {
     this.nestedListSelectableGroups = nestedListSelectableGroups;
+  }
+
+  public RlsMetadata getRls() {
+    return rls;
+  }
+
+  public void setRls(RlsMetadata rls) {
+    this.rls = rls;
   }
 }

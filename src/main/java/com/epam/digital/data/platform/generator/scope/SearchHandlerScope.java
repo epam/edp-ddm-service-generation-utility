@@ -19,6 +19,7 @@ package com.epam.digital.data.platform.generator.scope;
 import java.util.List;
 import java.util.Map;
 
+import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.model.template.NestedSelectableFieldsGroup;
 import com.epam.digital.data.platform.generator.model.template.SelectableField;
 import com.epam.digital.data.platform.generator.model.template.SearchConditionField;
@@ -31,6 +32,7 @@ public class SearchHandlerScope extends ClassScope {
   private List<SearchConditionField> equalFields;
   private List<SearchConditionField> notEqualFields;
   private List<SearchConditionField> startsWithFields;
+  private List<SearchConditionField> startsWithArrayFields;
   private List<SearchConditionField> containsFields;
   private List<SearchConditionField> inFields;
   private List<SearchConditionField> notInFields;
@@ -40,6 +42,8 @@ public class SearchHandlerScope extends ClassScope {
   private Boolean pagination;
   private Map<String, NestedSelectableFieldsGroup> nestedSingleSelectableGroups;
   private Map<String, NestedSelectableFieldsGroup> nestedListSelectableGroups;
+
+  private RlsMetadata rls;
 
   public String getSchemaName() {
     return schemaName;
@@ -88,6 +92,14 @@ public class SearchHandlerScope extends ClassScope {
 
   public void setStartsWithFields(List<SearchConditionField> startsWithFields) {
     this.startsWithFields = startsWithFields;
+  }
+
+  public List<SearchConditionField> getStartsWithArrayFields() {
+    return startsWithArrayFields;
+  }
+
+  public void setStartsWithArrayFields(List<SearchConditionField> startsWithArrayFields) {
+    this.startsWithArrayFields = startsWithArrayFields;
   }
 
   public List<SearchConditionField> getContainsFields() {
@@ -160,5 +172,13 @@ public class SearchHandlerScope extends ClassScope {
 
   public void setNestedListSelectableGroups(Map<String, NestedSelectableFieldsGroup> nestedListSelectableGroups) {
     this.nestedListSelectableGroups = nestedListSelectableGroups;
+  }
+
+  public RlsMetadata getRls() {
+    return rls;
+  }
+
+  public void setRls(RlsMetadata rls) {
+    this.rls = rls;
   }
 }

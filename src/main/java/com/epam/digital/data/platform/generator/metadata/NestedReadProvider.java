@@ -30,8 +30,11 @@ public class NestedReadProvider {
 
   private final MetadataFacade metadataFacade;
 
-  public NestedReadProvider(MetadataFacade metadataFacade) {
+  private final RlsMetadataFacade rlsMetadataFacade;
+
+  public NestedReadProvider(MetadataFacade metadataFacade, RlsMetadataFacade rlsMetadataFacade) {
     this.metadataFacade = metadataFacade;
+    this.rlsMetadataFacade = rlsMetadataFacade;
   }
 
   public Map<String, NestedReadEntity> findFor(String tableName) {
@@ -39,5 +42,10 @@ public class NestedReadProvider {
         .findByChangeTypeAndChangeName(NESTED_READ_CHANGE_TYPE, tableName)
         .map(metadata -> new NestedReadEntity(tableName, metadata.getValue(), metadata.getName()))
         .collect(toMap(NestedReadEntity::getColumn, Function.identity(), (el1, el2) -> el2));
+  }
+
+  public RlsMetadata getRlsMetadata(String tableName) {
+    return rlsMetadataFacade.findByTypeAndCheckTable(RlsMetadataFacade.METADATA_TYPE_READ, tableName)
+            .findFirst().orElse(null);
   }
 }

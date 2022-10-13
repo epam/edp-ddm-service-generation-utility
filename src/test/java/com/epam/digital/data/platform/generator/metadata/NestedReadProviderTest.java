@@ -40,9 +40,12 @@ class NestedReadProviderTest {
   @Mock
   private MetadataFacade metadataFacade;
 
+  @Mock
+  private RlsMetadataFacade rlsMetadataFacade;
+
   @BeforeEach
   void beforeEach() {
-    nestedReadProvider = new NestedReadProvider(metadataFacade);
+    nestedReadProvider = new NestedReadProvider(metadataFacade, rlsMetadataFacade);
   }
 
   @Test
