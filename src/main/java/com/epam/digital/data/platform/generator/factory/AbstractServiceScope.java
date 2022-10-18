@@ -20,7 +20,7 @@ import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.metadata.RlsMetadataFacade;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.ServiceScope;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import schemacrawler.schema.Table;
 
@@ -39,7 +39,7 @@ public abstract class AbstractServiceScope<T extends ServiceScope> extends CrudA
 
     T scope = instantiate();
 
-    scope.setClassName(modelName + StringUtils.capitalize(getOperation()) + "Service");
+    scope.setClassName(modelName + CaseUtils.toCamelCase(getOperation(), true, '-') + "Service");
     scope.setSchemaName(modelName);
     scope.setPkName(getPkName(table));
     scope.setPkType(getPkTypeName(table));

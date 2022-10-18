@@ -18,7 +18,7 @@ package com.epam.digital.data.platform.generator.factory;
 
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.ListenerScope;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.CaseUtils;
 import schemacrawler.schema.Table;
 
 public abstract class AbstractCommandListenerScopeFactory extends CrudAbstractScope<ListenerScope> {
@@ -30,14 +30,16 @@ public abstract class AbstractCommandListenerScopeFactory extends CrudAbstractSc
   @Override
   protected ListenerScope map(Table table, Context context) {
     var scope = new ListenerScope();
-    scope.setClassName(getSchemaName(table) + StringUtils.capitalize(getOperation()) + "Listener");
+    scope.setClassName(
+        getSchemaName(table) + CaseUtils.toCamelCase(getOperation(), true, '-') + "Listener");
     scope.setSchemaName(getSchemaName(table));
     scope.setPkType(getPkTypeName(table));
 
     scope.setOperation(getOperation());
     scope.setRootOfTopicName(toHyphenTableName(table));
     scope.setOutputType(getOutputType());
-    scope.setHandlerName(getSchemaName(table) + StringUtils.capitalize(getOperation()) + "CommandHandler");
+    scope.setHandlerName(
+        getSchemaName(table) + CaseUtils.toCamelCase(getOperation(), true, '-') + "CommandHandler");
 
     return scope;
   }

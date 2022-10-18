@@ -19,6 +19,7 @@ package com.epam.digital.data.platform.generator.factory;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
+import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
 import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
@@ -36,12 +37,15 @@ public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScop
 
   protected final PartialUpdateProvider partialUpdateProvider;
   protected final NestedStructureProvider nestedStructureProvider;
+  protected final BulkLoadInfoProvider bulkLoadInfoProvider;
 
-  protected AbstractApplicationYamlScope(
+  public AbstractApplicationYamlScope(
       PartialUpdateProvider partialUpdateProvider,
-      NestedStructureProvider nestedStructureProvider) {
+      NestedStructureProvider nestedStructureProvider,
+      BulkLoadInfoProvider bulkLoadInfoProvider) {
     this.partialUpdateProvider = partialUpdateProvider;
     this.nestedStructureProvider = nestedStructureProvider;
+    this.bulkLoadInfoProvider = bulkLoadInfoProvider;
   }
 
   protected abstract T instantiate();
@@ -50,6 +54,7 @@ public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScop
   public List<T> create(Context context) {
     var rootTopics = new ArrayList<String>();
     rootTopics.addAll(getCudTopics(context));
+    rootTopics.addAll(getBulkLoadTopics());
     rootTopics.addAll(getPartialUpdateTopics(context));
     rootTopics.addAll(getNestedTopics());
     if (!context.getAsyncData().getAsyncTables().isEmpty()) {
@@ -79,6 +84,12 @@ public abstract class AbstractApplicationYamlScope<T extends ApplicationYamlScop
         .map(this::toHyphenTableName)
         .flatMap(topicRoot -> CUD_REQUESTS.stream()
             .map(request -> request + "-" + topicRoot))
+        .collect(toList());
+  }
+
+  private List<String> getBulkLoadTopics() {
+    return bulkLoadInfoProvider.getTablesWithBulkLoad().stream()
+        .map(tableName -> "create-list-" + toHyphenTableName(tableName))
         .collect(toList());
   }
 
