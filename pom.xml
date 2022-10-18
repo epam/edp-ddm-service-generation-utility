@@ -21,6 +21,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
+    <spring-core.version>5.3.23</spring-core.version>
     <schemacrawler.version>16.11.5</schemacrawler.version>
     <apache.commons.text.version>1.9</apache.commons.text.version>
     <snakeyaml.version>1.33</snakeyaml.version>
@@ -44,6 +45,11 @@
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
         <version>${snakeyaml.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring-core.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
