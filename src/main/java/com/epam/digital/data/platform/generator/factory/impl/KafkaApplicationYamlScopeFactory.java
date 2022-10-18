@@ -17,6 +17,7 @@
 package com.epam.digital.data.platform.generator.factory.impl;
 
 import com.epam.digital.data.platform.generator.factory.AbstractApplicationYamlScope;
+import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
 import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.scope.KafkaApplicationYamlScope;
@@ -28,8 +29,9 @@ public class KafkaApplicationYamlScopeFactory
 
   public KafkaApplicationYamlScopeFactory(
       PartialUpdateProvider partialUpdateProvider,
-      NestedStructureProvider nestedStructureProvider) {
-    super(partialUpdateProvider, nestedStructureProvider);
+      NestedStructureProvider nestedStructureProvider,
+      BulkLoadInfoProvider bulkLoadInfoProvider) {
+    super(partialUpdateProvider, nestedStructureProvider, bulkLoadInfoProvider);
   }
 
   @Override

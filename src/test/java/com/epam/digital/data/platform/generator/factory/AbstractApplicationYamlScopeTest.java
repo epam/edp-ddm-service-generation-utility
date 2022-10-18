@@ -24,6 +24,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
+import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
 import com.epam.digital.data.platform.generator.metadata.NestedNode;
 import com.epam.digital.data.platform.generator.metadata.NestedStructure;
 import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
@@ -57,12 +58,14 @@ class AbstractApplicationYamlScopeTest {
   PartialUpdateProvider partialUpdateProvider;
   @Mock
   NestedStructureProvider nestedStructureProvider;
+  @Mock
+  BulkLoadInfoProvider bulkLoadInfoProvider;
 
   private final Context context = getContext();
 
   @BeforeEach
   void setup() {
-    instance = new TestApplicationYamlScope(partialUpdateProvider, nestedStructureProvider);
+    instance = new TestApplicationYamlScope(partialUpdateProvider, nestedStructureProvider, bulkLoadInfoProvider);
   }
 
   @Test
@@ -152,12 +155,13 @@ class AbstractApplicationYamlScopeTest {
             .contains("upsert-nesting-flow-my-table-nested");
   }
 
-  private class TestApplicationYamlScope
+  private static class TestApplicationYamlScope
       extends AbstractApplicationYamlScope<RestApplicationYamlScope> {
 
     private TestApplicationYamlScope(PartialUpdateProvider partialUpdateProvider,
-                                     NestedStructureProvider nestedStructureProvider) {
-      super(partialUpdateProvider, nestedStructureProvider);
+                                     NestedStructureProvider nestedStructureProvider,
+                                     BulkLoadInfoProvider bulkLoadInfoProvider) {
+      super(partialUpdateProvider, nestedStructureProvider, bulkLoadInfoProvider);
     }
 
     @Override

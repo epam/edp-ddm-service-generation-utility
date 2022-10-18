@@ -24,6 +24,7 @@ public class ModifyControllerScope extends ControllerScope {
   private List<String> createRoles = emptyList();
   private List<String> updateRoles = emptyList();
   private List<String> deleteRoles = emptyList();
+  private boolean bulkLoadEnabled;
 
   public List<String> getCreateRoles() {
     return createRoles;
@@ -47,5 +48,13 @@ public class ModifyControllerScope extends ControllerScope {
 
   public void setDeleteRoles(List<String> deleteRoles) {
     this.deleteRoles = deleteRoles;
+  }
+
+  public boolean isBulkLoadEnabled() {
+    return bulkLoadEnabled;
+  }
+
+  public void setBulkLoadEnabled(boolean bulkLoadEnabled) {
+    this.bulkLoadEnabled = bulkLoadEnabled;
   }
 }

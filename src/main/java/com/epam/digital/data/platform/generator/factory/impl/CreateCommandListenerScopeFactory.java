@@ -20,7 +20,7 @@ import com.epam.digital.data.platform.generator.factory.AbstractCommandListenerS
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateCommandListenerScopyFactory extends AbstractCommandListenerScopeFactory {
+public class CreateCommandListenerScopeFactory extends AbstractCommandListenerScopeFactory {
 
   @Override
   protected String getOperation() {
@@ -34,6 +34,6 @@ public class CreateCommandListenerScopyFactory extends AbstractCommandListenerSc
 
   @Override
   public String getPath() {
-    return "kafka-api/src/main/java/kafkaapi/listener/listener.java.ftl";
+    return "kafka-api/src/main/java/kafkaapi/listener/createListener.java.ftl";
   }
 }

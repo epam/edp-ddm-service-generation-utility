@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
+import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.metadata.NestedNode;
 import com.epam.digital.data.platform.generator.metadata.NestedStructure;
@@ -62,12 +63,14 @@ class RestApplicationYamlScopeFactoryTest {
   private PartialUpdateProvider partialUpdateProvider;
   @Mock
   private NestedStructureProvider nestedStructureProvider;
+  @Mock
+  private BulkLoadInfoProvider bulkLoadInfoProvider;
 
   @BeforeEach
   void setup() {
     instance =
         new RestApplicationYamlScopeFactory(
-            enumProvider, partialUpdateProvider, nestedStructureProvider);
+            partialUpdateProvider, nestedStructureProvider, bulkLoadInfoProvider, enumProvider);
   }
 
   @Test
@@ -141,6 +144,19 @@ class RestApplicationYamlScopeFactoryTest {
     var resultScope = resultList.get(0);
     assertThat(resultScope.getNestedPaths())
             .containsOnly("nested/nesting-flow");
+  }
+
+  @Test
+  void shouldCreateScopeWithBulkLoad() {
+    given(bulkLoadInfoProvider.getTablesWithBulkLoad()).willReturn(Set.of(TABLE_NAME));
+
+    var resultList = instance.create(context);
+
+    var resultScope = resultList.get(0);
+    assertThat(resultList).hasSize(1);
+    assertThat(resultScope.getEntityPaths())
+            .containsEntry(hyphen(TABLE_NAME),
+                    List.of(hyphen(TABLE_NAME), hyphen(TABLE_NAME) + "/list"));
   }
 
   @Test

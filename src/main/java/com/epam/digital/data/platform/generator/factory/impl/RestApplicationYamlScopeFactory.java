@@ -20,8 +20,10 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import com.epam.digital.data.platform.generator.factory.AbstractApplicationYamlScope;
+import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.metadata.NestedStructure;
 import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
@@ -45,10 +47,11 @@ public class RestApplicationYamlScopeFactory
   private final EnumProvider enumProvider;
 
   public RestApplicationYamlScopeFactory(
-      EnumProvider enumProvider,
       PartialUpdateProvider partialUpdateProvider,
-      NestedStructureProvider nestedStructureProvider) {
-    super(partialUpdateProvider, nestedStructureProvider);
+      NestedStructureProvider nestedStructureProvider,
+      BulkLoadInfoProvider bulkLoadInfoProvider,
+      EnumProvider enumProvider) {
+    super(partialUpdateProvider, nestedStructureProvider, bulkLoadInfoProvider);
     this.enumProvider = enumProvider;
   }
 
@@ -88,6 +91,9 @@ public class RestApplicationYamlScopeFactory
     var partialUpdatePaths = getPartialUpdatePaths();
 
     entityPaths.forEach((k, v) -> ofNullable(partialUpdatePaths.get(k)).ifPresent(v::addAll));
+
+    var bulkLoadPaths = getBulkLoadPaths();
+    entityPaths.forEach((k, v) -> ofNullable(bulkLoadPaths.get(k)).ifPresent(v::addAll));
     return entityPaths;
   }
 
@@ -106,6 +112,12 @@ public class RestApplicationYamlScopeFactory
 
     return partialUpdateProvider.findAll().stream()
         .collect(groupingBy(tableName, mapping(endpoint, toList())));
+  }
+
+  private Map<String, List<String>> getBulkLoadPaths() {
+    return bulkLoadInfoProvider.getTablesWithBulkLoad().stream()
+            .map(this::toHyphenTableName)
+            .collect(toMap(Function.identity(), endpoint -> Collections.singletonList(endpoint + "/list")));
   }
 
   private List<String> getNestedInsertPaths() {
