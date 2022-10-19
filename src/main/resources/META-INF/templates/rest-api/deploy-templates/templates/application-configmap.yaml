@@ -9,6 +9,9 @@ data:
         web:
           exposure:
             include: 'health, prometheus'
+      health:
+        redis:
+          enabled: false
     data-platform:
       datasource:
         url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}
@@ -87,11 +90,16 @@ data:
           keystore-certificate: {{ .Values.kafka.sslUserCertificate }}
           keystore-key: {{ .Values.kafka.sslUserKey }}
           truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
-      
+
     storage:
       lowcode-form-form-data-storage:
-        type: ceph
+        type: redis
         backend:
+          redis:
+            password: ${REDIS_PASSWORD}
+            sentinel:
+              master: mymaster
+              nodes: rfs-redis-sentinel.{{ .Release.Namespace }}.svc:26379
           ceph:
             http-endpoint: ${ceph.http-endpoint}
             access-key: ${ceph.access-key}
