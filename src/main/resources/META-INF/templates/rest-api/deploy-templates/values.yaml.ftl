@@ -136,4 +136,7 @@ kong:
 
 stageName: ${stageName}
 
+redis:
+  secretName: redis-auth
+
 deployProfile: prod
