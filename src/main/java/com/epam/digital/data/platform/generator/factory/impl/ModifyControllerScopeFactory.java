@@ -17,7 +17,6 @@
 package com.epam.digital.data.platform.generator.factory.impl;
 
 import com.epam.digital.data.platform.generator.factory.CrudAbstractScope;
-import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
 import com.epam.digital.data.platform.generator.scope.ModifyControllerScope;
@@ -31,12 +30,9 @@ public class ModifyControllerScopeFactory extends CrudAbstractScope<ModifyContro
 
   private final PermissionMap permissionMap;
 
-  private final BulkLoadInfoProvider bulkLoadInfoProvider;
-
   public ModifyControllerScopeFactory(
-      PermissionMap permissionMap, BulkLoadInfoProvider bulkLoadInfoProvider) {
+      PermissionMap permissionMap) {
     this.permissionMap = permissionMap;
-    this.bulkLoadInfoProvider = bulkLoadInfoProvider;
   }
 
   @Override
@@ -53,7 +49,6 @@ public class ModifyControllerScopeFactory extends CrudAbstractScope<ModifyContro
     scope.setCreateRoles(new ArrayList<>(permissionMap.getCreateExpressionsFor(tableName)));
     scope.setDeleteRoles(new ArrayList<>(permissionMap.getDeleteExpressionsFor(tableName)));
 
-    scope.setBulkLoadEnabled(bulkLoadInfoProvider.getTablesWithBulkLoad().contains(tableName));
     return scope;
   }
 

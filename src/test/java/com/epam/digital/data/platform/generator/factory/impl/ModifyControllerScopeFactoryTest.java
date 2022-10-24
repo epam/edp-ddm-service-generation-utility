@@ -20,12 +20,10 @@ import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.EN
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.PK_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SCHEMA_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.TABLE_NAME;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.VIEW_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getContext;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
-import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
 import java.util.List;
@@ -44,8 +42,6 @@ class ModifyControllerScopeFactoryTest {
 
   @Mock
   private PermissionMap permissionMap;
-  @Mock
-  private BulkLoadInfoProvider bulkLoadInfoProvider;
 
   private ModifyControllerScopeFactory instance;
 
@@ -56,7 +52,7 @@ class ModifyControllerScopeFactoryTest {
 
   @BeforeEach
   void setup() {
-    instance = new ModifyControllerScopeFactory(permissionMap, bulkLoadInfoProvider);
+    instance = new ModifyControllerScopeFactory(permissionMap);
   }
 
   @Test
@@ -71,7 +67,6 @@ class ModifyControllerScopeFactoryTest {
     assertThat(resultScope.getPkName()).isEqualTo(PK_NAME);
     assertThat(resultScope.getEndpoint()).isEqualTo(ENDPOINT);
     assertThat(resultScope.getPkType()).isEqualTo(UUID.class.getCanonicalName());
-    assertThat(resultScope.isBulkLoadEnabled()).isFalse();
   }
 
   @Test
@@ -86,15 +81,5 @@ class ModifyControllerScopeFactoryTest {
     assertThat(resultScope.getUpdateRoles()).containsAll(DENY_ALL_LIST);
     assertThat(resultScope.getCreateRoles()).containsAll(ROLE_LIST);
     assertThat(resultScope.getDeleteRoles()).containsAll(ROLE_LIST);
-  }
-
-  @Test
-  void shouldEnableBulkLoadForControllerScope() {
-    given(bulkLoadInfoProvider.getTablesWithBulkLoad()).willReturn(Set.of(TABLE_NAME, VIEW_NAME));
-
-    List<ModifyControllerScope> resultList = instance.create(context);
-
-    ModifyControllerScope resultScope = resultList.get(0);
-    assertThat(resultScope.isBulkLoadEnabled()).isTrue();
   }
 }

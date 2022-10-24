@@ -28,12 +28,6 @@ import ${basePackage}.restapi.service.${schemaName}CreateService;
 import ${basePackage}.restapi.service.${schemaName}DeleteService;
 import ${basePackage}.restapi.service.${schemaName}UpdateService;
 
-<#if bulkLoadEnabled>
-import java.util.List;
-import ${basePackage}.model.dto.${schemaName}CreateList;
-import ${basePackage}.restapi.service.${schemaName}CreateListService;
-</#if>
-
 @RestController
 @RequestMapping("${endpoint}")
 public class ${className} {
@@ -41,23 +35,14 @@ public class ${className} {
   private final Logger log = LoggerFactory.getLogger(${className}.class);
 
   private final ${schemaName}CreateService createService;
-  <#if bulkLoadEnabled>
-  private final ${schemaName}CreateListService createListService;
-  </#if>
   private final ${schemaName}UpdateService updateService;
   private final ${schemaName}DeleteService deleteService;
 
   public ${className}(
     ${schemaName}CreateService createService,
-    <#if bulkLoadEnabled>
-    ${schemaName}CreateListService createListService,
-    </#if>
     ${schemaName}UpdateService updateService,
     ${schemaName}DeleteService deleteService) {
       this.createService = createService;
-      <#if bulkLoadEnabled>
-      this.createListService = createListService;
-      </#if>
       this.updateService = updateService;
       this.deleteService = deleteService;
   }
@@ -74,21 +59,6 @@ public class ${className} {
     var response = createService.request(request);
     return ResponseResolverUtil.getHttpResponseFromKafka(response);
   }
-
-  <#if bulkLoadEnabled>
-  @AuditableController
-<@PreAuthorize roles=createRoles />
-  @PostMapping("/list")
-  public ResponseEntity<List<EntityId>> create${schemaName}List(
-    @Valid @RequestBody ${schemaName}CreateList ${schemaName?uncap_first}CreateList,
-    @HttpRequestContext RequestContext context,
-    @HttpSecurityContext SecurityContext securityContext) {
-    log.info("POST ${endpoint}/list called");
-    Request<${schemaName}CreateList> request = new Request<>(${schemaName?uncap_first}CreateList, context, securityContext);
-    var response = createListService.request(request);
-    return ResponseResolverUtil.getHttpResponseFromKafka(response);
-  }
-  </#if>
 
   @AuditableController
 <@PreAuthorize roles=updateRoles />

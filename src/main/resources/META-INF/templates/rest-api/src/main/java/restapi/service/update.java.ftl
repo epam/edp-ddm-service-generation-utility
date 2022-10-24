@@ -15,7 +15,7 @@ import com.epam.digital.data.platform.starter.security.jwt.JwtClaimsUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 @Service
-public class ${className} extends GenericService<Request<${schemaName}>, Void> {
+public class ${className} extends GenericService<${schemaName}, Void> {
 
   private static final String REQUEST_TYPE = "${requestType}";
 
