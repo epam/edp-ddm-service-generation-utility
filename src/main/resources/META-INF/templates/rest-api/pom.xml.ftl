@@ -13,14 +13,13 @@
     <description>REST API</description>
 
   <properties>
-      <rest.api.core.version>1.8.0.9</rest.api.core.version>
+      <rest.api.core.version>1.8.0.12</rest.api.core.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
       <java.version>11</java.version>
       <log4j.version>2.17.0</log4j.version>
       <spring.boot.version>2.6.1</spring.boot.version>
       <spring.cloud.version>2021.0.0</spring.cloud.version>
-      <jackson.core.version>2.12.0</jackson.core.version>
   </properties>
 
     <dependencyManagement>
@@ -65,22 +64,6 @@
         <version>${fullVersion}</version>
       </dependency>
     <#noparse>
-
-        <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-core</artifactId>
-          <version>${jackson.core.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-          <version>${jackson.core.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-annotations</artifactId>
-          <version>${jackson.core.version}</version>
-        </dependency>
     </dependencies>
 
     <build>

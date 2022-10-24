@@ -12,7 +12,7 @@ import com.epam.digital.data.platform.starter.kafka.config.properties.KafkaPrope
 import com.fasterxml.jackson.core.type.TypeReference;
 
 @Service
-public class ${schemaName}SearchService extends GenericService<Request<${schemaName}SearchConditions>, List<${schemaName}>> {
+public class ${schemaName}SearchService extends GenericService<${schemaName}SearchConditions, List<${schemaName}>> {
 
   private static final String REQUEST_TYPE = "${requestType}";
 

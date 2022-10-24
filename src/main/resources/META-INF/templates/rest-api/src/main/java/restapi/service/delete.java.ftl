@@ -11,7 +11,7 @@ import com.epam.digital.data.platform.starter.kafka.config.properties.KafkaPrope
 import com.fasterxml.jackson.core.type.TypeReference;
 
 @Service
-public class ${className} extends GenericService<Request<${schemaName}>, Void> {
+public class ${className} extends GenericService<${schemaName}, Void> {
 
   private static final String REQUEST_TYPE = "${requestType}";
 
