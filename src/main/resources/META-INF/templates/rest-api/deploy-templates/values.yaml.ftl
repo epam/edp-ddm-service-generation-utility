@@ -1,5 +1,6 @@
 global:
   disableRequestsLimits: false
+  deploymentMode: development
   registry:
     restApi:
       istio:
@@ -149,5 +150,3 @@ stageName: ${stageName}
 
 redis:
   secretName: redis-auth
-
-deployProfile: prod

@@ -1,4 +1,4 @@
-{{- if eq .Values.deployProfile "dev" }}
+{{- if eq .Values.global.deploymentMode "development" }}
 {{- if .Values.ingress.required }}
 {{- range $serviceName := compact (list .Values.name ((.Values.externalService).name)) }}
 apiVersion: route.openshift.io/v1
@@ -28,5 +28,5 @@ status:
   ingress: []
 ---
 {{- end }}
-  {{end}}
+{{- end }}
 {{- end }}
