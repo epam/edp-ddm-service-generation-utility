@@ -6,7 +6,7 @@ import com.epam.digital.data.platform.model.core.kafka.Request;
 import com.epam.digital.data.platform.model.core.kafka.Response;
 import com.epam.digital.data.platform.restapi.core.service.KafkaService;
 import org.springframework.stereotype.Service;
-import ${basePackage}.restapi.csv.${schemaName}CreateCsvProcessor;
+import ${basePackage}.restapi.csv.${schemaName}CsvProcessor;
 
 import java.util.List;
 
@@ -14,11 +14,11 @@ import java.util.List;
 public class ${className} implements KafkaService<File, List<EntityId>> {
 
   private final ${schemaName}CreateListService service;
-  private final ${schemaName}CreateCsvProcessor csvProcessor;
+  private final ${schemaName}CsvProcessor csvProcessor;
 
   public ${className}(
         ${schemaName}CreateListService service,
-        ${schemaName}CreateCsvProcessor csvProcessor) {
+        ${schemaName}CsvProcessor csvProcessor) {
     this.service = service;
     this.csvProcessor = csvProcessor;
   }
