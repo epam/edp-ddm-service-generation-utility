@@ -20,7 +20,6 @@ import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.model.template.Constraint;
 import com.epam.digital.data.platform.generator.model.template.Field;
-import com.epam.digital.data.platform.generator.scope.ListenerScope;
 import com.epam.digital.data.platform.generator.scope.ModelScope;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SCHEMA_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.TABLE_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getContext;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -68,11 +66,11 @@ class CreateListEntityScopeFactoryTest {
     expectedField.setType("TestSchema[]");
     expectedField.setConstraints(
         List.of(
-            new Constraint("@javax.validation.Valid", Collections.emptyList()),
             new Constraint("@javax.validation.constraints.NotNull", Collections.emptyList()),
             new Constraint(
                 "@javax.validation.constraints.Size",
-                Collections.singletonList(new Constraint.Content("max", 50)))));
+                Collections.singletonList(new Constraint.Content("max", 50))),
+            new Constraint("@javax.validation.Valid", Collections.emptyList())));
     expectedScope.setFields(Set.of(expectedField));
     assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expectedScope);
   }
