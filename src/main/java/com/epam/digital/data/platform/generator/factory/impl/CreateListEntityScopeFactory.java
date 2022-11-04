@@ -16,7 +16,6 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import com.epam.digital.data.platform.generator.constraints.impl.CompositeConstraintProvider;
 import com.epam.digital.data.platform.generator.factory.AbstractEntityScopeFactory;
 import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
@@ -59,12 +58,12 @@ public class CreateListEntityScopeFactory extends AbstractEntityScopeFactory<Mod
               field.setType(getArrayOfType(schemaName));
               field.setConstraints(
                   List.of(
-                      new Constraint("@javax.validation.Valid", Collections.emptyList()),
                       new Constraint(
                           "@javax.validation.constraints.NotNull", Collections.emptyList()),
                       new Constraint(
                           "@javax.validation.constraints.Size",
-                          Collections.singletonList(new Content("max", 50)))));
+                          Collections.singletonList(new Content("max", 50))),
+                      new Constraint("@javax.validation.Valid", Collections.emptyList())));
               scope.getFields().add(field);
               return scope;
             })

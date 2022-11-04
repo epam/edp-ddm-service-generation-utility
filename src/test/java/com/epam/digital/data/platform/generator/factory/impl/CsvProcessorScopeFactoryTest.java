@@ -55,7 +55,7 @@ class CsvProcessorScopeFactoryTest {
     var expectedScopes = instance.create(context);
 
     assertThat(expectedScopes).hasSize(1);
-    assertThat(expectedScopes.get(0).getClassName()).isEqualTo("TestSchemaCreateCsvProcessor");
+    assertThat(expectedScopes.get(0).getClassName()).isEqualTo("TestSchemaCsvProcessor");
     assertThat(expectedScopes.get(0).getSchemaName()).isEqualTo(SCHEMA_NAME);
   }
 }

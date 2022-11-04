@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ${basePackage}.model.dto.${schemaName}CreateList;
+import ${basePackage}.restapi.csv.${schemaName}CsvProcessor;
 import ${basePackage}.restapi.service.${schemaName}CreateListService;
 import ${basePackage}.restapi.service.${schemaName}CreateCsvService;
 
@@ -34,12 +35,15 @@ public class ${className} {
 
   private final ${schemaName}CreateListService createListService;
   private final ${schemaName}CreateCsvService createCsvService;
+  private final ${schemaName}CsvProcessor csvProcessor;
 
   public ${className}(
     ${schemaName}CreateListService createListService,
-    ${schemaName}CreateCsvService createCsvService) {
+    ${schemaName}CreateCsvService createCsvService,
+    ${schemaName}CsvProcessor csvProcessor) {
       this.createListService = createListService;
       this.createCsvService = createCsvService;
+      this.csvProcessor = csvProcessor;
   }
 
   @AuditableController
@@ -66,5 +70,16 @@ public class ${className} {
     Request<File> request = new Request<>(file, context, securityContext);
     var response = createCsvService.request(request);
     return ResponseResolverUtil.getHttpResponseFromKafka(response);
+  }
+
+  @PostMapping("/csv/validation")
+  public ResponseEntity<Void> validate${schemaName}Csv(
+    @Valid @RequestBody File file,
+    @HttpRequestContext RequestContext context,
+    @HttpSecurityContext SecurityContext securityContext) {
+    log.info("POST ${endpoint}/csv/validation called");
+    Request<File> request = new Request<>(file, context, securityContext);
+    csvProcessor.validate(request);
+    return ResponseEntity.ok().build();
   }
 }
