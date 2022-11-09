@@ -23,7 +23,7 @@
     <java.version>11</java.version>
     <spring-core.version>5.3.23</spring-core.version>
     <schemacrawler.version>16.11.5</schemacrawler.version>
-    <apache.commons.text.version>1.9</apache.commons.text.version>
+    <apache.commons.text.version>1.10.0</apache.commons.text.version>
     <snakeyaml.version>1.33</snakeyaml.version>
     <sonar.coverage.exclusions>
       <!-- do not calc coverage for the classes without BL: -->
