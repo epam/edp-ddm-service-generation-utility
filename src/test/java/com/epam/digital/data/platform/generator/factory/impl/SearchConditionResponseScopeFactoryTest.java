@@ -143,12 +143,14 @@ class SearchConditionResponseScopeFactoryTest {
 
   @Test
   void shouldCreateFieldsForNestedRead() {
+    var myColumn = withColumn("my_col", Object.class, "_uuid");
+    var anotherColumn = withColumn("another_col", Object.class, "uuid");
     override(
             context.getCatalog(),
             withSearchConditionView(
                     "test_table_search",
-                    withColumn("my_col", Object.class, "_uuid"),
-                    withColumn("another_col", Object.class, "uuid"),
+                    myColumn,
+                    anotherColumn,
                     withTextColumn("not_returning_column")),
             withTable("related_table"));
     given(searchConditionProvider.findFor("test_table_search"))
@@ -163,10 +165,10 @@ class SearchConditionResponseScopeFactoryTest {
     given(nestedReadProvider.findFor("test_table_search"))
             .willReturn(Map.of("my_col", m2mNestedReadEntity,
                     "another_col", o2mNestedReadEntity));
-    given(constraintProviders.getConstraintForProperty("uuid", "RelatedTableReadNested"))
+    given(constraintProviders.getConstraintForProperty(anotherColumn, "RelatedTableReadNested"))
             .willReturn(emptyList());
     var nestedReadConstraints = Collections.singletonList(new Constraint());
-    when(constraintProviders.getConstraintForProperty("_uuid", "RelatedTableReadNested"))
+    when(constraintProviders.getConstraintForProperty(myColumn, "RelatedTableReadNested"))
             .thenReturn(nestedReadConstraints);
 
     List<ModelScope> scopes = instance.create(context);

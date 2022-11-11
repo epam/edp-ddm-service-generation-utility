@@ -62,8 +62,7 @@ public class EntityScopeFactory extends AbstractEntityScopeFactory<ModelScope> {
               var clazzName = DbTypeConverter.convertToJavaTypeName(column);
 
               var constraints =
-                  constraintProviders.getConstraintForProperty(
-                      column.getColumnDataType().getName(), clazzName);
+                  constraintProviders.getConstraintForProperty(column, clazzName);
 
               var field = new Field();
               field.setName(getPropertyName(column));

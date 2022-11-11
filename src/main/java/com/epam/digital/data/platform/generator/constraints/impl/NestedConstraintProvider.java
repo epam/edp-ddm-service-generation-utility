@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import schemacrawler.schema.Column;
 
 @Component
 public class NestedConstraintProvider implements ConstraintProvider {
@@ -30,7 +31,7 @@ public class NestedConstraintProvider implements ConstraintProvider {
       new Constraint("@javax.validation.Valid", Collections.emptyList());
 
   @Override
-  public List<Constraint> getConstraintForProperty(String propertyDataType, String propertyClassName) {
+  public List<Constraint> getConstraintForProperty(Column column, String propertyClassName) {
     var isPropertyClassInSamePackage = !propertyClassName.contains(".");
     if (isPropertyClassInSamePackage) {
       return Collections.singletonList(VALID_CONSTRAINT);

@@ -73,7 +73,7 @@ public class PartialUpdateEntityScopeFactory extends AbstractEntityScopeFactory<
           var clazzName = DbTypeConverter.convertToJavaTypeName(column);
 
           var constraints = constraintProviders.getConstraintForProperty(
-              column.getColumnDataType().getName(), clazzName);
+              column, clazzName);
 
           var field = new Field();
           field.setName(getPropertyName(f));

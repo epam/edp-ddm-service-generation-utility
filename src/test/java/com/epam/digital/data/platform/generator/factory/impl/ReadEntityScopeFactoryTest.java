@@ -16,23 +16,6 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import com.epam.digital.data.platform.generator.constraints.impl.CompositeConstraintProvider;
-import com.epam.digital.data.platform.generator.metadata.EnumProvider;
-import com.epam.digital.data.platform.generator.metadata.NestedReadEntity;
-import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
-import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.model.template.Constraint;
-import com.epam.digital.data.platform.generator.model.template.Field;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
-
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.GEOMETRY_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.PK_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SCHEMA_NAME;
@@ -41,11 +24,28 @@ import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.em
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getSettings;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.newCatalog;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withColumn;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withPk;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withTable;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withTableConstraintColumn;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withTextColumn;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withUuidPk;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+
+import com.epam.digital.data.platform.generator.constraints.impl.CompositeConstraintProvider;
+import com.epam.digital.data.platform.generator.metadata.EnumProvider;
+import com.epam.digital.data.platform.generator.metadata.NestedReadEntity;
+import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
+import com.epam.digital.data.platform.generator.model.Context;
+import com.epam.digital.data.platform.generator.model.template.Constraint;
+import com.epam.digital.data.platform.generator.model.template.Field;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class ReadEntityScopeFactoryTest {
@@ -75,19 +75,25 @@ class ReadEntityScopeFactoryTest {
 
   @Test
   void expectReadEntityIsCreatedWithNestedColumns() {
+    var oneToManyColumn = withColumn(ONE_TO_MANY_COLUMN, UUID.class, "uuid");
+    var manyToManyColumn = withColumn(MANY_TO_MANY_COLUMN, Object.class, "_uuid");
+    var relatedColumn = withTextColumn("related_column");
+    var pkColumn1 = withTableConstraintColumn(PK_COLUMN_NAME, Object.class, "uuid");
+    var pkColumn2 = withTableConstraintColumn(PK_COLUMN_NAME, Object.class, "uuid");
+
     context =
         new Context(
             getSettings(),
             newCatalog(
                 withTable(
                     TABLE_NAME,
-                    withUuidPk(PK_COLUMN_NAME),
-                    withColumn(ONE_TO_MANY_COLUMN, UUID.class, "uuid"),
-                    withColumn(MANY_TO_MANY_COLUMN, Object.class, "_uuid")),
+                    withPk(pkColumn1),
+                    oneToManyColumn,
+                    manyToManyColumn),
                 withTable(
                     RELATED_TABLE_NAME,
-                    withUuidPk(PK_COLUMN_NAME),
-                    withTextColumn("related_column"))),
+                    withPk(pkColumn2),
+                    relatedColumn)),
             emptyAsyncData());
     when(nestedReadProvider.findFor(TABLE_NAME))
         .thenReturn(
@@ -96,17 +102,21 @@ class ReadEntityScopeFactoryTest {
                     new NestedReadEntity(TABLE_NAME, ONE_TO_MANY_COLUMN, RELATED_TABLE_NAME),
                 MANY_TO_MANY_COLUMN,
                     new NestedReadEntity(TABLE_NAME, MANY_TO_MANY_COLUMN, RELATED_TABLE_NAME)));
+
     var uuidConstraints = Collections.singletonList(new Constraint());
-    when(constraintProviders.getConstraintForProperty("uuid", UUID.class.getCanonicalName()))
-        .thenReturn(uuidConstraints);
-    when(constraintProviders.getConstraintForProperty("uuid", RELATED_SCHEMA_NAME + "ReadNested"))
+    when(constraintProviders.getConstraintForProperty(oneToManyColumn, RELATED_SCHEMA_NAME + "ReadNested"))
         .thenReturn(Collections.emptyList());
     var nestedReadConstraints = Collections.singletonList(new Constraint());
-    when(constraintProviders.getConstraintForProperty("_uuid", RELATED_SCHEMA_NAME + "ReadNested"))
+    when(constraintProviders.getConstraintForProperty(manyToManyColumn, RELATED_SCHEMA_NAME + "ReadNested"))
         .thenReturn(nestedReadConstraints);
+    when(constraintProviders.getConstraintForProperty(relatedColumn, "java.lang.String"))
+        .thenReturn(Collections.emptyList());
+    when(constraintProviders.getConstraintForProperty(pkColumn1, "java.util.UUID"))
+        .thenReturn(uuidConstraints);
+    when(constraintProviders.getConstraintForProperty(pkColumn2, "java.util.UUID"))
+        .thenReturn(uuidConstraints);
 
     var actual = instance.create(context);
-
     var actualScope = actual.get(0);
     assertThat(actualScope.getClassName()).isEqualTo(SCHEMA_NAME + "Read");
     assertThat(actualScope.getFields())
@@ -119,17 +129,19 @@ class ReadEntityScopeFactoryTest {
 
   @Test
   void expectReadEntityIsCreatedWithoutNonReadableColumns() {
+    var pkColumn = withTableConstraintColumn(PK_COLUMN_NAME, Object.class, "uuid");
     context =
         new Context(
             getSettings(),
             newCatalog(
                 withTable(
                     TABLE_NAME,
-                    withUuidPk(PK_COLUMN_NAME),
+                    withPk(pkColumn),
                     withColumn(GEOMETRY_COLUMN_NAME, Object.class, "geometry"))),
             emptyAsyncData());
     when(nestedReadProvider.findFor(TABLE_NAME)).thenReturn(Collections.emptyMap());
-    when(constraintProviders.getConstraintForProperty("uuid", "java.util.UUID"))
+
+    when(constraintProviders.getConstraintForProperty(pkColumn, "java.util.UUID"))
         .thenReturn(Collections.emptyList());
 
     var actual = instance.create(context);

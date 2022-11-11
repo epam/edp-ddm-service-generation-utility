@@ -94,6 +94,12 @@ public class ContextTestUtils {
     return withPk(name, Object.class, "uuid");
   }
 
+  public static PrimaryKey withPk(TableConstraintColumn column) {
+    PrimaryKey pk = mock(PrimaryKey.class);
+    lenient().when(pk.getColumns()).thenReturn(singletonList(column));
+    return pk;
+  }
+
   private static PrimaryKey withPk(String name, Class<?> clazz, String typeName) {
     PrimaryKey pk = mock(PrimaryKey.class);
     TableConstraintColumn c = withColumn(TableConstraintColumn.class, name, clazz, typeName, null);
@@ -208,6 +214,14 @@ public class ContextTestUtils {
     return withColumn(Column.class, name, clazz, typeName, referencedColumn);
   }
 
+  public static TableConstraintColumn withTableConstraintColumn(String name, Class<?> clazz, String typeName) {
+    return withColumn(TableConstraintColumn.class, name, clazz, typeName, null);
+  }
+
+  public static Column withColumn(String name, Class<?> clazz, String typeName, int size) {
+    return withColumn(Column.class, name, clazz, typeName, null, size);
+  }
+
   private static <T extends Column> T withColumn(
       Class<T> mockClazz, String name, Class<?> clazz, String typeName, Column referencedColumn) {
     var column = mock(mockClazz);
@@ -219,6 +233,22 @@ public class ContextTestUtils {
 
     lenient().when(column.getColumnDataType()).thenReturn(type);
     lenient().when(column.getReferencedColumn()).thenReturn(referencedColumn);
+    return column;
+  }
+
+  private static <T extends Column> T withColumn(
+      Class<T> mockClazz, String name, Class<?> clazz, String typeName, Column referencedColumn, int size) {
+    var column = mock(mockClazz);
+    lenient().when(column.getName()).thenReturn(name);
+
+    var type = mock(ColumnDataType.class);
+    lenient().doReturn(clazz).when(type).getTypeMappedClass();
+    lenient().when(type.getName()).thenReturn(typeName);
+
+    lenient().when(column.getColumnDataType()).thenReturn(type);
+    lenient().when(column.getReferencedColumn()).thenReturn(referencedColumn);
+
+    lenient().when(column.getSize()).thenReturn(size);
     return column;
   }
 }

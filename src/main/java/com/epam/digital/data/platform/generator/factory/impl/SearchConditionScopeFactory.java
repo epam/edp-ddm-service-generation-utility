@@ -24,7 +24,6 @@ import static java.util.stream.Collectors.toList;
 import com.epam.digital.data.platform.generator.constraints.impl.CompositeConstraintProvider;
 import com.epam.digital.data.platform.generator.factory.AbstractEntityScopeFactory;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
-import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.Field;
@@ -131,12 +130,12 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
     var constraints =
         constraintProviders
             .getFormattingConstraintProvider()
-            .getConstraintForProperty(column.getColumnDataType().getName(), clazzName);
+            .getConstraintForProperty(column, clazzName);
 
     constraints.addAll(
         constraintProviders
             .getMarshalingConstraintProvider()
-            .getConstraintForProperty(column.getColumnDataType().getName(), clazzName));
+            .getConstraintForProperty(column, clazzName));
 
     var field = new Field();
     field.setName(fieldName);

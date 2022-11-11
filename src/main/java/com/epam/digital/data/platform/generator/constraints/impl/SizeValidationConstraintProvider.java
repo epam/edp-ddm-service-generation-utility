@@ -18,27 +18,26 @@ package com.epam.digital.data.platform.generator.constraints.impl;
 
 import com.epam.digital.data.platform.generator.constraints.ConstraintProvider;
 import com.epam.digital.data.platform.generator.model.template.Constraint;
-import org.springframework.stereotype.Component;
-
+import com.epam.digital.data.platform.generator.model.template.Constraint.Content;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import org.springframework.stereotype.Component;
 import schemacrawler.schema.Column;
 
 @Component
-public class CustomTypeConstraintProvider implements ConstraintProvider {
+public class SizeValidationConstraintProvider implements ConstraintProvider {
 
-  private static final String CUSTOM_TYPE_PREFIX = "com.epam.digital.data.platform.model.core";
-
-  private static final Constraint VALID_CONSTRAINT =
-      new Constraint("@javax.validation.Valid", Collections.emptyList());
+  private static final String SIZE_CONSTRAINT = "@javax.validation.constraints.Size";
+  private static final Set<String> SIZE_CONSTRAINT_DATA_TYPES = Set.of("bpchar", "varchar");
 
   @Override
-  public List<Constraint> getConstraintForProperty(Column column, String propertyClassName) {
-    var isPropertyOfCustomType = propertyClassName.startsWith(CUSTOM_TYPE_PREFIX);
-    if (isPropertyOfCustomType) {
-      return Collections.singletonList(VALID_CONSTRAINT);
-    } else {
-      return Collections.emptyList();
+  public List<Constraint> getConstraintForProperty(Column column,
+      String propertyClassName) {
+    if (SIZE_CONSTRAINT_DATA_TYPES.contains(column.getColumnDataType().getName())) {
+      return List.of(new Constraint(SIZE_CONSTRAINT,
+          List.of(new Content("max", column.getSize()))));
     }
+    return Collections.emptyList();
   }
 }

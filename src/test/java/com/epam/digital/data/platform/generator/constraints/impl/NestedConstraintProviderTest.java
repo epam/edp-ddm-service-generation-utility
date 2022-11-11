@@ -17,10 +17,12 @@
 package com.epam.digital.data.platform.generator.constraints.impl;
 
 import com.epam.digital.data.platform.generator.model.template.Constraint;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withColumn;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class NestedConstraintProviderTest {
@@ -32,7 +34,7 @@ class NestedConstraintProviderTest {
     var dbType = "uuid";
     var clazzName = "NestedEntity";
 
-    var actualConstraints = nestedConstraintProvider.getConstraintForProperty(dbType, clazzName);
+    var actualConstraints = nestedConstraintProvider.getConstraintForProperty(withColumn("my_col", UUID.class, dbType), clazzName);
 
     assertThat(actualConstraints)
         .usingRecursiveFieldByFieldElementComparator()
@@ -44,7 +46,7 @@ class NestedConstraintProviderTest {
     var dbType = "uuid";
     var clazzName = "java.lang.UUID";
 
-    var actualConstraints = nestedConstraintProvider.getConstraintForProperty(dbType, clazzName);
+    var actualConstraints = nestedConstraintProvider.getConstraintForProperty(withColumn("my_col", UUID.class, dbType), clazzName);
 
     assertThat(actualConstraints).isEmpty();
   }
