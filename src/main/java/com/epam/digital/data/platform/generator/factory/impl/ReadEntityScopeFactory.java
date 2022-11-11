@@ -85,8 +85,7 @@ public class ReadEntityScopeFactory extends AbstractEntityScopeFactory<ModelScop
               field.setName(getPropertyName(column));
               field.setType(typeToString(clazzName, column));
               field.setConstraints(
-                  constraintProviders.getConstraintForProperty(
-                      column.getColumnDataType().getName(), clazzName));
+                  constraintProviders.getConstraintForProperty(column, clazzName));
               return field;
             })
         .collect(toList());
@@ -109,8 +108,7 @@ public class ReadEntityScopeFactory extends AbstractEntityScopeFactory<ModelScop
                 field.setType(clazzName);
               }
               field.setConstraints(
-                  constraintProviders.getConstraintForProperty(
-                      column.getColumnDataType().getName(), clazzName));
+                  constraintProviders.getConstraintForProperty(column, clazzName));
               return field;
             })
         .collect(toList());

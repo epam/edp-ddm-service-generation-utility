@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2022 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.epam.digital.data.platform.generator.constraints.impl;
 
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withColumn;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.epam.digital.data.platform.generator.model.template.Constraint;
@@ -23,41 +24,32 @@ import com.epam.digital.data.platform.generator.model.template.Constraint.Conten
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class ValidationConstraintProviderTest {
-  private final ValidationConstraintProvider provider = new ValidationConstraintProvider();
+class SizeValidationConstraintProviderTest {
+
+  private final SizeValidationConstraintProvider provider = new SizeValidationConstraintProvider();
 
   @Test
-  void shouldReturnConstraintForDomainType() {
-    String dbType = "dn_edrpou";
+  void shouldReturnConstraintForCharDataTypeSize() {
+    String dbType = "bpchar";
     String clazzName = "java.lang.String";
-    Constraint expected = buildConstraint();
+    Constraint expected = buildConstraint(String.valueOf(8));
 
-    List<Constraint> constraints = provider.getConstraintForProperty(dbType, clazzName);
+    List<Constraint> constraints = provider.getConstraintForProperty(withColumn("my_col", String.class, dbType, 8), clazzName);
 
     assertEquals(1, constraints.size());
     assertEquals(expected.getName(), constraints.get(0).getName());
     assertEquals(1, constraints.get(0).getContent().size());
     assertEquals(expected.getContent().get(0).getKey(), constraints.get(0).getContent().get(0).getKey());
-    assertEquals(expected.getContent().get(0).getValue(), constraints.get(0).getContent().get(0).getValue());
+    assertEquals(String.valueOf(expected.getContent().get(0).getValue()), String.valueOf(constraints.get(0).getContent().get(0).getValue()));
   }
 
-  @Test
-  void shouldReturnEmptyListForNotConstrainedParameter() {
-    String dbType = "stub";
-    String clazzName = "java.lang.String";
-
-    List<Constraint> constraints = provider.getConstraintForProperty(dbType, clazzName);
-
-    assertEquals(0, constraints.size());
-  }
-
-  private Constraint buildConstraint() {
+  private Constraint buildConstraint(String value) {
     Content content = new Content();
-    content.setKey("regexp");
-    content.setValue("\"^[0-9]{8,10}$\"");
+    content.setKey("max");
+    content.setValue(value);
 
     Constraint constraint = new Constraint();
-    constraint.setName("@javax.validation.constraints.Pattern");
+    constraint.setName("@javax.validation.constraints.Size");
     constraint.setContent(List.of(content));
 
     return constraint;

@@ -88,8 +88,7 @@ public class SearchConditionResponseScopeFactory extends AbstractEntityScopeFact
               field.setName(getPropertyName(column));
               field.setType(typeToString(clazzName, column));
               field.setConstraints(
-                  constraintProviders.getConstraintForProperty(
-                      column.getColumnDataType().getName(), clazzName));
+                  constraintProviders.getConstraintForProperty(column, clazzName));
               return field;
             })
         .collect(toList());
@@ -112,8 +111,7 @@ public class SearchConditionResponseScopeFactory extends AbstractEntityScopeFact
                 field.setType(clazzName);
               }
               field.setConstraints(
-                  constraintProviders.getConstraintForProperty(
-                      column.getColumnDataType().getName(), clazzName));
+                  constraintProviders.getConstraintForProperty(column, clazzName));
               return field;
             })
         .collect(toList());

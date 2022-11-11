@@ -16,6 +16,7 @@
 
 package com.epam.digital.data.platform.generator.constraints.impl;
 
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withColumn;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.epam.digital.data.platform.generator.model.template.Constraint;
@@ -30,7 +31,7 @@ class FormattingConstraintProviderTest {
     String dbType = "timestamp with time zone";
     String clazzName = "java.time.LocalDateTime";
 
-    List<Constraint> constraints = provider.getConstraintForProperty(dbType, clazzName);
+    List<Constraint> constraints = provider.getConstraintForProperty(withColumn("my_col", Object.class, dbType), clazzName);
 
     assertEquals(1, constraints.size());
     assertEquals("@com.fasterxml.jackson.annotation.JsonFormat", constraints.get(0).getName());
@@ -47,7 +48,7 @@ class FormattingConstraintProviderTest {
     String dbType = "stub";
     String clazzName = "java.lang.String";
 
-    List<Constraint> constraints = provider.getConstraintForProperty(dbType, clazzName);
+    List<Constraint> constraints = provider.getConstraintForProperty(withColumn("my_col", Object.class, dbType), clazzName);
 
     assertEquals(0, constraints.size());
   }

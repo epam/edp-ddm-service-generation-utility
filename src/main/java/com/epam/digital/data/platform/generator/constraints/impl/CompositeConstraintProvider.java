@@ -22,6 +22,7 @@ import com.epam.digital.data.platform.generator.constraints.ConstraintProvider;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import com.epam.digital.data.platform.generator.model.template.Constraint;
+import schemacrawler.schema.Column;
 
 @Component
 public class CompositeConstraintProvider implements ConstraintProvider {
@@ -40,9 +41,9 @@ public class CompositeConstraintProvider implements ConstraintProvider {
   }
 
   @Override
-  public List<Constraint> getConstraintForProperty(String propertyDataType, String propertyClassName) {
+  public List<Constraint> getConstraintForProperty(Column column, String propertyClassName) {
     return providers.stream()
-        .map(x -> x.getConstraintForProperty(propertyDataType, propertyClassName))
+        .map(x -> x.getConstraintForProperty(column, propertyClassName))
         .flatMap(List::stream)
         .collect(toList());
   }

@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import com.epam.digital.data.platform.generator.constraints.ConstraintProvider;
 import com.epam.digital.data.platform.generator.model.template.Constraint;
 import com.epam.digital.data.platform.generator.model.template.Constraint.Content;
+import schemacrawler.schema.Column;
 
 @Component
 public class FormattingConstraintProvider implements ConstraintProvider {
@@ -40,7 +41,7 @@ public class FormattingConstraintProvider implements ConstraintProvider {
           LocalTime.class.getCanonicalName(), createConstraintForPattern("\"HH:mm:ss\""));
 
   @Override
-  public List<Constraint> getConstraintForProperty(String propertyDataType, String propertyClassName) {
+  public List<Constraint> getConstraintForProperty(Column column, String propertyClassName) {
     return Optional.ofNullable(CONSTRAINTS.get(propertyClassName)).stream()
         .filter(Objects::nonNull)
         .collect(Collectors.toList());

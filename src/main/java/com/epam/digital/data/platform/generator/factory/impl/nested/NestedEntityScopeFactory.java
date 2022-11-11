@@ -103,7 +103,7 @@ public class NestedEntityScopeFactory extends AbstractEntityScopeFactory<ModelSc
               field.setType(typeToString(clazzName, column));
               field.setConstraints(
                   constraintProviders
-                      .getConstraintForProperty(column.getColumnDataType().getName(), clazzName));
+                      .getConstraintForProperty(column, clazzName));
               return field;
             })
         .collect(toList());
@@ -117,7 +117,7 @@ public class NestedEntityScopeFactory extends AbstractEntityScopeFactory<ModelSc
 
               var constraints =
                   constraintProviders.getConstraintForProperty(
-                      column.getColumnDataType().getName(), clazzName);
+                      column, clazzName);
 
               var field = new Field();
               field.setName(getPropertyName(column));

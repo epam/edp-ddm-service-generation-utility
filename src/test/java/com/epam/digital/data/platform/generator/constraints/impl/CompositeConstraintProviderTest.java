@@ -16,8 +16,10 @@
 
 package com.epam.digital.data.platform.generator.constraints.impl;
 
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withColumn;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -28,12 +30,12 @@ class CompositeConstraintProviderTest {
 
   CompositeConstraintProvider instance = new CompositeConstraintProvider(List.of(
       formattingConstraintProvider, marshalingConstraintProvider,
-      new ValidationConstraintProvider()
+      new PatternValidationConstraintProvider(), new SizeValidationConstraintProvider()
   ), formattingConstraintProvider, marshalingConstraintProvider);
 
   @Test
   void shouldFindConstraintsInAllProviders() {
-    assertThat(instance.getConstraintForProperty("timestamp with time zone", "java.time.LocalDateTime")).hasSize(2);
-    assertThat(instance.getConstraintForProperty( "dn_edrpou", "java.lang.String")).hasSize(1);
+    assertThat(instance.getConstraintForProperty(withColumn("my_col", LocalDateTime.class, "timestamp with time zone"), "java.time.LocalDateTime")).hasSize(2);
+    assertThat(instance.getConstraintForProperty( withColumn("my_col", String.class, "dn_edrpou"), "java.lang.String")).hasSize(1);
   }
 }

@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withColumn;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CustomTypeConstraintProviderTest {
@@ -34,7 +35,7 @@ class CustomTypeConstraintProviderTest {
     var clazzName = "com.epam.digital.data.platform.model.core.geometry.Geometry";
 
     var actualConstraints =
-        customTypeConstraintProvider.getConstraintForProperty(dbType, clazzName);
+        customTypeConstraintProvider.getConstraintForProperty(withColumn("my_col", Object.class, dbType), clazzName);
 
     assertThat(actualConstraints)
         .usingRecursiveFieldByFieldElementComparator()
@@ -47,7 +48,7 @@ class CustomTypeConstraintProviderTest {
     var clazzName = "java.lang.String";
 
     var actualConstraints =
-        customTypeConstraintProvider.getConstraintForProperty(dbType, clazzName);
+        customTypeConstraintProvider.getConstraintForProperty(withColumn("my_col", Object.class, dbType), clazzName);
 
     assertThat(actualConstraints).isEmpty();
   }

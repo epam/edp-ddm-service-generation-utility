@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
+import schemacrawler.schema.Column;
 
 @Component
 public class MarshalingConstraintProvider implements ConstraintProvider {
@@ -46,7 +47,7 @@ public class MarshalingConstraintProvider implements ConstraintProvider {
                   "com.epam.digital.data.platform.model.core.xmladapter.LocalTimeXmlAdapter.class"));
 
   @Override
-  public List<Constraint> getConstraintForProperty(String propertyDataType, String propertyClassName) {
+  public List<Constraint> getConstraintForProperty(Column column, String propertyClassName) {
     return Optional.ofNullable(CONSTRAINTS.get(propertyClassName)).stream()
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
