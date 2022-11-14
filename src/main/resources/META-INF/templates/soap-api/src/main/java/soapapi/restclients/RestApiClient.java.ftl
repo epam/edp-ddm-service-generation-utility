@@ -20,7 +20,7 @@ public interface RestApiClient {
 
 <#list searchScopes as scope>
   @GetMapping("${scope.endpoint}")
-  List<${scope.schemaName}> search${scope.schemaName}(
+  List<${scope.schemaName}SearchConditionResponse> search${scope.schemaName}(
       @SpringQueryMap ${scope.schemaName}SearchConditions searchConditions,
       @RequestHeader Map<String, Object> headers);
 

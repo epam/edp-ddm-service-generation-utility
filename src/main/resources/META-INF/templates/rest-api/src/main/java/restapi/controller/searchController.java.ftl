@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ${basePackage}.model.dto.${schemaName};
+import ${basePackage}.model.dto.${schemaName}SearchConditionResponse;
 import ${basePackage}.model.dto.${schemaName}SearchConditions;
 import ${basePackage}.restapi.service.${serviceName};
 
@@ -38,7 +38,7 @@ public class ${className} {
   @AuditableController
 <@PreAuthorize roles=readRoles />
   @GetMapping
-  public ResponseEntity<List<${schemaName}>> search(
+  public ResponseEntity<List<${schemaName}SearchConditionResponse>> search(
       ${schemaName}SearchConditions searchConditions,
       @HttpRequestContext RequestContext context,
       @HttpSecurityContext SecurityContext securityContext) {

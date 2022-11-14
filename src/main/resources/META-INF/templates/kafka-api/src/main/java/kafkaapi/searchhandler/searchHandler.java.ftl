@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import ${basePackage}.model.dto.${schemaName};
+import ${basePackage}.model.dto.${schemaName}SearchConditionResponse;
 import ${basePackage}.model.dto.${schemaName}SearchConditions;
 
 @Service
 public class ${className}
     extends AbstractSearchHandler<
         ${schemaName}SearchConditions,
-        ${schemaName}> {
+        ${schemaName}SearchConditionResponse> {
 
   @Override
   protected Condition whereClause(${schemaName}SearchConditions searchConditions) {
@@ -105,8 +105,8 @@ public class ${className}
   }
 
   @Override
-  public Class<${schemaName}> entityType() {
-    return ${schemaName}.class;
+  public Class<${schemaName}SearchConditionResponse> entityType() {
+    return ${schemaName}SearchConditionResponse.class;
   }
 
   @Override

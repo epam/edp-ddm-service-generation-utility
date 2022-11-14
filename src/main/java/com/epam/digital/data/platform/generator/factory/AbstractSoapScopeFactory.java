@@ -46,7 +46,7 @@ public abstract class AbstractSoapScopeFactory extends AbstractScope<SoapScope> 
 
   private SoapScope map(Table table, SoapScope soapScope) {
 
-    soapScope.addSchemaName(getSchemaName(table));
+    soapScope.addSchemaName(getSchemaName(table) + "SearchConditionResponse");
     soapScope.addSchemaName(getSchemaName(table) + "SearchConditions");
 
     var controllerScope = new ControllerScope();
@@ -60,6 +60,6 @@ public abstract class AbstractSoapScopeFactory extends AbstractScope<SoapScope> 
   private boolean isApplicable(Table table) {
     return searchConditionProvider
         .getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA)
-        .contains(getCutTableName(table));
+        .contains(getCutTableName(table)) && isSearchConditionsView(table);
   }
 }

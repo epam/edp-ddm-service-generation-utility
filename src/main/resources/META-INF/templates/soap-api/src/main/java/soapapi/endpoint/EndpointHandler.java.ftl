@@ -31,7 +31,7 @@ public class EndpointHandler implements IEndpointHandler {
   }
 
 <#list searchScopes as scope>
-  public List<${scope.schemaName}> search${scope.schemaName}(
+  public List<${scope.schemaName}SearchConditionResponse> search${scope.schemaName}(
       @WebParam(name = "searchConditions") ${scope.schemaName}SearchConditions searchConditions,
       @WebParam(header = true, name = "headers") SoapHeaders headers) {
     log.info("search${scope.schemaName} called");

@@ -63,7 +63,7 @@ public class SearchConditionResponseScopeFactory extends AbstractEntityScopeFact
             table -> {
               var nestedEntitiesMap = nestedReadProvider.findFor(getCutTableName(table));
               var scope = new ModelScope();
-              scope.setClassName(getSchemaName(table));
+              scope.setClassName(getSchemaName(table) + "SearchConditionResponse");
               List<Column> columns = identifyAllowedColumns(table);
               var nestedColumns =
                   columns.stream()

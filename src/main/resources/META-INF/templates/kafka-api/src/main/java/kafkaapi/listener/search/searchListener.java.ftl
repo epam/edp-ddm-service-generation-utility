@@ -14,14 +14,14 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 import ${basePackage}.kafkaapi.searchhandler.${handlerName};
-import ${basePackage}.model.dto.${schemaName};
+import ${basePackage}.model.dto.${schemaName}SearchConditionResponse;
 import ${basePackage}.model.dto.${schemaName}SearchConditions;
 
 import static com.epam.digital.data.platform.kafkaapi.core.util.Header.DIGITAL_SEAL;
 
 @Component
 public class ${schemaName}Listener extends
-    GenericSearchListener<${schemaName}SearchConditions, ${schemaName}> {
+    GenericSearchListener<${schemaName}SearchConditions, ${schemaName}SearchConditionResponse> {
 
   private final Logger log = LoggerFactory.getLogger(${className}.class);
 
@@ -36,7 +36,7 @@ public class ${schemaName}Listener extends
       groupId = "\u0023{kafkaProperties.consumer.groupId}",
       containerFactory = "concurrentKafkaListenerContainerFactory")
   @SendTo
-  public Message<Response<List<${schemaName}>>> search(
+  public Message<Response<List<${schemaName}SearchConditionResponse>>> search(
       @Header(name = DIGITAL_SEAL, required = false) String key,
       Request<${schemaName}SearchConditions> searchConditions) {
     log.info("Kafka event received with search");
