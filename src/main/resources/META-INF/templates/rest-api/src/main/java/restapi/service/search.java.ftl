@@ -2,7 +2,7 @@ package ${basePackage}.restapi.service;
 
 import com.epam.digital.data.platform.restapi.core.service.GenericSearchService;
 import org.springframework.stereotype.Service;
-import ${basePackage}.model.dto.${schemaName};
+import ${basePackage}.model.dto.${schemaName}SearchConditionResponse;
 import ${basePackage}.model.dto.${schemaName}SearchConditions;
 import ${basePackage}.restapi.handler.${schemaName}SearchHandler;
 
@@ -10,7 +10,7 @@ import ${basePackage}.restapi.handler.${schemaName}SearchHandler;
 public class ${className}
     extends GenericSearchService<
             ${schemaName}SearchConditions,
-            ${schemaName}> {
+            ${schemaName}SearchConditionResponse> {
 
 
   public ${schemaName}SearchService(

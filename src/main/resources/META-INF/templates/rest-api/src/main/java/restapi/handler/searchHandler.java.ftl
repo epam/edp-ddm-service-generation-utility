@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import ${basePackage}.model.dto.${schemaName};
+import ${basePackage}.model.dto.${schemaName}SearchConditionResponse;
 import ${basePackage}.model.dto.${schemaName}SearchConditions;
 <#if rls??>
 import com.epam.digital.data.platform.model.core.kafka.Request;
@@ -23,7 +23,7 @@ import com.epam.digital.data.platform.starter.security.jwt.JwtClaimsUtils;
 public class ${className}
     extends AbstractSearchHandler<
         ${schemaName}SearchConditions,
-        ${schemaName}> {
+        ${schemaName}SearchConditionResponse> {
 
 
 <#if rls??>
@@ -124,8 +124,8 @@ public class ${className}
   }
 
   @Override
-  public Class<${schemaName}> entityType() {
-    return ${schemaName}.class;
+  public Class<${schemaName}SearchConditionResponse> entityType() {
+    return ${schemaName}SearchConditionResponse.class;
   }
 
   @Override

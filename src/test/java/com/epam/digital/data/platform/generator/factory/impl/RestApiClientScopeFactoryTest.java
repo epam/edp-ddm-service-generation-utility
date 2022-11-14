@@ -49,7 +49,7 @@ class RestApiClientScopeFactoryTest {
   void shouldCreateCorrectScopes() {
     when(provider.getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA))
         .thenReturn(Set.of("test_schema_search"));
-    var expectedSchemaNames = Set.of("TestSchemaSearch", "TestSchemaSearchSearchConditions");
+    var expectedSchemaNames = Set.of("TestSchemaSearchSearchConditionResponse", "TestSchemaSearchSearchConditions");
 
     var restApiClientScopes = instance.create(context);
 

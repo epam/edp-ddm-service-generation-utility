@@ -89,7 +89,7 @@ class SearchConditionResponseScopeFactoryTest {
 
     List<String> result = toNamesList(instance.create(context));
 
-    assertThat(result).contains("TestTableSearch", "SecondTestTableSearch");
+    assertThat(result).contains("TestTableSearchSearchConditionResponse", "SecondTestTableSearchSearchConditionResponse");
   }
 
   @Test
