@@ -194,11 +194,4 @@ data-platform:
               - delete
               - upsert
             days: ${retentionPolicyDaysWrite?c}
-  web:
-    filters:
-      exclude:
-        - /openapi
-        - /v3/api-docs/**
-        - /swagger-ui/**
-        - /actuator/**
-        - /*/csv/validation
+

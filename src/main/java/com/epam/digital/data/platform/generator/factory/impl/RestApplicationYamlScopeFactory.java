@@ -116,12 +116,8 @@ public class RestApplicationYamlScopeFactory
 
   private Map<String, List<String>> getBulkLoadPaths() {
     return bulkLoadInfoProvider.getTablesWithBulkLoad().stream()
-        .map(this::toHyphenTableName)
-        .collect(
-            toMap(
-                Function.identity(),
-                endpoint ->
-                    List.of(endpoint + "/list", endpoint + "/csv", endpoint + "/csv/validation")));
+            .map(this::toHyphenTableName)
+            .collect(toMap(Function.identity(), endpoint -> Collections.singletonList(endpoint + "/list")));
   }
 
   private List<String> getNestedInsertPaths() {
