@@ -155,13 +155,8 @@ class RestApplicationYamlScopeFactoryTest {
     var resultScope = resultList.get(0);
     assertThat(resultList).hasSize(1);
     assertThat(resultScope.getEntityPaths())
-        .containsEntry(
-            hyphen(TABLE_NAME),
-            List.of(
-                hyphen(TABLE_NAME),
-                hyphen(TABLE_NAME) + "/list",
-                hyphen(TABLE_NAME) + "/csv",
-                hyphen(TABLE_NAME) + "/csv/validation"));
+            .containsEntry(hyphen(TABLE_NAME),
+                    List.of(hyphen(TABLE_NAME), hyphen(TABLE_NAME) + "/list"));
   }
 
   @Test
