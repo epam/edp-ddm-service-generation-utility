@@ -9,9 +9,6 @@ data:
         web:
           exposure:
             include: 'health, prometheus'
-      health:
-        redis:
-          enabled: false
     data-platform:
       datasource:
         url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}
