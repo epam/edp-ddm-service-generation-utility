@@ -94,7 +94,7 @@ public class NestedEntityScopeFactory extends AbstractEntityScopeFactory<ModelSc
 
               String clazzName;
               if (childElement.getChildNodes().isEmpty()) {
-                clazzName = getSchemaName(childElement.getTableName());
+                clazzName = getSchemaName(childElement.getTableName()) + "Model";
               } else {
                 clazzName = getSchemaName(structureName, childElement.getTableName()) + "Nested";
               }

@@ -30,7 +30,7 @@ import com.epam.digital.data.platform.generator.scope.CreateServiceScope;
 
 class AbstractServiceScopeTest {
 
-  class TestScope extends AbstractServiceScope<CreateServiceScope> {
+  static class TestScope extends AbstractServiceScope<CreateServiceScope> {
 
     @Override
     protected CreateServiceScope instantiate() {
@@ -63,7 +63,7 @@ class AbstractServiceScopeTest {
     assertEquals(1, resultList.size());
     CreateServiceScope resultScope = resultList.get(0);
     assertEquals(SCHEMA_NAME + "CreateService", resultScope.getClassName());
-    assertEquals(SCHEMA_NAME, resultScope.getSchemaName());
+    assertEquals(SCHEMA_NAME + "Model", resultScope.getSchemaName());
     assertEquals(PK_NAME, resultScope.getPkName());
     assertEquals(UUID.class.getCanonicalName(), resultScope.getPkType());
   }

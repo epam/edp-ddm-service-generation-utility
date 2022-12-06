@@ -92,7 +92,7 @@ class NestedEntityScopeFactoryTest {
     var idField = new Field(UUID.class.getCanonicalName(), "id", emptyList());
     var nameField = new Field(String.class.getCanonicalName(), "name", emptyList());
     var itemField = new Field(UUID.class.getCanonicalName(), "itemId", emptyList());
-    var transactionField = new Field("Transaction", "transaction", emptyList());
+    var transactionField = new Field("TransactionModel", "transaction", emptyList());
     orderScope.setFields(Set.of(idField, nameField, itemField, transactionField));
     return orderScope;
   }

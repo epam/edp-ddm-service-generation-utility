@@ -4,15 +4,15 @@ import org.springframework.stereotype.Service;
 
 import com.epam.digital.data.platform.kafkaapi.core.commandhandler.AbstractUpsertCommandHandler;
 import com.epam.digital.data.platform.kafkaapi.core.commandhandler.util.EntityConverter;
-import ${basePackage}.kafkaapi.tabledata.${providerName};
-import ${basePackage}.model.dto.${schemaName};
+import ${basePackage}.kafkaapi.tabledata.${tableDataProviderName};
+import ${basePackage}.model.dto.${schemaName}Model;
 
 @Service
-public class ${className} extends AbstractUpsertCommandHandler<${schemaName}> {
+public class ${className} extends AbstractUpsertCommandHandler<${schemaName}Model> {
 
   public ${className}(
-      EntityConverter<${schemaName}> entityConverter,
-      ${providerName} tableDataProvider,
+      EntityConverter<${schemaName}Model> entityConverter,
+      ${tableDataProviderName} tableDataProvider,
       ${schemaName}CreateCommandHandler createCommandHandler,
       ${schemaName}UpdateCommandHandler updateCommandHandler) {
     super(entityConverter, tableDataProvider, createCommandHandler, updateCommandHandler);

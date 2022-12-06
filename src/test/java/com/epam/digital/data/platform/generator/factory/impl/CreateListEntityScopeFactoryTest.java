@@ -63,7 +63,7 @@ class CreateListEntityScopeFactoryTest {
     expectedScope.setClassName("TestSchemaCreateList");
     var expectedField = new Field();
     expectedField.setName("entities");
-    expectedField.setType("TestSchema[]");
+    expectedField.setType("TestSchemaModel[]");
     expectedField.setConstraints(
         List.of(
             new Constraint("@javax.validation.constraints.NotNull", Collections.emptyList()),

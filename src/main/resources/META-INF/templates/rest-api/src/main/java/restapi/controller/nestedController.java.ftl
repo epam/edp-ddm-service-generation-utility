@@ -38,11 +38,11 @@ public class ${className} {
   @AuditableController
   @PutMapping("${endpoint}")
   public ResponseEntity<EntityId> upsert${schemaName}(
-    @Valid @RequestBody ${schemaName} ${schemaName?uncap_first},
+    @Valid @RequestBody ${schemaName} entity,
     @HttpRequestContext RequestContext context,
     @HttpSecurityContext SecurityContext securityContext) {
     log.info("PUT /nested${endpoint} called");
-    Request<${schemaName}> request = new Request<>(${schemaName?uncap_first}, context, securityContext);
+    var request = new Request<>(entity, context, securityContext);
     var response = upsertService.request(request);
     return ResponseResolverUtil.getHttpResponseFromKafka(response);
   }

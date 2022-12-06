@@ -35,12 +35,12 @@ public abstract class AbstractServiceScope<T extends ServiceScope> extends CrudA
 
   @Override
   protected T map(Table table, Context context) {
-    String modelName = getSchemaName(table);
+    String schemaName = getSchemaName(table);
 
     T scope = instantiate();
 
-    scope.setClassName(modelName + CaseUtils.toCamelCase(getOperation(), true, '-') + "Service");
-    scope.setSchemaName(modelName);
+    scope.setClassName(schemaName + CaseUtils.toCamelCase(getOperation(), true, '-') + "Service");
+    scope.setSchemaName(schemaName + "Model");
     scope.setPkName(getPkName(table));
     scope.setPkType(getPkTypeName(table));
 

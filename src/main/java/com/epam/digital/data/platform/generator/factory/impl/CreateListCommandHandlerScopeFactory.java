@@ -19,7 +19,7 @@ package com.epam.digital.data.platform.generator.factory.impl;
 import com.epam.digital.data.platform.generator.factory.AbstractScope;
 import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
 import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.scope.CommandHandlerScope;
+import com.epam.digital.data.platform.generator.scope.CreateListCommandHandlerScope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Component
-public class CreateListCommandHandlerScopeFactory extends AbstractScope<CommandHandlerScope> {
+public class CreateListCommandHandlerScopeFactory extends AbstractScope<CreateListCommandHandlerScope> {
 
   private final BulkLoadInfoProvider bulkLoadInfoProvider;
 
@@ -36,17 +36,19 @@ public class CreateListCommandHandlerScopeFactory extends AbstractScope<CommandH
   }
 
   @Override
-  public List<CommandHandlerScope> create(Context context) {
+  public List<CreateListCommandHandlerScope> create(Context context) {
     return bulkLoadInfoProvider.getTablesWithBulkLoad().stream()
         .map(
             tableName -> {
               var table = findTable(tableName, context);
               String modelName = getSchemaName(table);
 
-              var scope = new CommandHandlerScope();
+              var scope = new CreateListCommandHandlerScope();
 
               scope.setClassName(modelName + "CreateListCommandHandler");
-              scope.setSchemaName(modelName);
+              scope.setChildSchemaName(modelName + "Model");
+              scope.setListEntitySchemaName(modelName + "CreateList");
+              scope.setChildCommandHandlerName(modelName + "CreateCommandHandler");
               return scope;
             })
         .collect(toList());

@@ -29,7 +29,7 @@ public class QueryHandlerScope extends ClassScope {
   private String pkColumnName;
   private String tableName;
   private String pkType;
-  private String providerName;
+  private String tableDataProviderName;
   private Map<String, List<String>> tableAccessCheckFields;
   private List<SelectableField> simpleSelectableFields;
   private Map<String, NestedSelectableFieldsGroup> nestedSingleSelectableGroups;
@@ -69,12 +69,12 @@ public class QueryHandlerScope extends ClassScope {
     this.pkType = pkType;
   }
 
-  public String getProviderName() {
-    return providerName;
+  public String getTableDataProviderName() {
+    return tableDataProviderName;
   }
 
-  public void setProviderName(String providerName) {
-    this.providerName = providerName;
+  public void setTableDataProviderName(String tableDataProviderName) {
+    this.tableDataProviderName = tableDataProviderName;
   }
 
   public Map<String, List<String>> getTableAccessCheckFields() {

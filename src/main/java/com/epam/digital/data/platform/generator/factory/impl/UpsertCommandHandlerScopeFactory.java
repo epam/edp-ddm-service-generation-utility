@@ -59,7 +59,7 @@ public class UpsertCommandHandlerScopeFactory extends AbstractScope<CommandHandl
               var table = findTable(tableName, context);
               scope.setClassName(getSchemaName(table) + "UpsertCommandHandler");
               scope.setSchemaName(getSchemaName(table));
-              scope.setProviderName(getSchemaName(table) + "TableDataProvider");
+              scope.setTableDataProviderName(getSchemaName(table) + "TableDataProvider");
               return scope;
             });
   }

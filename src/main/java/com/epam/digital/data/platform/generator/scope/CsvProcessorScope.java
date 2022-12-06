@@ -18,13 +18,22 @@ package com.epam.digital.data.platform.generator.scope;
 
 public class CsvProcessorScope extends ClassScope {
 
-  private String schemaName;
+  private String csvPayloadSchemaName;
+  private String csvRowSchemaName;
 
-  public String getSchemaName() {
-    return schemaName;
+  public String getCsvPayloadSchemaName() {
+    return csvPayloadSchemaName;
   }
 
-  public void setSchemaName(String schemaName) {
-    this.schemaName = schemaName;
+  public void setCsvPayloadSchemaName(String csvPayloadSchemaName) {
+    this.csvPayloadSchemaName = csvPayloadSchemaName;
+  }
+
+  public String getCsvRowSchemaName() {
+    return csvRowSchemaName;
+  }
+
+  public void setCsvRowSchemaName(String csvRowSchemaName) {
+    this.csvRowSchemaName = csvRowSchemaName;
   }
 }

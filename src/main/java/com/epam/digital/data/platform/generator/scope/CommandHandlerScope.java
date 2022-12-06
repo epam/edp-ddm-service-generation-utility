@@ -19,7 +19,7 @@ package com.epam.digital.data.platform.generator.scope;
 public class CommandHandlerScope extends ClassScope {
 
   private String schemaName;
-  private String providerName;
+  private String tableDataProviderName;
   private String operation;
 
   public String getSchemaName() {
@@ -30,12 +30,12 @@ public class CommandHandlerScope extends ClassScope {
     this.schemaName = schemaName;
   }
 
-  public String getProviderName() {
-    return providerName;
+  public String getTableDataProviderName() {
+    return tableDataProviderName;
   }
 
-  public void setProviderName(String providerName) {
-    this.providerName = providerName;
+  public void setTableDataProviderName(String tableDataProviderName) {
+    this.tableDataProviderName = tableDataProviderName;
   }
 
   public String getOperation() {

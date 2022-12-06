@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import ${basePackage}.model.dto.${schemaName};
-import ${basePackage}.kafkaapi.tabledata.${providerName};
+import ${basePackage}.kafkaapi.tabledata.${tableDataProviderName};
 
 @Service
 public class ${className} extends
     AbstractQueryHandler<${pkType}, ${schemaName}> {
 
   public ${className}(
-      ${providerName} tableDataProvider) {
+      ${tableDataProviderName} tableDataProvider) {
     super(tableDataProvider);
   }
 

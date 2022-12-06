@@ -55,7 +55,7 @@ public class CreateListEntityScopeFactory extends AbstractEntityScopeFactory<Mod
 
               var field = new Field();
               field.setName("entities");
-              field.setType(getArrayOfType(schemaName));
+              field.setType(getArrayOfType(schemaName + "Model"));
               field.setConstraints(
                   List.of(
                       new Constraint(

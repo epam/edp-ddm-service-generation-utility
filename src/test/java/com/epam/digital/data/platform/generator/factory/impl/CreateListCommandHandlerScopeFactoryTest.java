@@ -17,7 +17,7 @@
 package com.epam.digital.data.platform.generator.factory.impl;
 
 import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
-import com.epam.digital.data.platform.generator.scope.CommandHandlerScope;
+import com.epam.digital.data.platform.generator.scope.CreateListCommandHandlerScope;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +28,6 @@ import java.util.Set;
 
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SCHEMA_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.TABLE_NAME;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.VIEW_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getContext;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -52,9 +51,11 @@ class CreateListCommandHandlerScopeFactoryTest {
 
     var actual = instance.create(getContext());
 
-    var expectedScope = new CommandHandlerScope();
-    expectedScope.setSchemaName(SCHEMA_NAME);
+    var expectedScope = new CreateListCommandHandlerScope();
     expectedScope.setClassName("TestSchemaCreateListCommandHandler");
+    expectedScope.setChildSchemaName(SCHEMA_NAME + "Model");
+    expectedScope.setListEntitySchemaName(SCHEMA_NAME + "CreateList");
+    expectedScope.setChildCommandHandlerName(SCHEMA_NAME + "CreateCommandHandler");
     assertThat(actual).hasSize(1);
     assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expectedScope);
   }

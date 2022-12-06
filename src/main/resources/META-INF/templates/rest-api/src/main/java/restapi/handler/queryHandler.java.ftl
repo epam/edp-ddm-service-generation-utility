@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import ${basePackage}.model.dto.${schemaName};
-import ${basePackage}.restapi.tabledata.${providerName};
+import ${basePackage}.restapi.tabledata.${tableDataProviderName};
 <#if rls??>
 import com.epam.digital.data.platform.model.core.kafka.Request;
 import com.epam.digital.data.platform.restapi.core.exception.ForbiddenOperationException;
@@ -27,13 +27,13 @@ public class ${className} extends
     protected JwtInfoProvider jwtInfoProvider;
 
     public ${className}(
-    ${providerName} tableDataProvider,  JwtInfoProvider jwtInfoProvider) {
+    ${tableDataProviderName} tableDataProvider,  JwtInfoProvider jwtInfoProvider) {
         super(tableDataProvider);
         this.jwtInfoProvider =  jwtInfoProvider;
     }
 <#else>
     public ${className}(
-    ${providerName} tableDataProvider) {
+    ${tableDataProviderName} tableDataProvider) {
         super(tableDataProvider);
     }
 </#if>

@@ -2,25 +2,25 @@ package ${basePackage}.restapi.csv;
 
 import com.epam.digital.data.platform.restapi.core.service.AbstractCsvProcessor;
 import org.springframework.stereotype.Service;
-import ${basePackage}.model.dto.${schemaName};
-import ${basePackage}.model.dto.${schemaName}CreateList;
+import ${basePackage}.model.dto.${csvRowSchemaName};
+import ${basePackage}.model.dto.${csvPayloadSchemaName};
 
 import java.util.List;
 
 @Service
 public class ${className}
-        extends AbstractCsvProcessor<${schemaName}, ${schemaName}CreateList> {
+        extends AbstractCsvProcessor<${csvRowSchemaName}, ${csvPayloadSchemaName}> {
 
   @Override
-  protected Class<${schemaName}> getCsvRowElementType() {
-    return ${schemaName}.class;
+  protected Class<${csvRowSchemaName}> getCsvRowElementType() {
+    return ${csvRowSchemaName}.class;
   }
 
   @Override
-  protected ${schemaName}CreateList getPayloadObjectFromCsvRows(
-          List<${schemaName}> list) {
-    var payload = new ${schemaName}CreateList();
-    payload.setEntities(list.toArray(${schemaName}[]::new));
+  protected ${csvPayloadSchemaName} getPayloadObjectFromCsvRows(
+          List<${csvRowSchemaName}> list) {
+    var payload = new ${csvPayloadSchemaName}();
+    payload.setEntities(list.toArray(${csvRowSchemaName}[]::new));
     return payload;
   }
 }

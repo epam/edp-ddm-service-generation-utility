@@ -103,7 +103,7 @@ class QueryHandlerScopeFactoryTest {
     assertThat(nestedResultScope.getTableName()).isEqualTo(TABLE_NAME);
     assertThat(nestedResultScope.getPkColumnName()).isEqualTo(PK_COLUMN_NAME);
     assertThat(nestedResultScope.getPkType()).isEqualTo(UUID.class.getCanonicalName());
-    assertThat(nestedResultScope.getProviderName()).isEqualTo(SCHEMA_NAME + "TableDataProvider");
+    assertThat(nestedResultScope.getTableDataProviderName()).isEqualTo(SCHEMA_NAME + "TableDataProvider");
 
     assertThat(nestedResultScope.getSimpleSelectableFields()).hasSize(3);
     assertThat(nestedResultScope.getSimpleSelectableFields().get(0).getName()).isEqualTo(COLUMN_NAME);
@@ -151,7 +151,7 @@ class QueryHandlerScopeFactoryTest {
     assertThat(simpleResultScope.getTableName()).isEqualTo(RELATED_TABLE);
     assertThat(simpleResultScope.getPkColumnName()).isEqualTo(PK_COLUMN_NAME);
     assertThat(simpleResultScope.getPkType()).isEqualTo(UUID.class.getCanonicalName());
-    assertThat(simpleResultScope.getProviderName()).isEqualTo(RELATED_TABLE_SCHEMA + "TableDataProvider");
+    assertThat(simpleResultScope.getTableDataProviderName()).isEqualTo(RELATED_TABLE_SCHEMA + "TableDataProvider");
     assertThat(simpleResultScope.getSimpleSelectableFields()).hasSize(2);
     assertThat(simpleResultScope.getSimpleSelectableFields())
             .usingRecursiveFieldByFieldElementComparator()

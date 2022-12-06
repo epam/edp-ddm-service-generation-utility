@@ -72,7 +72,7 @@ class NestedCommandHandlerScopeFactoryTest {
     applicationScope.setClassName("NestingFlowApplicationNestedUpsertCommandHandler");
     applicationScope.setSchemaName("NestingFlowApplicationNested");
     applicationScope.setSimpleFields(List.of("name", "id"));
-    applicationScope.setRootEntityName("application");
+    applicationScope.setRootEntityName("ApplicationModel");
     applicationScope.setRootHandler("applicationUpsertCommandHandler");
 
     var orderNestedCommandHandler = new NestedCommandHandlerField();
@@ -88,7 +88,7 @@ class NestedCommandHandlerScopeFactoryTest {
     orderScope.setClassName("NestingFlowOrderNestedUpsertCommandHandler");
     orderScope.setSchemaName("NestingFlowOrderNested");
     orderScope.setSimpleFields(List.of("name", "itemId", "id"));
-    orderScope.setRootEntityName("order");
+    orderScope.setRootEntityName("OrderModel");
     orderScope.setRootHandler("orderUpsertCommandHandler");
 
     var transactionNestedCommandHandler = new NestedCommandHandlerField();

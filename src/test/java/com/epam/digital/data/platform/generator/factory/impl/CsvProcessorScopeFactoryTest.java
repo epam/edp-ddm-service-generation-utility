@@ -26,7 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Set;
 
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SCHEMA_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.TABLE_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getContext;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,6 +55,7 @@ class CsvProcessorScopeFactoryTest {
 
     assertThat(expectedScopes).hasSize(1);
     assertThat(expectedScopes.get(0).getClassName()).isEqualTo("TestSchemaCsvProcessor");
-    assertThat(expectedScopes.get(0).getSchemaName()).isEqualTo(SCHEMA_NAME);
+    assertThat(expectedScopes.get(0).getCsvPayloadSchemaName()).isEqualTo("TestSchemaCreateList");
+    assertThat(expectedScopes.get(0).getCsvRowSchemaName()).isEqualTo("TestSchemaModel");
   }
 }

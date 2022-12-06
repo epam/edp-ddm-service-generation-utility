@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ${basePackage}.model.dto.${schemaName};
+import ${basePackage}.model.dto.${schemaName}Model;
 import ${basePackage}.restapi.service.${schemaName}CreateService;
 import ${basePackage}.restapi.service.${schemaName}DeleteService;
 import ${basePackage}.restapi.service.${schemaName}UpdateService;
@@ -51,11 +51,11 @@ public class ${className} {
 <@PreAuthorize roles=createRoles />
   @PostMapping
   public ResponseEntity<EntityId> create${schemaName}(
-    @Valid @RequestBody ${schemaName} ${schemaName?uncap_first},
+    @Valid @RequestBody ${schemaName}Model entity,
     @HttpRequestContext RequestContext context,
     @HttpSecurityContext SecurityContext securityContext) {
     log.info("POST ${endpoint} called");
-    Request<${schemaName}> request = new Request<>(${schemaName?uncap_first}, context, securityContext);
+    var request = new Request<>(entity, context, securityContext);
     var response = createService.request(request);
     return ResponseResolverUtil.getHttpResponseFromKafka(response);
   }
@@ -65,12 +65,12 @@ public class ${className} {
   @PutMapping("/{id}")
   public ResponseEntity<Void> update${schemaName}(
     @PathVariable("id") ${pkType} id,
-    @Valid @RequestBody ${schemaName} ${schemaName?uncap_first},
+    @Valid @RequestBody ${schemaName}Model entity,
     @HttpRequestContext RequestContext context,
     @HttpSecurityContext SecurityContext securityContext) {
     log.info("PUT ${endpoint}/{id} called");
-    ${schemaName?uncap_first}.set${pkName?cap_first}(id);
-    Request<${schemaName}> request = new Request<>(${schemaName?uncap_first}, context, securityContext);
+    entity.set${pkName?cap_first}(id);
+    var request = new Request<>(entity, context, securityContext);
     var response = updateService.request(request);
     return ResponseResolverUtil.getHttpResponseFromKafka(response);
   }
@@ -82,9 +82,9 @@ public class ${className} {
       @HttpRequestContext RequestContext context,
       @HttpSecurityContext SecurityContext securityContext) {
     log.info("DELETE ${endpoint}/{id} called");
-    ${schemaName} ${schemaName?uncap_first} = new ${schemaName}();
-    ${schemaName?uncap_first}.set${pkName?cap_first}(id);
-    Request<${schemaName}> request = new Request<>(${schemaName?uncap_first}, context, securityContext);
+    var entity = new ${schemaName}Model();
+    entity.set${pkName?cap_first}(id);
+    var request = new Request<>(entity, context, securityContext);
     var response = deleteService.request(request);
     return ResponseResolverUtil.getHttpResponseFromKafka(response);
   }
