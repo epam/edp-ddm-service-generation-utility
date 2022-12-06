@@ -114,13 +114,13 @@ public class ServiceGenerationUtilityApplication implements ApplicationRunner {
         baseName = ((ClassScope) model).getClassName();
       }
 
-      File dir = new File(path);
-      dir.mkdirs();
-      sourceFileWriter = new FileWriter(new File(dir, baseName + JAVA_EXTENSION), UTF_8);
+      File dir = new File(path); //NOSONAR
+      dir.mkdirs(); //NOSONAR
+      sourceFileWriter = new FileWriter(new File(dir, baseName + JAVA_EXTENSION), UTF_8); //NOSONAR
     } else {
       String path = FilenameUtils.getPath(resultFile);
-      File dir = new File(path);
-      dir.mkdirs();
+      File dir = new File(path); //NOSONAR
+      dir.mkdirs(); //NOSONAR
       sourceFileWriter = new FileWriter(resultFile, UTF_8);
     }
     return sourceFileWriter;

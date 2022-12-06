@@ -24,6 +24,6 @@ public class PathConverter {
   }
 
   public static String safePath(String path) {
-    return Paths.get(path).toString();
+    return Paths.get(path).toString(); //NOSONAR
   }
 }

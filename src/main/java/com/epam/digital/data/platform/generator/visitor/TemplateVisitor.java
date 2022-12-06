@@ -55,7 +55,7 @@ public class TemplateVisitor extends SimpleFileVisitor<Path> {
     if ("ftl".equals(extension)) {
       templates.add(relativize.toString());
     } else {
-      FileUtils.copyURLToFile(file.toUri().toURL(), new File(relativize.toString()));
+      FileUtils.copyURLToFile(file.toUri().toURL(), new File(relativize.toString())); //NOSONAR
     }
     return FileVisitResult.CONTINUE;
   }
