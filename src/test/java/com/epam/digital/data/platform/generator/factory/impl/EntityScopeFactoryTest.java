@@ -26,10 +26,8 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.lenient;
 
 import com.epam.digital.data.platform.generator.constraints.impl.CompositeConstraintProvider;
-import com.epam.digital.data.platform.generator.constraints.impl.FormattingConstraintProvider;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
@@ -76,7 +74,7 @@ class EntityScopeFactoryTest {
     List<ModelScope> actual = instance.create(context);
     List<String> result = toNamesList(actual);
 
-    assertThat(result).containsExactlyInAnyOrder("TestTable", "SecondTestTable");
+    assertThat(result).containsExactlyInAnyOrder("TestTableModel", "SecondTestTableModel");
   }
 
   @Test

@@ -48,7 +48,7 @@ public class EntityScopeFactory extends AbstractEntityScopeFactory<ModelScope> {
         .map(
             t -> {
               var scope = new ModelScope();
-              scope.setClassName(getSchemaName(t));
+              scope.setClassName(getSchemaName(t) + "Model");
               scope.getFields().addAll(getFields(t.getColumns()));
               return scope;
             })

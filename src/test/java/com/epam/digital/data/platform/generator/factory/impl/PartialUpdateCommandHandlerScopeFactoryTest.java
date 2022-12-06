@@ -82,6 +82,6 @@ public class PartialUpdateCommandHandlerScopeFactoryTest {
     var resultScope = findByStringContains("MyTable", CommandHandlerScope::getSchemaName, resultList);
     assertThat(resultScope.getClassName()).isEqualTo("MyTableMyTableUpdCommandHandler");
     assertThat(resultScope.getSchemaName()).isEqualTo("MyTableMyTableUpd");
-    assertThat(resultScope.getProviderName()).isEqualTo("MyTableTableDataProvider");
+    assertThat(resultScope.getTableDataProviderName()).isEqualTo("MyTableTableDataProvider");
   }
 }

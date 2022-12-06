@@ -59,7 +59,7 @@ public class QueryHandlerScopeFactory extends CrudAbstractScope<QueryHandlerScop
     scope.setPkColumnName(getPkColumn(table).getName());
     scope.setTableName(table.getName());
     scope.setPkType(getPkTypeName(table));
-    scope.setProviderName(getSchemaName(table) + "TableDataProvider");
+    scope.setTableDataProviderName(getSchemaName(table) + "TableDataProvider");
     scope.setTableAccessCheckFields(
         getPermissionCheckTableColumns(nestedEntitiesMap.values(), table, context));
     var nestedColumns =

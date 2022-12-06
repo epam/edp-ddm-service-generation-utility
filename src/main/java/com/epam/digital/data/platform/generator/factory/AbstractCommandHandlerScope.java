@@ -32,8 +32,8 @@ public abstract class AbstractCommandHandlerScope extends CrudAbstractScope<Comm
     var scope = new CommandHandlerScope();
 
     scope.setClassName(modelName + StringUtils.capitalize(getOperation()) + "CommandHandler");
-    scope.setSchemaName(modelName);
-    scope.setProviderName(modelName + "TableDataProvider");
+    scope.setSchemaName(modelName + "Model");
+    scope.setTableDataProviderName(modelName + "TableDataProvider");
     scope.setOperation(getOperation());
     return scope;
   }

@@ -29,17 +29,18 @@ public abstract class AbstractCommandListenerScopeFactory extends CrudAbstractSc
 
   @Override
   protected ListenerScope map(Table table, Context context) {
+    var schemaName = getSchemaName(table);
     var scope = new ListenerScope();
     scope.setClassName(
-        getSchemaName(table) + CaseUtils.toCamelCase(getOperation(), true, '-') + "Listener");
-    scope.setSchemaName(getSchemaName(table));
+        schemaName + CaseUtils.toCamelCase(getOperation(), true, '-') + "Listener");
+    scope.setSchemaName(schemaName + "Model");
     scope.setPkType(getPkTypeName(table));
 
     scope.setOperation(getOperation());
     scope.setRootOfTopicName(toHyphenTableName(table));
     scope.setOutputType(getOutputType());
     scope.setHandlerName(
-        getSchemaName(table) + CaseUtils.toCamelCase(getOperation(), true, '-') + "CommandHandler");
+        schemaName + CaseUtils.toCamelCase(getOperation(), true, '-') + "CommandHandler");
 
     return scope;
   }

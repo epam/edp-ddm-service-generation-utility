@@ -6,7 +6,7 @@ import com.epam.digital.data.platform.kafkaapi.core.commandhandler.UpsertCommand
 import com.epam.digital.data.platform.model.core.kafka.EntityId;
 import com.epam.digital.data.platform.model.core.kafka.Request;
 import ${basePackage}.model.dto.${schemaName};
-import ${basePackage}.model.dto.${rootEntityName?cap_first};
+import ${basePackage}.model.dto.${rootEntityName};
 
 @Service
 public class ${className} implements UpsertCommandHandler<${schemaName}> {
@@ -34,17 +34,17 @@ public class ${className} implements UpsertCommandHandler<${schemaName}> {
     var requestContext = request.getRequestContext();
     var securityContext = request.getSecurityContext();
     var requestPayload = request.getPayload();
-    var ${rootEntityName} = new ${rootEntityName?cap_first}();
+    var upsertModel = new ${rootEntityName}();
     <#list simpleFields as field>
-    ${rootEntityName}.set${field?cap_first}(requestPayload.get${field?cap_first}());
+    upsertModel.set${field?cap_first}(requestPayload.get${field?cap_first}());
     </#list>
     <#list nestedHandlers as handler>
     var ${handler.injectionField} =
         ${handler.name}
           .upsert(new Request<>(requestPayload.get${handler.childField?cap_first}(), requestContext, securityContext))
           .getId();    
-    ${rootEntityName}.set${handler.injectionField?cap_first}(${handler.injectionField});
+    upsertModel.set${handler.injectionField?cap_first}(${handler.injectionField});
     </#list>
-    return ${rootHandler}.upsert(new Request<>(${rootEntityName}, requestContext, securityContext));
+    return ${rootHandler}.upsert(new Request<>(upsertModel, requestContext, securityContext));
   }
 }

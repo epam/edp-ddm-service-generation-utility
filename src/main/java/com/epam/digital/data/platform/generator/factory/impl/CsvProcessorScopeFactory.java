@@ -42,10 +42,12 @@ public class CsvProcessorScopeFactory extends AbstractScope<CsvProcessorScope> {
         .map(
             tableName -> {
               var table = findTable(tableName, context);
+              var schemaName = getSchemaName(table);
 
               var scope = new CsvProcessorScope();
-              scope.setClassName(getSchemaName(table) + "CsvProcessor");
-              scope.setSchemaName(getSchemaName(table));
+              scope.setClassName(schemaName + "CsvProcessor");
+              scope.setCsvPayloadSchemaName(schemaName + "CreateList");
+              scope.setCsvRowSchemaName(schemaName + "Model");
               return scope;
             })
         .collect(toList());

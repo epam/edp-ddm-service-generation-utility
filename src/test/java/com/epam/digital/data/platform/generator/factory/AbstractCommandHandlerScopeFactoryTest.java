@@ -17,7 +17,6 @@
 package com.epam.digital.data.platform.generator.factory;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.*;
 
 import com.epam.digital.data.platform.generator.scope.CommandHandlerScope;
@@ -28,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 class AbstractCommandHandlerScopeFactoryTest {
 
-  class TestScope extends AbstractCommandHandlerScope {
+  static class TestScope extends AbstractCommandHandlerScope {
 
     @Override
     protected String getOperation() {
@@ -56,8 +55,8 @@ class AbstractCommandHandlerScopeFactoryTest {
     assertThat(resultScope.getClassName())
             .isEqualTo(SCHEMA_NAME + "CreateCommandHandler");
     assertThat(resultScope.getSchemaName())
-            .isEqualTo(SCHEMA_NAME);
-    assertThat(resultScope.getProviderName())
+            .isEqualTo(SCHEMA_NAME + "Model");
+    assertThat(resultScope.getTableDataProviderName())
             .isEqualTo(SCHEMA_NAME + "TableDataProvider");
   }
 }

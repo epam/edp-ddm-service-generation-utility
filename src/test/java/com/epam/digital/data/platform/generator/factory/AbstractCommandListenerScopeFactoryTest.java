@@ -67,7 +67,7 @@ class AbstractCommandListenerScopeFactoryTest {
 
     ListenerScope resultScope = resultList.get(0);
     assertThat(resultScope.getClassName()).isEqualTo(SCHEMA_NAME + "UpdateListener");
-    assertThat(resultScope.getSchemaName()).isEqualTo(SCHEMA_NAME);
+    assertThat(resultScope.getSchemaName()).isEqualTo(SCHEMA_NAME + "Model");
     assertThat(resultScope.getPkType()).isEqualTo(expectedPkType);
 
     assertThat(resultScope.getOperation()).isEqualTo("update");
