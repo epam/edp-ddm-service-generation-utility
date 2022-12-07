@@ -1,21 +1,45 @@
+{{- define "keycloak.customUrl" -}}
+{{- printf "%s%s" "https://" .Values.keycloak.customHost }}
+{{- end -}}
+
 {{- define "keycloak.urlPrefix" -}}
 {{- printf "%s%s%s" .Values.keycloak.url "/auth/realms/" .Release.Namespace -}}
 {{- end -}}
 
+{{- define "keycloak.customUrlPrefix" -}}
+{{- printf "%s%s%s" (include "keycloak.customUrl" .) "/auth/realms/" .Release.Namespace -}}
+{{- end -}}
+
 {{- define "issuer.officer" -}}
+{{- if .Values.keycloak.customHost }}
+{{- printf "%s-%s" (include "keycloak.customUrlPrefix" .) .Values.keycloak.realms.officer -}}
+{{- else }}
 {{- printf "%s-%s" (include "keycloak.urlPrefix" .) .Values.keycloak.realms.officer -}}
+{{- end }}
 {{- end -}}
 
 {{- define "issuer.citizen" -}}
+{{- if .Values.keycloak.customHost }}
+{{- printf "%s-%s" (include "keycloak.customUrlPrefix" .) .Values.keycloak.realms.citizen -}}
+{{- else }}
 {{- printf "%s-%s" (include "keycloak.urlPrefix" .) .Values.keycloak.realms.citizen -}}
+{{- end }}
 {{- end -}}
 
 {{- define "issuer.admin" -}}
+{{- if .Values.keycloak.customHost }}
+{{- printf "%s-%s" (include "keycloak.customUrlPrefix" .) .Values.keycloak.realms.admin -}}
+{{- else }}
 {{- printf "%s-%s" (include "keycloak.urlPrefix" .) .Values.keycloak.realms.admin -}}
+{{- end }}
 {{- end -}}
 
 {{- define "issuer.external" -}}
+{{- if .Values.keycloak.customHost }}
+{{- printf "%s-%s" (include "keycloak.customUrlPrefix" .) .Values.keycloak.realms.external -}}
+{{- else }}
 {{- printf "%s-%s" (include "keycloak.urlPrefix" .) .Values.keycloak.realms.external -}}
+{{- end }}
 {{- end -}}
 
 {{- define "jwksUri.officer" -}}
