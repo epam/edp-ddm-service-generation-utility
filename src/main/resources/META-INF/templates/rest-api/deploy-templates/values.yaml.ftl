@@ -11,8 +11,7 @@ global:
             limits: {}
       container:
         resources: {}
-        envVars:
-          JAVA_OPTS: "-Xms1200m -Xmx1200m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent"
+        envVars: {}
   
 name: ${register}-rest-api
 

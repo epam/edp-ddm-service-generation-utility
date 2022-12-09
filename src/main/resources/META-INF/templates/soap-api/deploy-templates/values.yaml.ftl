@@ -10,8 +10,7 @@ global:
             limits: {}
       container:
         resources: {}
-        envVars:
-          JAVA_OPTS: "-Xms128m -Xmx128m -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent"
+        envVars: {}
   
 name: ${register}-soap-api
 
