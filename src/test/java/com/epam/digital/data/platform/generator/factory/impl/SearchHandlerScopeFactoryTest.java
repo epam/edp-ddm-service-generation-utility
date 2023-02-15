@@ -19,6 +19,7 @@ package com.epam.digital.data.platform.generator.factory.impl;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.metadata.NestedReadEntity;
 import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditions;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
@@ -43,7 +44,6 @@ import java.util.UUID;
 
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.GEOMETRY_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.PK_COLUMN_NAME;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.emptyAsyncData;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.newCatalog;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.override;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withColumn;
@@ -443,11 +443,13 @@ class SearchHandlerScopeFactoryTest {
 
   @Test
   void shouldSetPaginationWhenPresent() {
-    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder().pagination(true).build());
+    setupSearchConditions(
+        VIEW_NAME,
+        new SearchConditionsBuilder().pagination(SearchConditionPaginationType.TRUE).build());
 
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
-    assertThat(resultList.get(0).getPagination()).isTrue();
+    assertThat(resultList.get(0).getPagination()).isEqualTo(SearchConditionPaginationType.TRUE);
   }
 
   @Test

@@ -30,12 +30,15 @@ import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.wi
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withTable;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withUuidPk;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import com.epam.digital.data.platform.generator.metadata.NestedReadEntity;
 import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
 
@@ -44,7 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.epam.digital.data.platform.generator.scope.ReadControllerScope;
+import com.epam.digital.data.platform.generator.scope.SearchControllerScope;
+import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,6 +88,8 @@ class SearchControllerScopeFactoryTest {
     instance =
         new SearchControllerScopeFactory(
             searchConditionProvider, permissionMap, nestedReadProvider);
+
+    given(searchConditionProvider.findFor(any())).willReturn(new SearchConditionsBuilder().build());
   }
 
   private void setupReadExpressions(String tableName, String columnName, Set<String> expressions) {
@@ -100,14 +106,32 @@ class SearchControllerScopeFactoryTest {
 
   @Test
   void expectControllerScopeIsGenerated() {
-    List<ReadControllerScope> scopes = instance.create(context);
+    List<SearchControllerScope> scopes = instance.create(context);
 
     assertThat(scopes).hasSize(1);
-    ReadControllerScope resultScope = scopes.get(0);
+    SearchControllerScope resultScope = scopes.get(0);
     assertThat(resultScope.getClassName()).isEqualTo(SEARCH_SCHEMA_NAME + "SearchController");
     assertThat(resultScope.getSchemaName()).isEqualTo(SEARCH_SCHEMA_NAME);
     assertThat(resultScope.getEndpoint()).isEqualTo(ENDPOINT + "-search");
     assertThat(resultScope.getServiceName()).isEqualTo(SEARCH_SCHEMA_NAME + "SearchService");
+    assertThat(resultScope.getResponseType()).isEqualTo(List.class.getCanonicalName());
+  }
+
+  @Test
+  void expectControllerScopeWithPagingResponseIsGenerated() {
+    when(searchConditionProvider.findFor(VIEW_NAME))
+        .thenReturn(
+            new SearchConditionsBuilder().pagination(SearchConditionPaginationType.PAGE).build());
+
+    List<SearchControllerScope> scopes = instance.create(context);
+
+    assertThat(scopes).hasSize(1);
+    SearchControllerScope resultScope = scopes.get(0);
+    assertThat(resultScope.getClassName()).isEqualTo(SEARCH_SCHEMA_NAME + "SearchController");
+    assertThat(resultScope.getSchemaName()).isEqualTo(SEARCH_SCHEMA_NAME);
+    assertThat(resultScope.getEndpoint()).isEqualTo(ENDPOINT + "-search");
+    assertThat(resultScope.getServiceName()).isEqualTo(SEARCH_SCHEMA_NAME + "SearchService");
+    assertThat(resultScope.getResponseType()).isEqualTo(ScopeTypeUtils.SEARCH_CONDITION_PAGE_TYPE);
   }
 
   @Test
@@ -126,10 +150,10 @@ class SearchControllerScopeFactoryTest {
     );
     setupReadExpressions(TABLE_NAME, "field_1", Set.of("role3"));
 
-    List<ReadControllerScope> scopes = instance.create(context);
+    List<SearchControllerScope> scopes = instance.create(context);
 
     assertThat(scopes).hasSize(1);
-    ReadControllerScope resultScope = scopes.get(0);
+    SearchControllerScope resultScope = scopes.get(0);
     assertThat(resultScope.getClassName()).isEqualTo(SEARCH_SCHEMA_NAME + "SearchController");
     assertThat(resultScope.getSchemaName()).isEqualTo(SEARCH_SCHEMA_NAME);
     assertThat(resultScope.getEndpoint()).isEqualTo(ENDPOINT + "-search");

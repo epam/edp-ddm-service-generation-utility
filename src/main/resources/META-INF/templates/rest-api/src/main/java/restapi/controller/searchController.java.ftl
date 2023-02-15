@@ -9,7 +9,6 @@ import com.epam.digital.data.platform.model.core.kafka.SecurityContext;
 import com.epam.digital.data.platform.restapi.core.annotation.HttpRequestContext;
 import com.epam.digital.data.platform.restapi.core.annotation.HttpSecurityContext;
 import com.epam.digital.data.platform.restapi.core.audit.AuditableController;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.epam.digital.data.platform.restapi.core.utils.ResponseResolverUtil;
@@ -38,7 +37,7 @@ public class ${className} {
   @AuditableController
 <@PreAuthorize roles=readRoles />
   @GetMapping
-  public ResponseEntity<List<${schemaName}SearchConditionResponse>> search(
+  public ResponseEntity<${responseType}<${schemaName}SearchConditionResponse>> search(
       ${schemaName}SearchConditions searchConditions,
       @HttpRequestContext RequestContext context,
       @HttpSecurityContext SecurityContext securityContext) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2023 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
-public class SearchServiceScope extends ServiceScope {
+public class SearchListenerScope extends ListenerScope {
 
   private String responseType;
   private boolean responseAsPlainContent;

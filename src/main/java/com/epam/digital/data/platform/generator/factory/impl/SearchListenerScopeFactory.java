@@ -16,20 +16,32 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;
-
+import com.epam.digital.data.platform.generator.factory.SearchConditionsAbstractScope;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.scope.ListenerScope;
+import com.epam.digital.data.platform.generator.scope.SearchListenerScope;
+import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
 import org.springframework.stereotype.Component;
 import schemacrawler.schema.Table;
-import com.epam.digital.data.platform.generator.factory.SearchConditionsAbstractScope;
+
+import java.util.List;
+
+import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;
 
 @Component
-public class SearchListenerScopeFactory extends SearchConditionsAbstractScope<ListenerScope> {
+public class SearchListenerScopeFactory extends SearchConditionsAbstractScope<SearchListenerScope> {
+
+  private final SearchConditionProvider provider;
+
+  public SearchListenerScopeFactory(SearchConditionProvider provider) {
+    this.provider = provider;
+  }
 
   @Override
-  protected ListenerScope map(Table table, Context context) {
-    var scope = new ListenerScope();
+  protected SearchListenerScope map(Table table, Context context) {
+    var searchConditionInfo = provider.findFor(getCutTableName(table.getName()));
+    var scope = new SearchListenerScope();
     scope.setClassName(getSchemaName(table) + "Listener");
     scope.setSchemaName(getSchemaName(table));
 
@@ -37,6 +49,13 @@ public class SearchListenerScopeFactory extends SearchConditionsAbstractScope<Li
     scope.setRootOfTopicName(toHyphenTableName(table));
     scope.setOutputType(scope.getSchemaName());
     scope.setHandlerName(getSchemaName(table) + "SearchHandler");
+    if (SearchConditionPaginationType.isTypePage(searchConditionInfo.getPagination())) {
+      scope.setResponseType(ScopeTypeUtils.SEARCH_CONDITION_PAGE_TYPE);
+      scope.setResponseAsPlainContent(false);
+    } else {
+      scope.setResponseType(List.class.getCanonicalName());
+      scope.setResponseAsPlainContent(true);
+    }
 
     return scope;
   }

@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -84,10 +85,11 @@ public class SearchConditionProvider {
       b.limit(Integer.valueOf(limit.get(0)));
     }
 
-    var pagination = groupedByName.get(PAGINATION_ATTRIBUTE_NAME);
-    if (pagination != null) {
-      b.pagination(Boolean.valueOf(pagination.get(0)));
-    }
+    var pagination =
+        Optional.ofNullable(groupedByName.get(PAGINATION_ATTRIBUTE_NAME))
+            .map(paginationValue -> paginationValue.get(0))
+            .orElse(null);
+    b.pagination(SearchConditionPaginationType.findByValue(pagination));
 
     return b.build();
   }

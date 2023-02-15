@@ -32,7 +32,7 @@ public class SearchConditions {
   private final List<String> between;
   private final List<String> returningColumns;
   private final Integer limit;
-  private final Boolean pagination;
+  private final SearchConditionPaginationType pagination;
 
   SearchConditions(
       List<String> equal,
@@ -45,7 +45,7 @@ public class SearchConditions {
       List<String> between,
       List<String> returningColumns,
       Integer limit,
-      Boolean pagination) {
+      SearchConditionPaginationType pagination) {
     this.equal = unmodifiableList(equal);
     this.notEqual = unmodifiableList(notEqual);
     this.startsWith = unmodifiableList(startsWith);
@@ -99,7 +99,7 @@ public class SearchConditions {
     return limit;
   }
 
-  public Boolean getPagination() {
+  public SearchConditionPaginationType getPagination() {
     return pagination;
   }
 }

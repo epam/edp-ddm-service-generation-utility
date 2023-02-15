@@ -24,6 +24,7 @@ import com.epam.digital.data.platform.generator.model.template.Constraint;
 import com.epam.digital.data.platform.generator.model.template.Constraint.Content;
 import com.epam.digital.data.platform.generator.model.template.Field;
 import com.epam.digital.data.platform.generator.scope.ModelScope;
+import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -55,7 +56,7 @@ public class CreateListEntityScopeFactory extends AbstractEntityScopeFactory<Mod
 
               var field = new Field();
               field.setName("entities");
-              field.setType(getArrayOfType(schemaName + "Model"));
+              field.setType(ScopeTypeUtils.getArrayOfType(schemaName + "Model"));
               field.setConstraints(
                   List.of(
                       new Constraint(

@@ -32,7 +32,7 @@ public class SearchConditionsBuilder {
   private List<String> between = emptyList();
   private List<String> returningColumns = emptyList();
   private Integer limit;
-  private Boolean pagination;
+  private SearchConditionPaginationType pagination;
 
   public SearchConditionsBuilder equal(List<String> equal) {
     this.equal = equal;
@@ -83,7 +83,7 @@ public class SearchConditionsBuilder {
     return this;
   }
 
-  public SearchConditionsBuilder pagination(Boolean pagination) {
+  public SearchConditionsBuilder pagination(SearchConditionPaginationType pagination) {
     this.pagination = pagination;
     return this;
   }

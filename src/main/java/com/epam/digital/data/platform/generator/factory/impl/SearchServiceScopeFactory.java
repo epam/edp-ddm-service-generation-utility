@@ -18,16 +18,19 @@ package com.epam.digital.data.platform.generator.factory.impl;
 
 import static com.epam.digital.data.platform.generator.utils.ReadOperationUtils.isAsyncSearchCondition;
 
+import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.scope.ServiceScope;
+import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
 import org.springframework.stereotype.Component;
 import schemacrawler.schema.Table;
 import com.epam.digital.data.platform.generator.factory.SearchConditionsAbstractScope;
 import com.epam.digital.data.platform.generator.scope.SearchServiceScope;
 
+import java.util.List;
+
 @Component
-public class SearchServiceScopeFactory extends SearchConditionsAbstractScope<ServiceScope> {
+public class SearchServiceScopeFactory extends SearchConditionsAbstractScope<SearchServiceScope> {
 
   private final SearchConditionProvider searchConditionProvider;
 
@@ -36,11 +39,19 @@ public class SearchServiceScopeFactory extends SearchConditionsAbstractScope<Ser
   }
 
   @Override
-  protected ServiceScope map(Table table, Context context) {
+  protected SearchServiceScope map(Table table, Context context) {
+    var searchConditionInfo = searchConditionProvider.findFor(getCutTableName(table.getName()));
     var serviceScope = new SearchServiceScope();
     serviceScope.setClassName(getSchemaName(table) + "SearchService");
     serviceScope.setSchemaName(getSchemaName(table));
     serviceScope.setRequestType("search" + "-" + toHyphenTableName(table.getName()));
+    if (SearchConditionPaginationType.isTypePage(searchConditionInfo.getPagination())) {
+      serviceScope.setResponseType(ScopeTypeUtils.SEARCH_CONDITION_PAGE_TYPE);
+      serviceScope.setResponseAsPlainContent(false);
+    } else {
+      serviceScope.setResponseType(List.class.getCanonicalName());
+      serviceScope.setResponseAsPlainContent(true);
+    }
     return serviceScope;
   }
 

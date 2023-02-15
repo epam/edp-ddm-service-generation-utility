@@ -5,6 +5,7 @@ import com.epam.digital.data.platform.kafkaapi.core.util.Operation;
 import com.epam.digital.data.platform.kafkaapi.core.listener.GenericSearchListener;
 import com.epam.digital.data.platform.model.core.kafka.Request;
 import com.epam.digital.data.platform.model.core.kafka.Response;
+import com.epam.digital.data.platform.model.core.search.SearchConditionPage;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,10 @@ import static com.epam.digital.data.platform.kafkaapi.core.util.Header.DIGITAL_S
 
 @Component
 public class ${schemaName}Listener extends
-    GenericSearchListener<${schemaName}SearchConditions, ${schemaName}SearchConditionResponse> {
+    GenericSearchListener<
+        ${schemaName}SearchConditions,
+        ${schemaName}SearchConditionResponse,
+        ${responseType}<${schemaName}SearchConditionResponse>> {
 
   private final Logger log = LoggerFactory.getLogger(${className}.class);
 
@@ -36,12 +40,18 @@ public class ${schemaName}Listener extends
       groupId = "\u0023{kafkaProperties.consumer.groupId}",
       containerFactory = "concurrentKafkaListenerContainerFactory")
   @SendTo
-  public Message<Response<List<${schemaName}SearchConditionResponse>>> search(
+  public Message<Response<${responseType}<${schemaName}SearchConditionResponse>>> search(
       @Header(name = DIGITAL_SEAL, required = false) String key,
       Request<${schemaName}SearchConditions> searchConditions) {
     log.info("Kafka event received with search");
     var response = super.search(key, searchConditions);
     log.info("search kafka event processing finished");
     return response;
+  }
+
+  @Override
+  protected ${responseType}<${schemaName}SearchConditionResponse> getResponsePayload(
+      SearchConditionPage<${schemaName}SearchConditionResponse> searchConditionPage) {
+    return searchConditionPage<#if responseAsPlainContent>.getContent()</#if>;
   }
 }

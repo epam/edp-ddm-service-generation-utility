@@ -23,14 +23,14 @@ import java.util.Set;
 
 public class SoapScope {
 
-  private Set<String> schemaNames = new HashSet<>();
-  private List<ControllerScope> searchScopes = new ArrayList<>();
+  private final Set<String> schemaNames = new HashSet<>();
+  private final List<SearchControllerScope> searchScopes = new ArrayList<>();
 
   public Set<String> getSchemaNames() {
     return schemaNames;
   }
 
-  public List<ControllerScope> getSearchScopes() {
+  public List<SearchControllerScope> getSearchScopes() {
     return searchScopes;
   }
 
@@ -38,7 +38,7 @@ public class SoapScope {
     schemaNames.add(schemaName);
   }
 
-  public void addSearchScopes(ControllerScope searchScope) {
+  public void addSearchScopes(SearchControllerScope searchScope) {
     searchScopes.add(searchScope);
   }
 }

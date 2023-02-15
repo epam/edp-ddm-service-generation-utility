@@ -16,17 +16,26 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SEARCH_SCHEMA_NAME;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getContext;
-
+import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
-import com.epam.digital.data.platform.generator.scope.ServiceScope;
-import java.util.List;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
+import com.epam.digital.data.platform.generator.scope.SearchServiceScope;
+import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SEARCH_SCHEMA_NAME;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.VIEW_NAME;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getContext;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 class SearchServiceScopeFactoryTest {
 
   private SearchServiceScopeFactory instance;
@@ -41,12 +50,31 @@ class SearchServiceScopeFactoryTest {
 
   @Test
   void successfulTest() {
-    List<ServiceScope> scopes = instance.create(getContext());
+    when(searchConditionProvider.findFor(VIEW_NAME))
+        .thenReturn(new SearchConditionsBuilder().build());
+
+    List<SearchServiceScope> scopes = instance.create(getContext());
 
     assertThat(scopes).hasSize(1);
-    ServiceScope scope = scopes.get(0);
+    SearchServiceScope scope = scopes.get(0);
     assertThat(scope.getClassName()).isEqualTo(SEARCH_SCHEMA_NAME + "SearchService");
     assertThat(scope.getSchemaName()).isEqualTo(SEARCH_SCHEMA_NAME);
     assertThat(scope.getRequestType()).isEqualTo("search-test-schema-search");
+    assertThat(scope.getResponseType()).isEqualTo(List.class.getCanonicalName());
+    assertThat(scope.isResponseAsPlainContent()).isTrue();
+  }
+
+  @Test
+  void expectGenerateScopeForPagingResponse() {
+    when(searchConditionProvider.findFor(VIEW_NAME))
+        .thenReturn(
+            new SearchConditionsBuilder().pagination(SearchConditionPaginationType.PAGE).build());
+
+    List<SearchServiceScope> scopes = instance.create(getContext());
+
+    assertThat(scopes).hasSize(1);
+    SearchServiceScope scope = scopes.get(0);
+    assertThat(scope.getResponseType()).isEqualTo(ScopeTypeUtils.SEARCH_CONDITION_PAGE_TYPE);
+    assertThat(scope.isResponseAsPlainContent()).isFalse();
   }
 }

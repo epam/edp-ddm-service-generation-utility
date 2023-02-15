@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2023 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
-public class SearchServiceScope extends ServiceScope {
+public class SearchControllerScope extends ReadControllerScope {
 
   private String responseType;
-  private boolean responseAsPlainContent;
 
   public String getResponseType() {
     return responseType;
@@ -27,13 +26,5 @@ public class SearchServiceScope extends ServiceScope {
 
   public void setResponseType(String responseType) {
     this.responseType = responseType;
-  }
-
-  public boolean isResponseAsPlainContent() {
-    return responseAsPlainContent;
-  }
-
-  public void setResponseAsPlainContent(boolean responseAsPlainContent) {
-    this.responseAsPlainContent = responseAsPlainContent;
   }
 }

@@ -17,12 +17,15 @@
 package com.epam.digital.data.platform.generator.factory;
 
 import com.epam.digital.data.platform.generator.metadata.ExposeSearchConditionOption;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
-import com.epam.digital.data.platform.generator.scope.ControllerScope;
+import com.epam.digital.data.platform.generator.scope.SearchControllerScope;
 import com.epam.digital.data.platform.generator.scope.SoapScope;
-import java.util.List;
+import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
 import schemacrawler.schema.Table;
+
+import java.util.List;
 
 public abstract class AbstractSoapScopeFactory extends AbstractScope<SoapScope> {
 
@@ -43,15 +46,20 @@ public abstract class AbstractSoapScopeFactory extends AbstractScope<SoapScope> 
     return List.of(soapScope);
   }
 
-
   private SoapScope map(Table table, SoapScope soapScope) {
+    var searchConditionInfo = searchConditionProvider.findFor(getCutTableName(table.getName()));
 
     soapScope.addSchemaName(getSchemaName(table) + "SearchConditionResponse");
     soapScope.addSchemaName(getSchemaName(table) + "SearchConditions");
 
-    var controllerScope = new ControllerScope();
+    var controllerScope = new SearchControllerScope();
     controllerScope.setSchemaName(getSchemaName(table));
     controllerScope.setEndpoint(getEndpoint(table.getName()));
+    if (SearchConditionPaginationType.isTypePage(searchConditionInfo.getPagination())) {
+      controllerScope.setResponseType(ScopeTypeUtils.SEARCH_CONDITION_PAGE_TYPE);
+    } else {
+      controllerScope.setResponseType(List.class.getCanonicalName());
+    }
 
     soapScope.addSearchScopes(controllerScope);
     return soapScope;
@@ -59,7 +67,8 @@ public abstract class AbstractSoapScopeFactory extends AbstractScope<SoapScope> 
 
   private boolean isApplicable(Table table) {
     return searchConditionProvider
-        .getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA)
-        .contains(getCutTableName(table)) && isSearchConditionsView(table);
+            .getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA)
+            .contains(getCutTableName(table))
+        && isSearchConditionsView(table);
   }
 }

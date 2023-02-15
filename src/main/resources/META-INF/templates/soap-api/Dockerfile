@@ -1,4 +1,4 @@
-FROM ${dockerProxyRegistry}/${globalNexusNamespace}/soap-api-core-base-image-master:1.6.0.5 AS builder
+FROM ${dockerProxyRegistry}/${globalNexusNamespace}/soap-api-core-base-image-master:1.9.4.1 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild

@@ -27,6 +27,7 @@ import com.epam.digital.data.platform.generator.model.template.Field;
 import com.epam.digital.data.platform.generator.scope.ModelScope;
 import com.epam.digital.data.platform.generator.utils.DbTypeConverter;
 import com.epam.digital.data.platform.generator.utils.DbUtils;
+import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
 import org.springframework.stereotype.Component;
 import schemacrawler.schema.Column;
 import schemacrawler.schema.Table;
@@ -106,7 +107,7 @@ public class SearchConditionResponseScopeFactory extends AbstractEntityScopeFact
               var field = new Field();
               field.setName(getPropertyName(column));
               if (DbUtils.isColumnOfArrayType(column)) {
-                field.setType(getArrayOfType(clazzName));
+                field.setType(ScopeTypeUtils.getArrayOfType(clazzName));
               } else {
                 field.setType(clazzName);
               }

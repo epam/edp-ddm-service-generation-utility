@@ -10,7 +10,6 @@ import ${basePackage}.model.dto.${schema};
 </#list>
 
 import com.epam.digital.data.platform.soapapi.core.config.feign.FeignConfig;
-import java.util.List;
 import java.util.Map;
 
 <#noparse>
@@ -20,7 +19,7 @@ public interface RestApiClient {
 
 <#list searchScopes as scope>
   @GetMapping("${scope.endpoint}")
-  List<${scope.schemaName}SearchConditionResponse> search${scope.schemaName}(
+  ${scope.responseType}<${scope.schemaName}SearchConditionResponse> search${scope.schemaName}(
       @SpringQueryMap ${scope.schemaName}SearchConditions searchConditions,
       @RequestHeader Map<String, Object> headers);
 

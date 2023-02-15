@@ -7,7 +7,6 @@ import ${basePackage}.model.dto.${schema};
 import com.epam.digital.data.platform.soapapi.core.converter.HeadersProvider;
 import com.epam.digital.data.platform.soapapi.core.endpoint.IEndpointHandler;
 import com.epam.digital.data.platform.soapapi.core.util.SoapHeaders;
-import java.util.List;
 import java.util.Map;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -31,7 +30,7 @@ public class EndpointHandler implements IEndpointHandler {
   }
 
 <#list searchScopes as scope>
-  public List<${scope.schemaName}SearchConditionResponse> search${scope.schemaName}(
+  public ${scope.responseType}<${scope.schemaName}SearchConditionResponse> search${scope.schemaName}(
       @WebParam(name = "searchConditions") ${scope.schemaName}SearchConditions searchConditions,
       @WebParam(header = true, name = "headers") SoapHeaders headers) {
     log.info("search${scope.schemaName} called");

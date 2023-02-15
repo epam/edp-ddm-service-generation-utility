@@ -16,7 +16,6 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyList;
 import static java.util.List.of;
 import static java.util.stream.Collectors.toList;
@@ -24,6 +23,7 @@ import static java.util.stream.Collectors.toList;
 import com.epam.digital.data.platform.generator.constraints.impl.CompositeConstraintProvider;
 import com.epam.digital.data.platform.generator.factory.AbstractEntityScopeFactory;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.Field;
@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
+import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
 import org.springframework.stereotype.Component;
 import schemacrawler.schema.Column;
 import schemacrawler.schema.Table;
@@ -109,10 +110,16 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
                         mapColumnConditionToField(
                             table, sc, getPropertyName(sc) + "To", this::typeToString)))
             .collect(toList()));
-    if (TRUE.equals(searchConditions.getPagination())) {
-      fields.addAll(of(
-          getAuxiliaryField("limit", Integer.class),
-          getAuxiliaryField("offset", Integer.class)));
+    if (SearchConditionPaginationType.isTypeOffset(searchConditions.getPagination())) {
+      fields.addAll(
+          of(
+              getAuxiliaryField("limit", Integer.class),
+              getAuxiliaryField("offset", Integer.class)));
+    } else if (SearchConditionPaginationType.isTypePage(searchConditions.getPagination())) {
+      fields.addAll(
+          of(
+              getAuxiliaryField("pageSize", Integer.class),
+              getAuxiliaryField("pageNo", Integer.class)));
     }
 
     return fields;
@@ -145,7 +152,7 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
   }
 
   private String getFieldTypeForIn(String clazzName, Column column) {
-    return getGeneralizedListOfType(typeToString(clazzName, column));
+    return ScopeTypeUtils.getGeneralizedListOfType(typeToString(clazzName, column));
   }
 
   private Field getAuxiliaryField(String name, Class<?> clazz) {

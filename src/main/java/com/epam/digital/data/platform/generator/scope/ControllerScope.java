@@ -16,16 +16,12 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
-import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
-
 public class ControllerScope extends ClassScope {
 
   private String schemaName;
   private String endpoint;
   private String pkName;
   private String pkType;
-
-  private RlsMetadata rls;
 
   public String getSchemaName() {
     return schemaName;
@@ -57,13 +53,5 @@ public class ControllerScope extends ClassScope {
 
   public void setPkType(String pkType) {
     this.pkType = pkType;
-  }
-
-  public RlsMetadata getRls() {
-    return rls;
-  }
-
-  public void setRls(RlsMetadata rls) {
-    this.rls = rls;
   }
 }

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.model.template.NestedSelectableFieldsGroup;
 import com.epam.digital.data.platform.generator.model.template.SelectableField;
 import com.epam.digital.data.platform.generator.model.template.SearchConditionField;
@@ -39,7 +40,7 @@ public class SearchHandlerScope extends ClassScope {
   private List<SearchConditionField> betweenFields;
   private List<String> enumSearchConditionFields;
   private List<SelectableField> simpleSelectableFields;
-  private Boolean pagination;
+  private SearchConditionPaginationType pagination;
   private Map<String, NestedSelectableFieldsGroup> nestedSingleSelectableGroups;
   private Map<String, NestedSelectableFieldsGroup> nestedListSelectableGroups;
 
@@ -150,11 +151,11 @@ public class SearchHandlerScope extends ClassScope {
     this.simpleSelectableFields = selectableFields;
   }
 
-  public Boolean getPagination() {
+  public SearchConditionPaginationType getPagination() {
     return pagination;
   }
 
-  public void setPagination(Boolean pagination) {
+  public void setPagination(SearchConditionPaginationType pagination) {
     this.pagination = pagination;
   }
 

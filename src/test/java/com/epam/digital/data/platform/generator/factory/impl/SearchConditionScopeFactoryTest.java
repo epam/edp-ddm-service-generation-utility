@@ -34,6 +34,7 @@ import com.epam.digital.data.platform.generator.constraints.impl.CompositeConstr
 import com.epam.digital.data.platform.generator.constraints.impl.FormattingConstraintProvider;
 import com.epam.digital.data.platform.generator.constraints.impl.MarshalingConstraintProvider;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
 import com.epam.digital.data.platform.generator.model.Context;
@@ -237,7 +238,7 @@ class SearchConditionScopeFactoryTest {
             withColumn("status", String.class, "en_status")));
 
     given(searchConditionProvider.findFor(any()))
-        .willReturn(new SearchConditionsBuilder().pagination(true).build());
+        .willReturn(new SearchConditionsBuilder().pagination(SearchConditionPaginationType.OFFSET).build());
 
     List<ModelScope> result = instance.create(context).stream()
         .filter(x -> x.getClassName().equals("TestTableSearchConditions"))
@@ -249,6 +250,50 @@ class SearchConditionScopeFactoryTest {
     assertThat(fields)
         .usingFieldByFieldElementComparator()
         .contains(limit, offset);
+  }
+
+  @Test
+  void shouldCreateNoPaginationFieldsForSearchConditionView() {
+    override(
+            context.getCatalog(),
+            withSearchConditionView("test_table",
+                    withColumn("status", String.class, "en_status")));
+
+    given(searchConditionProvider.findFor(any()))
+            .willReturn(
+                    new SearchConditionsBuilder().pagination(SearchConditionPaginationType.NONE).build());
+
+    List<ModelScope> result = instance.create(context).stream()
+            .filter(x -> x.getClassName().equals("TestTableSearchConditions"))
+            .collect(toList());
+
+    var fields = result.get(0).getFields();
+    assertThat(fields).isEmpty();
+  }
+
+  @Test
+  void shouldCreatePagingFieldsForSearchConditionView() {
+    Field pageSize = new Field("java.lang.Integer", "pageSize", emptyList());
+    Field pageNo = new Field("java.lang.Integer", "pageNo", emptyList());
+    override(
+            context.getCatalog(),
+            withSearchConditionView("test_table",
+                    withColumn("status", String.class, "en_status")));
+
+    given(searchConditionProvider.findFor(any()))
+        .willReturn(
+            new SearchConditionsBuilder().pagination(SearchConditionPaginationType.PAGE).build());
+
+    List<ModelScope> result = instance.create(context).stream()
+            .filter(x -> x.getClassName().equals("TestTableSearchConditions"))
+            .collect(toList());
+
+    var fields = result.get(0).getFields();
+    assertThat(fields).hasSize(2);
+
+    assertThat(fields)
+            .usingFieldByFieldElementComparator()
+            .contains(pageSize, pageNo);
   }
 
   private List<String> toNamesList(List<ModelScope> modelScopes) {

@@ -18,7 +18,7 @@ package com.epam.digital.data.platform.generator.factory;
 
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.utils.DbTypeConverter;
-import java.util.List;
+import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
 import schemacrawler.schema.Column;
 
 public abstract class AbstractEntityScopeFactory<T> extends AbstractScope<T> {
@@ -37,7 +37,7 @@ public abstract class AbstractEntityScopeFactory<T> extends AbstractScope<T> {
     if (isArray) {
       String rawType = type.substring(1);
       String rawClazzName = DbTypeConverter.convertToJavaTypeName(clazzName, rawType);
-      return getGeneralizedListOfType(rawClazzName);
+      return ScopeTypeUtils.getGeneralizedListOfType(rawClazzName);
     }
 
     boolean isEnum = !enumProvider.findFor(type).isEmpty();
@@ -46,13 +46,5 @@ public abstract class AbstractEntityScopeFactory<T> extends AbstractScope<T> {
     }
 
     return clazzName;
-  }
-
-  protected String getArrayOfType(String clazzName) {
-    return String.format("%s[]", clazzName);
-  }
-
-  protected String getGeneralizedListOfType(String clazzName) {
-    return String.format("%s<%s>", List.class.getCanonicalName(), clazzName);
   }
 }

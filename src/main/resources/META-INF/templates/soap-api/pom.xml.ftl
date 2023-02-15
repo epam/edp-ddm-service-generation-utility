@@ -12,7 +12,7 @@
   <description>SOAP API</description>
 <#noparse>
   <properties>
-    <soap.api.core.version>1.6.0.5</soap.api.core.version>
+    <soap.api.core.version>1.9.4.1</soap.api.core.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>

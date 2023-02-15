@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import ${basePackage}.model.dto.${schemaName}SearchConditionResponse;
 import ${basePackage}.model.dto.${schemaName}SearchConditions;
 <#if rls??>
-import com.epam.digital.data.platform.model.core.kafka.Request;
 import com.epam.digital.data.platform.restapi.core.exception.ForbiddenOperationException;
 import com.epam.digital.data.platform.restapi.core.service.JwtInfoProvider;
 import com.epam.digital.data.platform.starter.security.exception.JwtClaimIncorrectAttributeException;
@@ -25,16 +24,29 @@ public class ${className}
         ${schemaName}SearchConditions,
         ${schemaName}SearchConditionResponse> {
 
-
 <#if rls??>
+  protected JwtInfoProvider jwtInfoProvider;
 
-    protected JwtInfoProvider jwtInfoProvider;
-
-    public ${className}(
-    JwtInfoProvider jwtInfoProvider) {
+  public ${className}(
+      JwtInfoProvider jwtInfoProvider) {
     super();
-        this.jwtInfoProvider =  jwtInfoProvider;
-    }
+    this.jwtInfoProvider =  jwtInfoProvider;
+  }
+</#if>
+<#if pagination?? && pagination.isTypePage()>
+  @Override
+  public com.epam.digital.data.platform.model.core.search.SearchConditionPage<${schemaName}SearchConditionResponse> search(
+      com.epam.digital.data.platform.model.core.kafka.Request<${schemaName}SearchConditions> input) {
+    var searchCriteria = input.getPayload();
+    var response = super.search(input);
+    response.setTotalElements(count(input));
+    response.setPageSize(limit(searchCriteria));
+    response.setTotalPages(com.epam.digital.data.platform.restapi.core.utils.PageableUtils
+        .getTotalPages(response.getPageSize(), response.getTotalElements()));
+    response.setPageNo(java.util.Optional.ofNullable(searchCriteria.getPageNo())
+        .orElse(com.epam.digital.data.platform.restapi.core.utils.PageableUtils.DEFAULT_PAGE_NUMBER));
+    return response;
+  }
 </#if>
 
   @Override
@@ -119,17 +131,17 @@ public class ${className}
   }
 
   @Override
-  public String tableName() {
+  protected String tableName() {
     return "${tableName}";
   }
 
   @Override
-  public Class<${schemaName}SearchConditionResponse> entityType() {
+  protected Class<${schemaName}SearchConditionResponse> entityType() {
     return ${schemaName}SearchConditionResponse.class;
   }
 
   @Override
-  public List<SelectFieldOrAsterisk> selectFields() {
+  protected List<SelectFieldOrAsterisk> selectFields() {
     List<SelectFieldOrAsterisk> fields = new ArrayList<>();
     fields.addAll(
         Arrays.asList(
@@ -182,42 +194,63 @@ public class ${className}
     return fields;
   }
 
-  <#if pagination?? || limit??>
   @Override
-  public Integer limit(${schemaName}SearchConditions searchConditions) {
-  <#if pagination?? && limit??>
+  protected Integer limit(${schemaName}SearchConditions searchConditions) {
+  <#if pagination?? && pagination.isTypeOffset()>
+    <#if limit??>
     if (searchConditions.getLimit() != null) {
       return Math.min(searchConditions.getLimit(), ${limit?c});
     }
-
     return ${limit?c};
-  <#elseif pagination?? && !limit??>
+    <#else>
     return searchConditions.getLimit();
+    </#if>
+  <#elseif pagination?? && pagination.isTypePage()>
+    <#if limit??>
+    var pageSize =
+      java.util.Optional.ofNullable(searchConditions.getPageSize())
+        .orElse(com.epam.digital.data.platform.restapi.core.utils.PageableUtils.DEFAULT_PAGE_SIZE);
+    return Math.min(pageSize, ${limit?c});
+    <#else>
+    return java.util.Optional.ofNullable(searchConditions.getPageSize())
+        .orElse(com.epam.digital.data.platform.restapi.core.utils.PageableUtils.DEFAULT_PAGE_SIZE);
+    </#if>
   <#else>
+    <#if limit??>
     return ${limit?c};
+    <#else>
+    return null;
+    </#if>
   </#if>
   }
-  </#if>
-  <#if pagination??>
+
   @Override
-  public Integer offset(${schemaName}SearchConditions searchConditions) {
+  protected Integer offset(${schemaName}SearchConditions searchConditions) {
+  <#if pagination?? && pagination.isTypeOffset()>
     return searchConditions.getOffset();
-  }
+  <#elseif pagination?? && pagination.isTypePage()>
+    return java.util.Optional.ofNullable(limit(searchConditions)).orElse(0)
+      * java.util.Optional.ofNullable(searchConditions.getPageNo())
+        .orElse(com.epam.digital.data.platform.restapi.core.utils.PageableUtils.DEFAULT_PAGE_NUMBER);
+  <#else>
+    return null;
   </#if>
+  }
 
   <#if rls??>
   @Override
-  public Condition getCommonCondition(Request<${schemaName}SearchConditions> input) {
+  protected Condition getCommonCondition(
+      com.epam.digital.data.platform.model.core.kafka.Request<${schemaName}SearchConditions> input) {
     var condition = DSL.noCondition();
-      try {
-            for (String d : JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")) {
-              condition = condition.or(DSL.field("${rls.checkColumn}").startsWith(d));
-            }
-      } catch (JwtClaimIncorrectAttributeException e) {
-        var claims = jwtInfoProvider.getUserClaims(input);
-        throw new ForbiddenOperationException("User <" + claims.getDrfo() + ":" + claims.getEdrpou() +
-          "> dont have the required security attribute ${rls.jwtAttribute}");
+    try {
+      for (String d : JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")) {
+        condition = condition.or(DSL.field("${rls.checkColumn}").startsWith(d));
       }
+    } catch (JwtClaimIncorrectAttributeException e) {
+      var claims = jwtInfoProvider.getUserClaims(input);
+      throw new ForbiddenOperationException("User <" + claims.getDrfo() + ":" + claims.getEdrpou() +
+          "> dont have the required security attribute ${rls.jwtAttribute}");
+    }
     return condition;
   }
   </#if>

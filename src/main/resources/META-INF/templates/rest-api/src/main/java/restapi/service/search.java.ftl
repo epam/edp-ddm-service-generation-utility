@@ -1,5 +1,6 @@
 package ${basePackage}.restapi.service;
 
+import com.epam.digital.data.platform.model.core.search.SearchConditionPage;
 import com.epam.digital.data.platform.restapi.core.service.GenericSearchService;
 import org.springframework.stereotype.Service;
 import ${basePackage}.model.dto.${schemaName}SearchConditionResponse;
@@ -10,7 +11,8 @@ import ${basePackage}.restapi.handler.${schemaName}SearchHandler;
 public class ${className}
     extends GenericSearchService<
             ${schemaName}SearchConditions,
-            ${schemaName}SearchConditionResponse> {
+            ${schemaName}SearchConditionResponse,
+            ${responseType}<${schemaName}SearchConditionResponse>> {
 
 
   public ${schemaName}SearchService(
@@ -18,4 +20,9 @@ public class ${className}
     super(handler);
   }
 
+  @Override
+  protected ${responseType}<${schemaName}SearchConditionResponse> getResponsePayload(
+      SearchConditionPage<${schemaName}SearchConditionResponse> searchConditionPage) {
+    return searchConditionPage<#if responseAsPlainContent>.getContent()</#if>;
+  }
 }
