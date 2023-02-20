@@ -27,6 +27,7 @@
     <schemacrawler.version>16.11.5</schemacrawler.version>
     <apache.commons.text.version>1.10.0</apache.commons.text.version>
     <snakeyaml.version>1.33</snakeyaml.version>
+    <postgresql.version>42.3.3</postgresql.version>
     <sonar.coverage.exclusions>
       <!-- do not calc coverage for the classes without BL: -->
       **/config/**/*,
