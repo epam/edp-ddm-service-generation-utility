@@ -211,14 +211,6 @@ spec:
                 path: data-platform.datasource.password
               - key: appRoleName
                 path: data-platform.datasource.username
-        - name: {{ $.Values.name }}-ceph-bucket-credentials
-          secret:
-            secretName: {{ $.Values.ceph.bucketName }}
-            items:
-              - key: AWS_ACCESS_KEY_ID
-                path: ceph.access-key
-              - key: AWS_SECRET_ACCESS_KEY
-                path: ceph.secret-key
         - name: {{ $.Values.name }}-lowcode-file-ceph-bucket-credentials
           secret:
             secretName: {{ $.Values.lowcodeFileCeph.bucketName }}

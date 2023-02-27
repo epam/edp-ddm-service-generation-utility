@@ -97,11 +97,6 @@ data:
             sentinel:
               master: mymaster
               nodes: rfs-redis-sentinel.{{ .Release.Namespace }}.svc:26379
-          ceph:
-            http-endpoint: ${ceph.http-endpoint}
-            access-key: ${ceph.access-key}
-            secret-key: ${ceph.secret-key}
-            bucket: ${ceph.bucket}
       lowcode-file-storage:
         type: ceph
         backend:
