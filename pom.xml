@@ -23,6 +23,7 @@
     <java.version>11</java.version>
     <spring-boot-maven-plugin.version>2.7.5</spring-boot-maven-plugin.version>
     <spring-core.version>5.3.23</spring-core.version>
+    <spring-beans.version>5.3.23</spring-beans.version>
     <schemacrawler.version>16.11.5</schemacrawler.version>
     <apache.commons.text.version>1.10.0</apache.commons.text.version>
     <snakeyaml.version>1.33</snakeyaml.version>
@@ -51,6 +52,11 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring-core</artifactId>
         <version>${spring-core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring-beans.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
