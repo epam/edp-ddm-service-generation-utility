@@ -145,3 +145,8 @@ stageName: ${stageName}
 
 redis:
   secretName: redis-auth
+
+edpComponent:
+  description: "Веб-інтерфейс для перегляду API-документації Підсистеми управління даними реєстру з ціллю подальшого використання при побудові взаємодії через типові розширення-конектори у бізнес-процесах"
+  displayName: "API документація сервісу управління даними реєстру (Swagger)"
+  operationalZone: "registry-administration-zone"
