@@ -119,7 +119,7 @@ management:
       readiness:
         services:
 <#noparse>
-          - ${dso.url}/actuator/health
+          - ${dso.url}/actuator/health/readiness
           - ${keycloak.url}
 </#noparse>
 
@@ -148,15 +148,27 @@ platform:
       - /v3/api-docs/**
       - /swagger-ui/**
       - /actuator/**
+  logging:
+    aspect:
+      enabled: false
+    primary-url:
+      enabled: true
 
 logbook:
-  secure-filter:
-    enabled: false
+  feign:
+    enabled: true
+  info-logging:
+    enabled: true
+  strategy: without-body
   exclude:
     - /openapi
     - /v3/api-docs/**
     - /swagger-ui/**
     - /actuator/**
+  obfuscate:
+    headers:
+      - x-access-token
+      - cookie
 
 data-platform:
   kafka:

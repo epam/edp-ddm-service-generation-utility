@@ -53,7 +53,7 @@ management:
       readiness:
         services:
 <#noparse>
-          - ${dso.url}/actuator/health
+          - ${dso.url}/actuator/health/readiness
           - ${keycloak.url}
 </#noparse>
 
@@ -91,3 +91,23 @@ data-platform:
       ${root}: ${root}-${serviceVersion}-inbound
   </#list>
     max-request-size: 1000000
+
+platform:
+  logging:
+    aspect:
+      enabled: false
+    primary-url:
+      enabled: true
+
+logbook:
+  feign:
+    enabled: true
+  info-logging:
+    enabled: true
+  strategy: without-body
+  exclude:
+    - /actuator/**
+  obfuscate:
+    headers:
+      - x-access-token
+      - cookie

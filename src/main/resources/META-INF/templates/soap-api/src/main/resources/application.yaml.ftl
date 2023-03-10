@@ -42,7 +42,7 @@ management:
     webservices:
       readiness:
         services:
-          - ${rest-api.url}/actuator/health
+          - ${rest-api.url}/actuator/health/readiness
           - ${keycloak.server-url}
 </#noparse>
 
@@ -57,3 +57,23 @@ data-platform:
 keycloak:
   serviceAccount:
     grant-type: client_credentials
+
+platform:
+  logging:
+    aspect:
+      enabled: false
+    primary-url:
+      enabled: true
+
+logbook:
+  feign:
+    enabled: true
+  info-logging:
+    enabled: true
+  strategy: without-body
+  exclude:
+    - /actuator/**
+  obfuscate:
+    headers:
+      - x-access-token
+      - cookie
