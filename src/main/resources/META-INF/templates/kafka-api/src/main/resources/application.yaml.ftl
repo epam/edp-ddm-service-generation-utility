@@ -76,7 +76,7 @@ data-platform:
     consumer:
       enabled: true
       group-id: ${register}-kafka-api
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       trusted-packages:
         - com.epam.digital.data.platform.model.core.kafka
         - ${basePackage}.model.dto
@@ -85,6 +85,7 @@ data-platform:
       custom-config:
         "[allow.auto.create.topics]": false
         "[retry.backoff.ms]": 10000
+        "[spring.deserializer.value.delegate.class]": org.springframework.kafka.support.serializer.JsonDeserializer
     topics:
   <#list rootsOfTopicNames as root>
       ${root}: ${root}-${serviceVersion}-inbound
