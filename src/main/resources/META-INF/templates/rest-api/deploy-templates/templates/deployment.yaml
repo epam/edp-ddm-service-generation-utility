@@ -104,16 +104,6 @@ spec:
                 secretKeyRef:
                   name: {{ $.Values.db.secret }}
                   key: appRolePass
-            - name: CEPH_BUCKET_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ $.Values.ceph.bucketName }}
-                  key: BUCKET_NAME
-            - name: CEPH_BUCKET_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ $.Values.ceph.bucketName }}
-                  key: BUCKET_HOST
             - name: LOWCODE_FILE_CEPH_BUCKET_NAME
               valueFrom:
                 configMapKeyRef:

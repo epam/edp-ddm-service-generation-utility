@@ -49,9 +49,6 @@ data:
     dso:
       url: {{ .Values.dso.url }}
 
-    ceph:
-      http-endpoint: {{ .Values.ceph.httpEndpoint }}
-      bucketName: {{ .Values.ceph.bucketName }}
     lowcode-file-ceph:
       http-endpoint: {{ .Values.lowcodeFileCeph.httpEndpoint }}
       bucketName: {{ .Values.lowcodeFileCeph.bucketName }}

@@ -56,10 +56,6 @@ image:
   version: latest
 
 <#noparse>
-ceph:
-  bucketName: lowcode-form-data-storage
-  httpEndpoint: ${CEPH_BUCKET_HOST}
-
 lowcodeFileCeph:
   bucketName: lowcode-file-storage
   httpEndpoint: ${LOWCODE_FILE_CEPH_BUCKET_HOST}
