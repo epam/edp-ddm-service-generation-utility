@@ -70,9 +70,6 @@ spec:
             - mountPath: /app/secrets
               name: db-credentials
               readOnly: true
-            - mountPath: /app/secrets/ceph
-              name: {{ $.Values.name }}-ceph-bucket-credentials
-              readOnly: true
             - mountPath: /app/secrets/lowcodefileceph
               name: {{ $.Values.name }}-lowcode-file-ceph-bucket-credentials
               readOnly: true
