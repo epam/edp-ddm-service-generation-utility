@@ -27,6 +27,7 @@ spec:
       labels:
         app: {{ .Values.name }}
         version: {{ .Values.version | squote }}
+        collect.logs: "json"
     spec:
       serviceAccountName: {{ .Values.name }}
       imagePullSecrets:

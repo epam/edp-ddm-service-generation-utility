@@ -17,6 +17,7 @@ spec:
       labels:
         app: {{.Values.name}}
         version: {{ .Values.version | squote }}
+        collect.logs: "json"
       {{- if or .Values.podAnnotations .Values.global.registry.kafkaApi.istio.sidecar.enabled }}
       annotations:
         {{- range $key, $value := .Values.podAnnotations }}
