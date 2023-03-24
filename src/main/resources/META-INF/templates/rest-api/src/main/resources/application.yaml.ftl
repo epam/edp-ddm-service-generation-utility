@@ -38,6 +38,27 @@ feign:
 springdoc:
   swagger-ui:
     path: /openapi
+    disable-swagger-default-url: true
+    urls:
+      - name: all
+        url: /v3/api-docs/all
+<#if enumPresent>
+      - name: enum
+        url: /v3/api-docs/enum
+</#if>
+<#list entityPaths as group, paths>
+      - name: ${group}
+        url: /v3/api-docs/${group}
+</#list>
+<#if searchPaths?has_content>
+      - name: search
+        url: /v3/api-docs/search
+</#if>
+<#if nestedPaths?has_content>
+      - name: nested
+        url: /v3/api-docs/nested
+</#if>
+    urls-primary-name: all
 
 openapi:
   request:
