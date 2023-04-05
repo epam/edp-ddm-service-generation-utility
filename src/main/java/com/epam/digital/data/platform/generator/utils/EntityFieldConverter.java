@@ -46,7 +46,7 @@ public class EntityFieldConverter {
           ARRAY_ASYNC,
           "com.epam.digital.data.platform.kafkaapi.core.util.JooqDataTypes.ARRAY_DATA_TYPE",
           TYPE_FILE_ARRAY_ASYNC,
-          "com.epam.digital.data.platform.restapi.core.utils.JooqDataTypes.FILE_ARRAY_DATA_TYPE"
+          "com.epam.digital.data.platform.kafkaapi.core.util.JooqDataTypes.FILE_ARRAY_DATA_TYPE"
           );
 
   private EntityFieldConverter() {
