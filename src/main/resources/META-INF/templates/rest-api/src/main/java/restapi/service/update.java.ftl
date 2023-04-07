@@ -10,7 +10,6 @@ import com.epam.digital.data.platform.restapi.core.exception.ForbiddenOperationE
 import com.epam.digital.data.platform.restapi.core.service.GenericService;
 import com.epam.digital.data.platform.restapi.core.service.JwtInfoProvider;
 import com.epam.digital.data.platform.starter.kafka.config.properties.KafkaProperties;
-import com.epam.digital.data.platform.starter.security.exception.JwtClaimIncorrectAttributeException;
 import com.epam.digital.data.platform.starter.security.jwt.JwtClaimsUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -37,19 +36,14 @@ public class ${className} extends GenericService<${schemaName}, Void> {
   <#if rls??>
   @Override
   public Response<Void> request(Request<${schemaName}> input) {
-    try {
-      var checkParam = String.valueOf(input.getPayload().get${rls.checkColumn?cap_first}());
-      if (JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")
-        .stream().noneMatch(checkParam::startsWith)) {
-        var claims = jwtInfoProvider.getUserClaims(input);
-        throw new ForbiddenOperationException("User <" + claims.getDrfo() + ":" + claims.getEdrpou() +
-          "> dont have permissions to execute this operation ");
-      }
-    } catch (JwtClaimIncorrectAttributeException e) {
+    var checkParam = String.valueOf(input.getPayload().get${rls.checkColumn?cap_first}());
+    if (JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")
+      .stream().noneMatch(checkParam::startsWith)) {
       var claims = jwtInfoProvider.getUserClaims(input);
       throw new ForbiddenOperationException("User <" + claims.getDrfo() + ":" + claims.getEdrpou() +
-        "> dont have the required security attribute ${rls.jwtAttribute}");
+        "> dont have permissions to execute this operation ");
     }
+
     return super.request(input);
   }
   </#if>

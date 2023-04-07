@@ -14,7 +14,6 @@ import ${basePackage}.model.dto.${schemaName}SearchConditions;
 <#if rls??>
 import com.epam.digital.data.platform.restapi.core.exception.ForbiddenOperationException;
 import com.epam.digital.data.platform.restapi.core.service.JwtInfoProvider;
-import com.epam.digital.data.platform.starter.security.exception.JwtClaimIncorrectAttributeException;
 import com.epam.digital.data.platform.starter.security.jwt.JwtClaimsUtils;
 </#if>
 
@@ -242,15 +241,10 @@ public class ${className}
   protected Condition getCommonCondition(
       com.epam.digital.data.platform.model.core.kafka.Request<${schemaName}SearchConditions> input) {
     var condition = DSL.noCondition();
-    try {
-          for (String d : JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")) {
-            condition = condition.or(DSL.field("${rls.checkColumn}").startsWith(d));
-          }
-    } catch (JwtClaimIncorrectAttributeException e) {
-      var claims = jwtInfoProvider.getUserClaims(input);
-      throw new ForbiddenOperationException("User <" + claims.getDrfo() + ":" + claims.getEdrpou() +
-          "> dont have the required security attribute ${rls.jwtAttribute}");
+    for (String d : JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")) {
+      condition = condition.or(DSL.field("${rls.checkColumn}").startsWith(d));
     }
+
     return condition;
   }
 </#if>
