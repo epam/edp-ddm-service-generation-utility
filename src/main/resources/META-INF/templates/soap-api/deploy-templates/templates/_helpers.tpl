@@ -5,6 +5,15 @@
 {{- end -}}
 {{- end }}
 
+{{- define "soapApi.whitelist.cidr" -}}
+{{- $ipList := .Values.trembita.ipList }}
+{{- $cidrList := (list) }}
+{{- range $ipList }}
+{{- $cidrList = append $cidrList (printf "%s/32" .) }}
+{{- end }}
+{{- join " " $cidrList }}
+{{- end -}}
+
 {{- define "soapApi.istioResources" -}}
 {{- if .Values.global.registry.soapApi.istio.sidecar.resources.limits.cpu }}
 sidecar.istio.io/proxyCPULimit: {{ .Values.global.registry.soapApi.istio.sidecar.resources.limits.cpu | quote }}
