@@ -1,4 +1,4 @@
-FROM ${dockerProxyRegistry}/${globalNexusNamespace}/rest-api-core-base-image-kraken-dev:1.8.0-KRAKEN-DEV-SNAPSHOT.4 AS builder
+FROM ${dockerProxyRegistry}/${globalNexusNamespace}/rest-api-core-base-image-kraken-dev:1.8.0-KRAKEN-DEV-SNAPSHOT.5 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild

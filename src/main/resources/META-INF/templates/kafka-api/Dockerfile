@@ -1,4 +1,4 @@
-FROM ${dockerProxyRegistry}/${globalNexusNamespace}/kafka-api-core-base-image-kraken-dev:1.8.0-KRAKEN-DEV-SNAPSHOT.5 AS builder
+FROM ${dockerProxyRegistry}/${globalNexusNamespace}/kafka-api-core-base-image-kraken-dev:1.8.0-KRAKEN-DEV-SNAPSHOT.6 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild
