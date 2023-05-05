@@ -13,6 +13,9 @@ import com.epam.digital.data.platform.restapi.core.service.JwtInfoProvider;
 import com.epam.digital.data.platform.starter.kafka.config.properties.KafkaProperties;
 import com.epam.digital.data.platform.starter.security.jwt.JwtClaimsUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
+<#if rls??>
+import java.util.function.Predicate;
+</#if>
 
 @Service
 public class ${className} extends GenericService<${schemaName}, EntityId> {
@@ -40,7 +43,7 @@ public class ${className} extends GenericService<${schemaName}, EntityId> {
   public Response<EntityId> request(Request<${schemaName}> input) {
     var checkParam = String.valueOf(input.getPayload().get${rls.checkColumn?cap_first}());
     if (JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")
-      .stream().noneMatch(checkParam::startsWith)) {
+      .stream().filter(Predicate.not(String::isEmpty)).noneMatch(checkParam::startsWith)) {
       var claims = jwtInfoProvider.getUserClaims(input);
       throw new ForbiddenOperationException("User <" + claims.getDrfo() + ":" + claims.getEdrpou() +
         "> dont have permissions to execute this operation ");

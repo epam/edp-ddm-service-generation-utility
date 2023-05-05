@@ -114,6 +114,9 @@ public class ${className} extends
   public Condition getCommonCondition(Request<${pkType}> input) {
     Condition condition = DSL.falseCondition();
     for (String d : JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")) {
+      if(d.isEmpty()) {
+        continue;
+      }
       condition = condition.or(DSL.field("${rls.checkColumn}").startsWith(d));
     }
 
