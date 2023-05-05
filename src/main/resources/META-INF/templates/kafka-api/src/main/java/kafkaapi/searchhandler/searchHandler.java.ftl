@@ -240,7 +240,7 @@ public class ${className}
   @Override
   protected Condition getCommonCondition(
       com.epam.digital.data.platform.model.core.kafka.Request<${schemaName}SearchConditions> input) {
-    var condition = DSL.noCondition();
+    Condition condition = DSL.falseCondition();
     for (String d : JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")) {
       condition = condition.or(DSL.field("${rls.checkColumn}").startsWith(d));
     }

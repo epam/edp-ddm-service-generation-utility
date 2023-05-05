@@ -112,7 +112,7 @@ public class ${className} extends
   <#if rls??>
   @Override
   public Condition getCommonCondition(Request<${pkType}> input) {
-    var condition = DSL.noCondition();
+    Condition condition = DSL.falseCondition();
     for (String d : JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")) {
       condition = condition.or(DSL.field("${rls.checkColumn}").startsWith(d));
     }
