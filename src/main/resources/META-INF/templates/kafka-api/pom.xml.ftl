@@ -13,7 +13,7 @@
   <description>KAFKA API</description>
 
   <properties>
-    <kafka.api.core.version>1.9.4.3</kafka.api.core.version>
+    <kafka.api.core.version>1.9.4.5</kafka.api.core.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
