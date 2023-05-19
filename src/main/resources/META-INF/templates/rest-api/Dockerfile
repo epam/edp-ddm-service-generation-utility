@@ -6,12 +6,12 @@ COPY pom.xml settings.xml ./
 COPY src src
 RUN mvn deploy -B --settings settings.xml -npu -nsu -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus:8081/nexus/repository/edp-maven-releases -Dartifactory.username=\$NEXUS_USR -Dartifactory.password=\$NEXUS_PASS -Dartifactory.baseUrl=http://nexus:8081/nexus -Dartifactory.releasesPath=edp-maven-releases
 
-FROM ${dockerProxyRegistry}/openjdk:11.0.16-jre-slim AS restlayer
+FROM ${dockerProxyRegistry}/adoptopenjdk/openjdk11:alpine-jre AS restlayer
 WORKDIR /app
 COPY --from=builder /app/forbuild/target/rest-api*.jar application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
-FROM ${dockerProxyRegistry}/openjdk:11.0.16-jre-slim
+FROM ${dockerProxyRegistry}/adoptopenjdk/openjdk11:alpine-jre
 WORKDIR /app
 COPY --from=restlayer app/dependencies/ ./
 COPY --from=restlayer app/spring-boot-loader/ ./
