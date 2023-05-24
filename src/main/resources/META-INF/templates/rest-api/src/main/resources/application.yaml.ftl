@@ -192,6 +192,11 @@ logbook:
       - cookie
 
 data-platform:
+  files:
+    processing:
+      allowed-packages:
+        - com.epam.digital.data.platform.model.core
+        - ${basePackage}.model.dto
   kafka:
     producer:
       enabled: true
