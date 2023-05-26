@@ -1,0 +1,22 @@
+{{- if ((.Values.publicService).name) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rest-api-public-swagger-properties
+data:
+  public-api-swagger-config.yaml: |-
+
+    server:
+      forward-headers-strategy: framework
+
+    springdoc:
+      swagger-ui:
+        urls:
+          - name: all
+            url: /api/public/data-factory/v3/api-docs/all
+      paths-to-match:
+      {{- include "public.paths" . | nindent 4 }}
+    openapi:
+      request:
+        groups: []
+{{- end }}

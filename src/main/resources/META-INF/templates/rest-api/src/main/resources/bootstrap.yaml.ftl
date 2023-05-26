@@ -10,7 +10,9 @@ spring:
     kubernetes:
       config:
         enabled: true
-        paths: /app/config/config.yaml
+        paths:
+          - /app/config/config.yaml
+          - /app/config/public-api-swagger-config.yaml
         enable-api: false
       secrets:
         enabled: true

@@ -88,7 +88,12 @@ externalService:
   name: ${register}-rest-api-ext
 </#if>
 
-<#if exposedToPlatformPaths?has_content || exposedToExternalPaths?has_content>
+<#if exposedToPublicPaths?has_content>
+publicService:
+  name: ${register}-rest-api-public
+</#if>
+
+<#if exposedToPlatformPaths?has_content || exposedToExternalPaths?has_content || exposedToPublicPaths?has_content>
 exposeSearchConditions:
   <#if exposedToPlatformPaths?has_content>
   platform:
@@ -101,6 +106,13 @@ exposeSearchConditions:
   external:
     paths:
     <#list exposedToExternalPaths as path>
+      - ${path}
+    </#list>
+  </#if>
+  <#if exposedToPublicPaths?has_content>
+  public:
+    paths:
+    <#list exposedToPublicPaths as path>
       - ${path}
     </#list>
   </#if>

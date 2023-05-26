@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2023 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ public class RestApiValuesScope {
   private String s3Signer;
   private Set<String> exposedToPlatformPaths;
   private Set<String> exposedToExternalPaths;
+  private Set<String> exposedToPublicPaths;
   private String stageName;
 
   public int getReplicationFactor() {
@@ -64,5 +65,13 @@ public class RestApiValuesScope {
 
   public void setStageName(String stageName) {
     this.stageName = stageName;
+  }
+
+  public Set<String> getExposedToPublicPaths() {
+    return exposedToPublicPaths;
+  }
+
+  public void setExposedToPublicPaths(Set<String> exposedToPublicPaths) {
+    this.exposedToPublicPaths = exposedToPublicPaths;
   }
 }

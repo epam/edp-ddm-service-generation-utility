@@ -202,6 +202,7 @@ class SearchConditionProviderTest {
   class GetExposedSearchConditionViews {
 
     static final String EXPOSED_VIEW = "search_condition_exposed_for_trembita";
+    static final String EXPOSED_PUBLIC_VIEW = "search_condition_exposed_for_public_access";
     static final String SOME_VIEW_NAME = "some_search_condition";
 
     @BeforeEach
@@ -218,7 +219,8 @@ class SearchConditionProviderTest {
     private List<Metadata> generateMetadata() {
       return List.of(
           new Metadata(1L, EXPOSE, TREMBITA, EXPOSED_CHANGE_NAME, EXPOSED_VIEW),
-          new Metadata(2L, EXPOSE, "not_" + TREMBITA, EXPOSED_CHANGE_NAME, SOME_VIEW_NAME)
+          new Metadata(2L, EXPOSE, "not_" + TREMBITA, EXPOSED_CHANGE_NAME, SOME_VIEW_NAME),
+          new Metadata(1L, EXPOSE, "publicAccess", EXPOSED_CHANGE_NAME, EXPOSED_PUBLIC_VIEW)
       );
     }
 
@@ -229,6 +231,14 @@ class SearchConditionProviderTest {
 
       assertThat(set).hasSize(1);
       assertThat(set.stream().findFirst().get()).isEqualTo(EXPOSED_VIEW);
+    }
+
+    @Test
+    void shouldGetExposedSearchConditionForPublicAccess() {
+      var set = instance.getExposedSearchConditions(ExposeSearchConditionOption.PUBLIC_ACCESS);
+
+      assertThat(set).hasSize(1);
+      assertThat(set.stream().findFirst()).contains(EXPOSED_PUBLIC_VIEW);
     }
   }
 

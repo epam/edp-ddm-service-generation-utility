@@ -71,6 +71,13 @@
   {{- end }}
 {{- end -}}
 
+{{- define "public.paths" -}}
+  {{- range $path := (((.Values.exposeSearchConditions).public).paths) }}
+    - {{ $path }}
+  {{- end }}
+{{- end -}}
+
+
 {{- define "external-system-api.hostname" -}}
 {{- printf "external-service-api-%s" (include "edp.hostnameSuffix" .) }}
 {{- end }}

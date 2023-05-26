@@ -76,28 +76,31 @@ openapi:
 
     groups:
 <#if enumPresent>
-      enum:
-        - enum
+      - name: enum
+        endpoints:
+          - enum
 </#if>
 <#list entityPaths as group, paths>
-      ${group}:
-  <#list paths as path>
-        - ${path}
-  </#list>
+      - name: ${group}
+        endpoints:
+    <#list paths as path>
+          - ${path}
+    </#list>
 </#list>
 <#if searchPaths?has_content>
-      search:
-<#list searchPaths as path>
-        - ${path}
-</#list>
+      - name: search
+        endpoints:
+    <#list searchPaths as path>
+          - ${path}
+    </#list>
 </#if>
 <#if nestedPaths?has_content>
-      nested:
-<#list nestedPaths as path>
-        - ${path}
-</#list>
+      - name: nested
+        endpoints:
+    <#list nestedPaths as path>
+          - ${path}
+    </#list>
 </#if>
-
   response:
     codes:
       delete: 204, 400, 401, 403, 409, 412, 500, 501

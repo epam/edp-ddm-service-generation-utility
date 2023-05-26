@@ -60,6 +60,8 @@ class RestApiValuesScopeFactoryTest {
             .thenReturn(Collections.singleton("platform_search_condition"));
     when(searchConditionProvider.getExposedSearchConditions(ExposeSearchConditionOption.EXTERNAL_SYSTEM))
             .thenReturn(Collections.singleton("external_search_condition"));
+    when(searchConditionProvider.getExposedSearchConditions(ExposeSearchConditionOption.PUBLIC_ACCESS))
+        .thenReturn(Collections.singleton("public_search_condition"));
 
     var result = instance.create(context);
     assertThat(result).hasSize(1);
@@ -67,6 +69,7 @@ class RestApiValuesScopeFactoryTest {
     assertThat(result.get(0).getS3Signer()).isEqualTo("S3SignerType");
     assertThat(result.get(0).getExposedToPlatformPaths()).containsExactly("/platform-search-condition");
     assertThat(result.get(0).getExposedToExternalPaths()).containsExactly("/external-search-condition");
+    assertThat(result.get(0).getExposedToPublicPaths()).containsExactly("/public-search-condition");
     assertThat(result.get(0).getStageName()).isEqualTo("platform");
   }
 }
