@@ -1,7 +1,7 @@
 {{- if not .Values.global.disableRequestsLimits }}
 {{- range $serviceName := compact (list .Values.name ((.Values.externalService).name)) }}
 kind: HorizontalPodAutoscaler
-apiVersion: {{ include "horizontalPodAutoscaler.apiVersion" . }}
+apiVersion: {{ include "horizontalPodAutoscaler.apiVersion" $ }}
 metadata:
   name: {{ $serviceName }}
   labels:
