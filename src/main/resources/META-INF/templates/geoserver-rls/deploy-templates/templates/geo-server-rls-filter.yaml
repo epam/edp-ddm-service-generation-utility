@@ -1,0 +1,162 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  annotations:
+    meta.helm.sh/release-name: geo-server
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: geoserver-rls-filter
+  namespace: {{ .Release.Namespace }}
+spec:
+  configPatches:
+    - applyTo: CLUSTER
+      match:
+        cluster:
+          name: platform-keycloak
+      patch:
+        operation: ADD
+        value:
+          connect_timeout: 5s
+          lb_policy: ROUND_ROBIN
+          load_assignment:
+            cluster_name: platform-keycloak
+            endpoints:
+              - lb_endpoints:
+                  - endpoint:
+                      address:
+                        socket_address:
+                          address: {{ .Values.keycloak.host }}
+                          port_value: 443
+          name: platform-keycloak
+          transport_socket:
+            common_tls_context:
+              tls_params:
+                tls_maximum_protocol_version: TLSv1_3
+                tls_minimum_protocol_version: TLSv1_3
+            name: envoy.transport_sockets.tls
+            sni: {{ .Values.keycloak.host }}
+          type: STRICT_DNS
+    - applyTo: HTTP_FILTER
+      match:
+        context: ANY
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: envoy.filters.http.lua
+          typed_config:
+            '@type': type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+            inline_code: |
+              function envoy_on_request(request_handle)
+                local path = request_handle:headers():get(":path")
+                print(request_handle:headers():get("X-Access-Token"))
+                if path == nil then
+                  print('Path is nil')
+                  return
+                end
+                local uri, query_params = path:match("(.+)?(.+)")
+                if uri == nil or query_params == nil then
+                  print('uri or query params is nil')
+                  return
+                end
+                print('Uri' .. uri)
+                print('Query params' .. query_params)
+                {{- if .Values.geoRlsParams }}
+                local params = {}
+                for key, value in string.gmatch(query_params, "([^&=]+)=([^&=]+)") do
+                    print(key .. " " .. value)
+                    params[key] = value
+                end
+                local meta = request_handle:streamInfo():dynamicMetadata()
+
+                local rls_filter = ''
+                if params['service'] == 'WFS'
+                  and params['request'] == 'getFeature' then
+                  {{- range $geoRlsEntry := .Values.geoRlsParams }}
+                    local jwtAttribute = {}
+                    for key, value in pairs(meta) do
+                      jwtAttribute = value.jwt_payload.{{ $geoRlsEntry.jwtAttribute }}
+                    end
+              
+                    process_rls_entry(request_handle, params, '{{ $geoRlsEntry.checkTable }}', jwtAttribute, '{{ $geoRlsEntry.checkColumn }}', '{{ $geoRlsEntry.bbox }}', rls_filter, uri) 
+                  {{- end }}
+                end
+                {{- end }}
+              end
+              
+              function process_rls_entry(request_handle, params, geoRlsCheckTable, jwtAttribute, geoRlsCheckColumn, geoRlsBbox, rls_filter, uri)
+                if params['typeName'] == geoRlsCheckTable then
+                    if jwtAttribute ~= nil then
+                      local rlsAttrSet = true
+                      for k,v in pairs(jwtAttribute) do
+                        if v == nil or v == '' then
+                          rlsAttrSet = false
+                          break
+                        end
+                        if(k ~= 1) then
+                          rls_filter = rls_filter .. '%20or%20'
+                        end
+                        rls_filter = rls_filter .. geoRlsCheckColumn ..'%20like%20%27' .. jwtAttribute[k] .. '%25%27'
+                      end
+                      if rlsAttrSet then
+                        rls_filter = '(' .. rls_filter .. ')'
+                        if params['bbox'] ~= nil then
+                          local location_params = {}
+                          for elem in params['bbox']:gsub('%%2C', ','):gmatch('[^,%s]+') do
+                             table.insert(location_params, elem)
+                          end
+                          rls_filter = rls_filter .. '%20AND%20BBOX(' .. geoRlsBbox .. ',' .. location_params[1] .. ',' .. location_params[2] .. ',' .. location_params[3] .. ',' .. location_params[4] .. ',%27' .. location_params[5] .. '%27)'
+                        end
+                      else 
+                        rls_filter = "(1=0)"
+                      end
+                    else
+                      rls_filter = "(1=0)"
+                    end
+                    if params['cql_filter'] ~= nil then
+                      params['cql_filter'] = '(' .. params['cql_filter'] .. ') and ' .. rls_filter
+                    else
+                      params['cql_filter'] = rls_filter
+                    end
+
+                    print('CQL FILTER ' .. params['cql_filter'])
+
+                    params['bbox'] = nil
+                    local modified_path = ''
+                    for key, value in pairs(params) do
+                        modified_path = modified_path .. key .. '=' .. value .. '&'
+                    end
+                    modified_path = modified_path:sub(1, -2)
+                    local modified_uri = uri .. '?' .. modified_path
+                    print(modified_uri)
+                    request_handle:headers():replace(':path', modified_uri)
+                  end
+              end
+    - applyTo: HTTP_FILTER
+      match:
+        context: ANY
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: envoy.filters.http.jwt_authn
+          typed_config:
+            '@type': >-
+              type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+            providers:
+              jwt_auth:
+                from_headers:
+                  - name: X-Access-Token
+                remote_jwks:
+                  http_uri:
+                    cluster: platform-keycloak
+                    timeout: 10s
+                    uri: {{ template "jwksUri.officer" . }}
+                payload_in_metadata: jwt_payload
+            rules:
+              - match:
+                  prefix: /geoserver/ows/geoserver/ows
+                requires:
+                  provider_name: jwt_auth
+  workloadSelector:
+    labels:
+      app.kubernetes.io/instance: geo-server

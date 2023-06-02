@@ -21,6 +21,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -76,13 +77,6 @@ class SearchConditionProviderTest {
           new Metadata(9L, CHANGE_NAME, TABLE_NAME, SEARCH_CONDITION_COLUMN_ATTRIBUTE, "alias2"),
           new Metadata(10L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, STARTS_WITH_ARRAY_ATTRIBUTE_NAME,
                       "whatever10")
-      );
-    }
-
-    private List<RlsMetadata> generateRlsMetadata() {
-      return List.of(
-              new RlsMetadata(1L, "test1", "read", "katottg", "col1", "table1"),
-              new RlsMetadata(2L, "test2", "read", "katottg", "col2", "table2")
       );
     }
 
@@ -194,13 +188,6 @@ class SearchConditionProviderTest {
       );
     }
 
-    private List<RlsMetadata> generateRlsMetadata() {
-      return List.of(
-              new RlsMetadata(1L, "test1", "read", "katottg", "col1", "table1"),
-              new RlsMetadata(2L, "test2", "read", "katottg", "col2", "table2")
-      );
-    }
-
     @Test
     void shouldMapViewOnTablesAndColumns() {
       var map = instance.getTableColumnMapFor(VIEW_NAME);
@@ -235,13 +222,6 @@ class SearchConditionProviderTest {
       );
     }
 
-    private List<RlsMetadata> generateRlsMetadata() {
-      return List.of(
-              new RlsMetadata(1L, "test1", "read", "katottg", "col1", "table1"),
-              new RlsMetadata(2L, "test2", "read", "katottg", "col2", "table2")
-      );
-    }
-
 
     @Test
     void shouldMapViewOnTablesAndColumns() {
@@ -250,5 +230,37 @@ class SearchConditionProviderTest {
       assertThat(set).hasSize(1);
       assertThat(set.stream().findFirst().get()).isEqualTo(EXPOSED_VIEW);
     }
+  }
+
+  @Nested
+  class GetRlsInfo {
+
+    @BeforeEach
+    public void setUp() {
+      setupSearchConditionsFound(Collections.emptyList(), generateRlsMetadata());
+    }
+
+    private void setupSearchConditionsFound(List<Metadata> metadata, List<RlsMetadata> rlsMetadata) {
+      given(metadataRepository.findAll()).willReturn(metadata);
+      given(rlsMetadataRepository.findAll()).willReturn(rlsMetadata);
+      instance = new SearchConditionProvider(new MetadataFacade(metadataRepository), new RlsMetadataFacade(rlsMetadataRepository));
+    }
+
+    @Test
+    void shouldReturnRlsInfo() {
+      var lst = instance.getRlsMetadata();
+
+      assertThat(lst).hasSize(2);
+
+      assertThat(lst.get(0).getCheckTable()).isEqualTo("table1");
+      assertThat(lst.get(1).getCheckTable()).isEqualTo("table2");
+    }
+  }
+
+  private List<RlsMetadata> generateRlsMetadata() {
+    return List.of(
+            new RlsMetadata(1L, "test1", "read", "katottg", "col1", "table1"),
+            new RlsMetadata(2L, "test2", "read", "katottg", "col2", "table2")
+    );
   }
 }

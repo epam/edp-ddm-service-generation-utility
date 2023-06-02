@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -120,5 +121,9 @@ public class SearchConditionProvider {
   public RlsMetadata getRlsMetadata(String tableName) {
     return rlsMetadataFacade.findByTypeAndCheckTable(RlsMetadataFacade.METADATA_TYPE_READ, tableName)
             .findFirst().orElse(null);
+  }
+
+  public List<RlsMetadata> getRlsMetadata() {
+    return rlsMetadataFacade.findByType(RlsMetadataFacade.METADATA_TYPE_READ).collect(toList());
   }
 }
