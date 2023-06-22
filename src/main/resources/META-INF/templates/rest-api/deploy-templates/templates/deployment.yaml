@@ -6,6 +6,8 @@ metadata:
   labels:
     app: {{ $serviceName }}
     version: {{ $.Values.version | squote }}
+  annotations:
+    configmap.reloader.stakater.com/reload: "rest-api-properties"
 spec:
   replicas: 1
   selector:

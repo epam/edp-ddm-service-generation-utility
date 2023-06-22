@@ -5,6 +5,8 @@ metadata:
   labels:
     app: {{.Values.name}}
     version: {{ .Values.version | squote }}
+  annotations:
+    configmap.reloader.stakater.com/reload: "kafka-api-properties"
 spec:
   replicas: 1
   selector:

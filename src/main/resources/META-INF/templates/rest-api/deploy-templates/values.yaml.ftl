@@ -12,6 +12,8 @@ global:
       container:
         resources: {}
         envVars: {}
+      datasource:
+        maxPoolSize: 10
   
 name: ${register}-rest-api
 
