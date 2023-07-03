@@ -35,8 +35,9 @@ public class SizeValidationConstraintProvider implements ConstraintProvider {
   public List<Constraint> getConstraintForProperty(Column column,
       String propertyClassName) {
     if (SIZE_CONSTRAINT_DATA_TYPES.contains(column.getColumnDataType().getName())) {
-      return List.of(new Constraint(SIZE_CONSTRAINT,
-          List.of(new Content("max", column.getSize()))));
+      return List.of(
+          new Constraint(
+              SIZE_CONSTRAINT, List.of(new Content("max", Integer.toString(column.getSize())))));
     }
     return Collections.emptyList();
   }

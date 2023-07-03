@@ -32,9 +32,9 @@ class SizeValidationConstraintProviderTest {
   void shouldReturnConstraintForCharDataTypeSize() {
     String dbType = "bpchar";
     String clazzName = "java.lang.String";
-    Constraint expected = buildConstraint(String.valueOf(8));
+    Constraint expected = buildConstraint(1024);
 
-    List<Constraint> constraints = provider.getConstraintForProperty(withColumn("my_col", String.class, dbType, 8), clazzName);
+    List<Constraint> constraints = provider.getConstraintForProperty(withColumn("my_col", String.class, dbType, 1024), clazzName);
 
     assertEquals(1, constraints.size());
     assertEquals(expected.getName(), constraints.get(0).getName());
@@ -43,10 +43,10 @@ class SizeValidationConstraintProviderTest {
     assertEquals(String.valueOf(expected.getContent().get(0).getValue()), String.valueOf(constraints.get(0).getContent().get(0).getValue()));
   }
 
-  private Constraint buildConstraint(String value) {
+  private Constraint buildConstraint(Integer value) {
     Content content = new Content();
     content.setKey("max");
-    content.setValue(value);
+    content.setValue(value.toString());
 
     Constraint constraint = new Constraint();
     constraint.setName("@javax.validation.constraints.Size");

@@ -69,7 +69,7 @@ class CreateListEntityScopeFactoryTest {
             new Constraint("@javax.validation.constraints.NotNull", Collections.emptyList()),
             new Constraint(
                 "@javax.validation.constraints.Size",
-                Collections.singletonList(new Constraint.Content("max", 50))),
+                Collections.singletonList(new Constraint.Content("max", "50"))),
             new Constraint("@javax.validation.Valid", Collections.emptyList())));
     expectedScope.setFields(Set.of(expectedField));
     assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expectedScope);

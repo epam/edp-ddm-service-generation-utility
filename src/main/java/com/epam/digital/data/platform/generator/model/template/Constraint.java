@@ -48,11 +48,11 @@ public class Constraint {
 
   public static class Content {
     private String key;
-    private Object value;
+    private String value;
 
     public Content() {}
 
-    public Content(String key, Object value) {
+    public Content(String key, String value) {
       this.key = key;
       this.value = value;
     }
