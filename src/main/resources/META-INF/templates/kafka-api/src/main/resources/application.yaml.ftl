@@ -62,6 +62,10 @@ probes:
     failureThreshold: 10
 
 <#noparse>
+lowcode-file-ceph:
+  bucket: ${LOWCODE_FILE_CEPH_BUCKET_NAME}
+datafactory-file-ceph:
+  bucket: ${DATAFACTORY_FILE_CEPH_BUCKET_NAME}
 ceph:
   bucket: ${DATAFACTORY_CEPH_BUCKET_NAME:datafactory-ceph-bucket}
 
@@ -80,6 +84,7 @@ data-platform:
       trusted-packages:
         - com.epam.digital.data.platform.model.core.kafka
         - ${basePackage}.model.dto
+        - com.epam.digital.data.platform.bpms.extension.delegate.dto
       error-handler:
         enabled-dlq: true
       custom-config:
@@ -90,6 +95,8 @@ data-platform:
   <#list rootsOfTopicNames as root>
       ${root}: ${root}-${serviceVersion}-inbound
   </#list>
+      data-load-csv-inbound: data-load.csv.incoming
+      data-load-csv-outbound: data-load.csv.outcoming
     max-request-size: 1000000
 
 platform:

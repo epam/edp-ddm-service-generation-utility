@@ -13,15 +13,15 @@
   <description>KAFKA API</description>
 
   <properties>
-    <kafka.api.core.version>1.9.4.19</kafka.api.core.version>
+    <kafka.api.core.version>1.9.4.20</kafka.api.core.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
     <spring-boot-maven-plugin.version>2.7.5</spring-boot-maven-plugin.version>
     <log4j.version>2.17.0</log4j.version>
-    <spring.boot.version>2.6.1</spring.boot.version>
+    <spring.boot.version>2.6.14</spring.boot.version>
     <spring.cloud.version>2021.0.0</spring.cloud.version>
-    <jackson.core.version>2.12.0</jackson.core.version>
+    <apache.commons.text.version>1.10.0</apache.commons.text.version>
   </properties>
 
   <dependencyManagement>
@@ -68,19 +68,9 @@
   <#noparse>
 
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>${jackson.core.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson.core.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-      <version>${jackson.core.version}</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>${apache.commons.text.version}</version>
     </dependency>
   </dependencies>
 

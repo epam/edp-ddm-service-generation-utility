@@ -25,13 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
-import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
-import com.epam.digital.data.platform.generator.metadata.EnumProvider;
-import com.epam.digital.data.platform.generator.metadata.NestedNode;
-import com.epam.digital.data.platform.generator.metadata.NestedStructure;
-import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
-import com.epam.digital.data.platform.generator.metadata.PartialUpdate;
-import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
+import com.epam.digital.data.platform.generator.metadata.*;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.EnumLabel;
 import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
@@ -65,12 +59,14 @@ class RestApplicationYamlScopeFactoryTest {
   private NestedStructureProvider nestedStructureProvider;
   @Mock
   private BulkLoadInfoProvider bulkLoadInfoProvider;
+  @Mock
+  private AsyncDataLoadInfoProvider asyncDataLoadInfoProvider;
 
   @BeforeEach
   void setup() {
     instance =
         new RestApplicationYamlScopeFactory(
-            partialUpdateProvider, nestedStructureProvider, bulkLoadInfoProvider, enumProvider);
+            partialUpdateProvider, nestedStructureProvider, bulkLoadInfoProvider, asyncDataLoadInfoProvider, enumProvider);
   }
 
   @Test
@@ -162,6 +158,22 @@ class RestApplicationYamlScopeFactoryTest {
                 hyphen(TABLE_NAME) + "/list",
                 hyphen(TABLE_NAME) + "/csv",
                 hyphen(TABLE_NAME) + "/csv/validation"));
+  }
+
+  @Test
+  void shouldCreateScopeWithAsyncDataLoad() {
+    given(asyncDataLoadInfoProvider.getTablesWithAsyncLoad()).willReturn(Map.of(TABLE_NAME, "100"));
+
+    var resultList = instance.create(context);
+
+    var resultScope = resultList.get(0);
+    assertThat(resultList).hasSize(1);
+    assertThat(resultScope.getEntityPaths())
+        .containsEntry(
+            hyphen(TABLE_NAME),
+            List.of(
+                hyphen(TABLE_NAME),
+                "v2/" + hyphen(TABLE_NAME) + "/csv/validation"));
   }
 
   @Test

@@ -15,3 +15,5 @@ spring:
       secrets:
         paths:
           - /app/secrets
+          - /app/secrets/lowcodefileceph
+          - /app/secrets/datafactoryfileceph

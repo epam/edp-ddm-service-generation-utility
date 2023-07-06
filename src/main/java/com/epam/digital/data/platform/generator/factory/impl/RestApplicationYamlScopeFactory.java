@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import com.epam.digital.data.platform.generator.factory.AbstractApplicationYamlScope;
+import com.epam.digital.data.platform.generator.metadata.AsyncDataLoadInfoProvider;
 import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.metadata.NestedStructure;
@@ -45,14 +46,17 @@ public class RestApplicationYamlScopeFactory
     extends AbstractApplicationYamlScope<RestApplicationYamlScope> {
 
   private final EnumProvider enumProvider;
+  private final AsyncDataLoadInfoProvider asyncDataLoadInfoProvider;
 
   public RestApplicationYamlScopeFactory(
       PartialUpdateProvider partialUpdateProvider,
       NestedStructureProvider nestedStructureProvider,
       BulkLoadInfoProvider bulkLoadInfoProvider,
+      AsyncDataLoadInfoProvider asyncDataLoadInfoProvider,
       EnumProvider enumProvider) {
     super(partialUpdateProvider, nestedStructureProvider, bulkLoadInfoProvider);
     this.enumProvider = enumProvider;
+    this.asyncDataLoadInfoProvider = asyncDataLoadInfoProvider;
   }
 
   @Override
@@ -94,6 +98,10 @@ public class RestApplicationYamlScopeFactory
 
     var bulkLoadPaths = getBulkLoadPaths();
     entityPaths.forEach((k, v) -> ofNullable(bulkLoadPaths.get(k)).ifPresent(v::addAll));
+
+    var asyncDataLoadPaths = getAsyncDataLoadPaths();
+    entityPaths.forEach((k, v) -> ofNullable(asyncDataLoadPaths.get(k)).ifPresent(v::addAll));
+
     return entityPaths;
   }
 
@@ -124,13 +132,35 @@ public class RestApplicationYamlScopeFactory
                     List.of(endpoint + "/list", endpoint + "/csv", endpoint + "/csv/validation")));
   }
 
-  private List<String> getNestedInsertPaths() {
-    Function<NestedStructure, String> endpointMapper =
-        structure -> "nested" + getEndpoint(structure.getName());
+  private Map<String, List<String>> getAsyncDataLoadPaths() {
+    return asyncDataLoadInfoProvider.getTablesWithAsyncLoad().keySet().stream()
+        .map(this::toHyphenTableName)
+        .collect(toMap(
+            Function.identity(),
+            endpoint -> List.of("v2/" + endpoint + "/csv/validation")));
+  }
 
-    return nestedStructureProvider.findAll().stream()
-            .map(endpointMapper)
-            .collect(toList());
+  private List<String> getNestedInsertPaths() {
+    Function<String, String> endpointMapper =
+        structureName -> "nested" + getEndpoint(structureName);
+
+    var nestedStructures = nestedStructureProvider.findAll()
+        .stream().map(NestedStructure::getName)
+        .collect(Collectors.toSet());
+
+    var nestedPaths = new ArrayList<String>();
+
+    nestedStructures.stream()
+        .map(endpointMapper)
+        .forEach(nestedPaths::add);
+
+    asyncDataLoadInfoProvider.getTablesWithAsyncLoad().keySet().stream()
+        .filter(nestedStructures::contains)
+        .map(this::toHyphenTableName)
+        .map(nestedPath -> "v2/nested" + getEndpoint(nestedPath) + "/csv/validation")
+        .forEach(nestedPaths::add);
+
+    return nestedPaths;
   }
 
   private boolean isEnumPresent() {

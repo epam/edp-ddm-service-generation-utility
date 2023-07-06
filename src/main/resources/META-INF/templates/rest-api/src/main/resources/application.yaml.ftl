@@ -217,6 +217,9 @@ data-platform:
           request: ${root}-${serviceVersion}-inbound
           reply: ${root}-${serviceVersion}-outbound
       </#list>
+        data-load-csv:
+          request: data-load.csv.incoming
+          reply: data-load.csv.outcoming
     topic-properties:
       creation:
         enabled: true
@@ -243,3 +246,5 @@ data-platform:
         - /swagger-ui/**
         - /actuator/**
         - /*/csv/validation
+        - /v2/*/csv/validation
+        - /v2/nested/*/csv/validation

@@ -62,6 +62,14 @@ datafactoryceph:
 datafactoryResponseCeph:
   bucketName: response-ceph-bucket
   httpEndpoint: ${DATAFACTORY_RESPONSE_CEPH_BUCKET_HOST}
+
+lowcodeFileCeph:
+  bucketName: lowcode-file-storage
+  httpEndpoint: ${LOWCODE_FILE_CEPH_BUCKET_HOST}
+
+datafactoryFileCeph:
+  bucketName: file-ceph-bucket
+  httpEndpoint: ${DATAFACTORY_FILE_CEPH_BUCKET_HOST}
 </#noparse>
 
 s3:

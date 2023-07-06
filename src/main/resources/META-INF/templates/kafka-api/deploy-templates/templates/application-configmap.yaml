@@ -39,6 +39,13 @@ data:
 
     dso:
       url: {{ .Values.dso.url }}
+    
+    lowcode-file-ceph:
+      http-endpoint: {{ .Values.lowcodeFileCeph.httpEndpoint }}
+      bucketName: {{ .Values.lowcodeFileCeph.bucketName }}
+    datafactory-file-ceph:
+      http-endpoint: {{ .Values.datafactoryFileCeph.httpEndpoint }}
+      bucketName: {{ .Values.datafactoryFileCeph.bucketName }}
 
     ceph:
       http-endpoint: {{ .Values.datafactoryceph.httpEndpoint }}
@@ -73,3 +80,21 @@ data:
     logging:
       level:
         org.jooq.tools.LoggerListener: TRACE
+  
+    storage:
+      lowcode-file-storage:
+        type: ceph
+        backend:
+          ceph:
+            http-endpoint: ${lowcode-file-ceph.http-endpoint}
+            access-key: ${lowcode-file-ceph.access-key}
+            secret-key: ${lowcode-file-ceph.secret-key}
+            bucket: ${lowcode-file-ceph.bucket}
+      datafactory-file-storage:
+        type: ceph
+        backend:
+          ceph:
+            http-endpoint: ${datafactory-file-ceph.http-endpoint}
+            access-key: ${datafactory-file-ceph.access-key}
+            secret-key: ${datafactory-file-ceph.secret-key}
+            bucket: ${datafactory-file-ceph.bucket}
