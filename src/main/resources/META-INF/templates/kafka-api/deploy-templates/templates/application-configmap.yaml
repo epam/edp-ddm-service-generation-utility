@@ -13,7 +13,7 @@ data:
       datasource:
         url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}?ApplicationName={{ .Chart.Name }}
         connection-timeout: {{.Values.db.connectionTimeout}}
-        max-pool-size: {{.Values.global.registry.kafkaApi.datasource.maxPoolSize}}
+        maximum-pool-size: {{.Values.global.registry.kafkaApi.datasource.maxPoolSize}}
       kafka:
         bootstrap: {{ .Values.kafka.service }}
         ssl:
