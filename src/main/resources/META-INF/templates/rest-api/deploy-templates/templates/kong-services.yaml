@@ -1,9 +1,9 @@
-{{- range $path := (((.Values.exposeSearchConditions).external).paths) }}
+{{- range $index, $path := (((.Values.exposeSearchConditions).external).paths) }}
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ printf "ext-system-api-%s" (trimPrefix "/" $path) | trunc 63 | trimSuffix "-" }}
+  name: {{ printf "ext-system-api-%d-%s" $index (trimPrefix "/" $path) | trunc 63 | trimSuffix "-" }}
   labels:
   {{- include "external-system-api.metaLabels" $ | nindent 4 }}
   annotations:
@@ -20,5 +20,5 @@ spec:
   sessionAffinity: None
   type: ClusterIP
   selector:
-    app: {{ $.Values.name }}
+    app: {{ $.Values.externalService.name }}
 {{- end }}

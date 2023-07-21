@@ -85,7 +85,7 @@ s3:
     options:
       pathStyleAccess: true
 
-<#if exposedToPlatformPaths?has_content>
+<#if exposedToPlatformPaths?has_content || exposedToExternalPaths?has_content>
 externalService:
   name: ${register}-rest-api-ext
 </#if>

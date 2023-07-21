@@ -18,5 +18,6 @@ spec:
             - /swagger-ui/*
             - /v3*
           {{- include "external.platform.paths" . | nindent 8 }}
+          {{- include "external.external.paths" . | nindent 8 }}
   action: ALLOW
 {{end}}

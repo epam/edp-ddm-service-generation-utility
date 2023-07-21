@@ -71,6 +71,12 @@
   {{- end }}
 {{- end -}}
 
+{{- define "external.external.paths" -}}
+  {{- range $path := (((.Values.exposeSearchConditions).external).paths) }}
+    - {{ $path }}
+  {{- end }}
+{{- end -}}
+
 {{- define "public.paths" -}}
   {{- range $path := (((.Values.exposeSearchConditions).public).paths) }}
     - {{ $path }}
