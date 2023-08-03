@@ -1,13 +1,13 @@
 {{- define "keycloak.customUrl" -}}
-{{- printf "%s%s" "https://" .Values.keycloak.customHost }}
+{{- printf "%s%s%s" "https://" .Values.keycloak.customHost "/auth"}}
 {{- end -}}
 
 {{- define "keycloak.urlPrefix" -}}
-{{- printf "%s%s%s" .Values.keycloak.url "/auth/realms/" .Release.Namespace -}}
+{{- printf "%s%s%s" .Values.keycloak.url "/realms/" .Release.Namespace -}}
 {{- end -}}
 
 {{- define "keycloak.customUrlPrefix" -}}
-{{- printf "%s%s%s" (include "keycloak.customUrl" .) "/auth/realms/" .Release.Namespace -}}
+{{- printf "%s%s%s" (include "keycloak.customUrl" .) "/realms/" .Release.Namespace -}}
 {{- end -}}
 
 {{- define "issuer.officer" -}}

@@ -24,7 +24,7 @@ data:
           truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
 
     keycloak:
-      server-url: {{ .Values.keycloak.url }}/auth
+      server-url: {{ .Values.keycloak.url }}
       service-account:
         realm: {{ .Values.ciProject }}-external-system
         client-id: {{ .Values.keycloak.serviceAccount.clientId }}

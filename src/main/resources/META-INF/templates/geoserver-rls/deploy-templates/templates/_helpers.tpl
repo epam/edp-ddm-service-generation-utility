@@ -1,9 +1,5 @@
-{{- define "keycloak.url" -}}
-{{- printf "%s%s" "https://" .Values.keycloak.host -}}
-{{- end -}}
-
 {{- define "keycloak.urlPrefix" -}}
-{{- printf "%s%s%s" (include "keycloak.url" .) "/auth/realms/" .Release.Namespace -}}
+{{- printf "%s%s%s" .Values.keycloak.url "/realms/" .Release.Namespace -}}
 {{- end -}}
 
 {{- define "jwksUri.officer" -}}
