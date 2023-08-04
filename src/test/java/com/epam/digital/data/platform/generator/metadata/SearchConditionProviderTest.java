@@ -23,6 +23,11 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
 import java.util.List;
+
+import com.epam.digital.data.platform.generator.model.template.SearchOperatorType;
+import com.epam.digital.data.platform.generator.model.template.SearchType;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -41,6 +46,9 @@ class SearchConditionProviderTest {
   @Mock
   private RlsMetadataRepository rlsMetadataRepository;
 
+  private final ObjectMapper objectMapper =
+      new ObjectMapper().enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+
   @Nested
   class FindFor {
 
@@ -55,64 +63,99 @@ class SearchConditionProviderTest {
     private void setupSearchConditionsFound(List<Metadata> metadata, List<RlsMetadata> rlsMetadata) {
       given(metadataRepository.findAll()).willReturn(metadata);
       given(rlsMetadataRepository.findAll()).willReturn(rlsMetadata);
-      instance = new SearchConditionProvider(new MetadataFacade(metadataRepository), new RlsMetadataFacade(rlsMetadataRepository));
+      instance =
+          new SearchConditionProvider(
+              new MetadataFacade(metadataRepository),
+              new RlsMetadataFacade(rlsMetadataRepository),
+              objectMapper);
     }
 
     private List<Metadata> generateMetadata() {
       return List.of(
-          new Metadata(1L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, EQUAL_ATTRIBUTE_NAME,
+          new Metadata(
+              1L,
+              SEARCH_CONDITION_CHANGE_TYPE,
+              CHANGE_NAME,
+              SearchType.EQUAL.getValue(),
               "whatever1"),
-          new Metadata(2L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, EQUAL_ATTRIBUTE_NAME,
+          new Metadata(
+              2L,
+              SEARCH_CONDITION_CHANGE_TYPE,
+              CHANGE_NAME,
+              SearchType.EQUAL.getValue(),
               "whatever2"),
-          new Metadata(3L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, STARTS_WITH_ATTRIBUTE_NAME,
+          new Metadata(
+              3L,
+              SEARCH_CONDITION_CHANGE_TYPE,
+              CHANGE_NAME,
+              SearchType.STARTS_WITH.getValue(),
               "whatever3"),
-          new Metadata(4L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, STARTS_WITH_ATTRIBUTE_NAME,
+          new Metadata(
+              4L,
+              SEARCH_CONDITION_CHANGE_TYPE,
+              CHANGE_NAME,
+              SearchType.STARTS_WITH.getValue(),
               "whatever4"),
-          new Metadata(5L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, CONTAINS_ATTRIBUTE_NAME,
+          new Metadata(
+              5L,
+              SEARCH_CONDITION_CHANGE_TYPE,
+              CHANGE_NAME,
+              SearchType.CONTAINS.getValue(),
               "whatever5"),
-          new Metadata(6L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, CONTAINS_ATTRIBUTE_NAME,
+          new Metadata(
+              6L,
+              SEARCH_CONDITION_CHANGE_TYPE,
+              CHANGE_NAME,
+              SearchType.CONTAINS.getValue(),
               "whatever6"),
           new Metadata(7L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, LIMIT_ATTRIBUTE_NAME, "7"),
           new Metadata(8L, CHANGE_NAME, TABLE_NAME, SEARCH_CONDITION_COLUMN_ATTRIBUTE, "alias1"),
           new Metadata(9L, CHANGE_NAME, TABLE_NAME, SEARCH_CONDITION_COLUMN_ATTRIBUTE, "alias2"),
-          new Metadata(10L, SEARCH_CONDITION_CHANGE_TYPE, CHANGE_NAME, STARTS_WITH_ARRAY_ATTRIBUTE_NAME,
-                      "whatever10")
-      );
+          new Metadata(
+              10L,
+              SEARCH_CONDITION_CHANGE_TYPE,
+              CHANGE_NAME,
+              SearchType.STARTS_WITH_ARRAY.getValue(),
+              "whatever10"),
+          new Metadata(
+              11L,
+              SEARCH_CONDITION_CHANGE_TYPE,
+              CHANGE_NAME,
+              LOGIC_OPERATOR_ATTRIBUTE_NAME,
+              String.format(
+                  "{\"operations\":[{\"tableName\":\"%s\",\"logicOperators\":[{\"type\":\"or\",\"columns\":[\"%s\",\"%s\"],\"logicOperators\":[]}]}]}",
+                  TABLE_NAME, "whatever1", "whatever2")));
     }
 
     @Test
-    void shouldCollectEqualSCByChangeName() {
-      var list = instance.findFor(CHANGE_NAME).getEqual();
+    void shouldCollectSCSearchTypesByChangeName() {
+      var map = instance.findFor(CHANGE_NAME).getColumnToSearchType();
 
-      assertThat(list).hasSize(2);
-      assertThat(list.get(0)).isEqualTo("whatever1");
-      assertThat(list.get(1)).isEqualTo("whatever2");
+      assertThat(map)
+          .hasSize(7)
+          .containsEntry("whatever1", SearchType.EQUAL)
+          .containsEntry("whatever2", SearchType.EQUAL)
+          .containsEntry("whatever3", SearchType.STARTS_WITH)
+          .containsEntry("whatever4", SearchType.STARTS_WITH)
+          .containsEntry("whatever10", SearchType.STARTS_WITH_ARRAY)
+          .containsEntry("whatever5", SearchType.CONTAINS)
+          .containsEntry("whatever6", SearchType.CONTAINS);
     }
 
     @Test
-    void shouldCollectStartsWithSCByChangeName() {
-      var list = instance.findFor(CHANGE_NAME).getStartsWith();
+    void shouldCollectSCOperationTreeByChangeName() {
+      var expectedTree = new SearchConditionOperationTree();
+      var operation = new SearchConditionOperation();
+      operation.setTableName(TABLE_NAME);
+      var logicOperator = new SearchConditionOperation.LogicOperator();
+      logicOperator.setType(SearchOperatorType.OR);
+      logicOperator.setColumns(List.of("whatever1", "whatever2"));
+      operation.setLogicOperators(List.of(logicOperator));
+      expectedTree.setOperations(List.of(operation));
 
-      assertThat(list).hasSize(2);
-      assertThat(list.get(0)).isEqualTo("whatever3");
-      assertThat(list.get(1)).isEqualTo("whatever4");
-    }
+      var actualTree = instance.findFor(CHANGE_NAME).getSearchOperationTree();
 
-    @Test
-    void shouldCollectStartsWithArraySCByChangeName() {
-      var list = instance.findFor(CHANGE_NAME).getStartsWithArray();
-
-      assertThat(list).hasSize(1);
-      assertThat(list.get(0)).isEqualTo("whatever10");
-    }
-
-    @Test
-    void shouldCollectContainsSCByChangeName() {
-      var list = instance.findFor(CHANGE_NAME).getContains();
-
-      assertThat(list).hasSize(2);
-      assertThat(list.get(0)).isEqualTo("whatever5");
-      assertThat(list.get(1)).isEqualTo("whatever6");
+      assertThat(actualTree).usingRecursiveComparison().isEqualTo(expectedTree);
     }
 
     @Test
@@ -133,9 +176,7 @@ class SearchConditionProviderTest {
     void shouldReturnEmptyListWhenNoSCDefined() {
       setupSearchConditionsFound(emptyList(), emptyList());
 
-      assertThat(instance.findFor(CHANGE_NAME).getEqual()).isEmpty();
-      assertThat(instance.findFor(CHANGE_NAME).getStartsWith()).isEmpty();
-      assertThat(instance.findFor(CHANGE_NAME).getContains()).isEmpty();
+      assertThat(instance.findFor(CHANGE_NAME).getColumnToSearchType()).isEmpty();
     }
 
     @Test
@@ -167,7 +208,11 @@ class SearchConditionProviderTest {
     private void setupSearchConditionsFound(List<Metadata> metadata, List<RlsMetadata> rlsMetadata) {
       given(metadataRepository.findAll()).willReturn(metadata);
       given(rlsMetadataRepository.findAll()).willReturn(rlsMetadata);
-      instance = new SearchConditionProvider(new MetadataFacade(metadataRepository), new RlsMetadataFacade(rlsMetadataRepository));
+      instance =
+          new SearchConditionProvider(
+              new MetadataFacade(metadataRepository),
+              new RlsMetadataFacade(rlsMetadataRepository),
+              objectMapper);
     }
 
     private List<Metadata> generateMetadata() {
@@ -213,7 +258,11 @@ class SearchConditionProviderTest {
     private void setupSearchConditionsFound(List<Metadata> metadata, List<RlsMetadata> rlsMetadata) {
       given(metadataRepository.findAll()).willReturn(metadata);
       given(rlsMetadataRepository.findAll()).willReturn(rlsMetadata);
-      instance = new SearchConditionProvider(new MetadataFacade(metadataRepository), new RlsMetadataFacade(rlsMetadataRepository));
+      instance =
+          new SearchConditionProvider(
+              new MetadataFacade(metadataRepository),
+              new RlsMetadataFacade(rlsMetadataRepository),
+              objectMapper);
     }
 
     private List<Metadata> generateMetadata() {
@@ -253,7 +302,11 @@ class SearchConditionProviderTest {
     private void setupSearchConditionsFound(List<Metadata> metadata, List<RlsMetadata> rlsMetadata) {
       given(metadataRepository.findAll()).willReturn(metadata);
       given(rlsMetadataRepository.findAll()).willReturn(rlsMetadata);
-      instance = new SearchConditionProvider(new MetadataFacade(metadataRepository), new RlsMetadataFacade(rlsMetadataRepository));
+      instance =
+          new SearchConditionProvider(
+              new MetadataFacade(metadataRepository),
+              new RlsMetadataFacade(rlsMetadataRepository),
+              objectMapper);
     }
 
     @Test

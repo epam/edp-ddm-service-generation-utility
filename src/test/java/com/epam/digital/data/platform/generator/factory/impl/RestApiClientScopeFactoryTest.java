@@ -19,7 +19,7 @@ package com.epam.digital.data.platform.generator.factory.impl;
 import com.epam.digital.data.platform.generator.metadata.ExposeSearchConditionOption;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
-import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
+import com.epam.digital.data.platform.generator.metadata.SearchConditions;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.SearchControllerScope;
 import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
@@ -55,7 +55,7 @@ class RestApiClientScopeFactoryTest {
   void shouldCreateCorrectScopes() {
     when(provider.getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA))
         .thenReturn(Set.of(VIEW_NAME));
-    when(provider.findFor(VIEW_NAME)).thenReturn(new SearchConditionsBuilder().build());
+    when(provider.findFor(VIEW_NAME)).thenReturn(new SearchConditions());
     var expectedSchemaNames =
         Set.of("TestSchemaSearchSearchConditionResponse", "TestSchemaSearchSearchConditions");
 
@@ -75,9 +75,9 @@ class RestApiClientScopeFactoryTest {
   void shouldCreateCorrectScopeResponseType() {
     when(provider.getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA))
         .thenReturn(Set.of(VIEW_NAME));
-    when(provider.findFor(VIEW_NAME))
-        .thenReturn(
-            new SearchConditionsBuilder().pagination(SearchConditionPaginationType.PAGE).build());
+    var scInfo = new SearchConditions();
+    scInfo.setPagination(SearchConditionPaginationType.PAGE);
+    when(provider.findFor(VIEW_NAME)).thenReturn(scInfo);
     var expectedSchemaNames =
         Set.of("TestSchemaSearchSearchConditionResponse", "TestSchemaSearchSearchConditions");
 

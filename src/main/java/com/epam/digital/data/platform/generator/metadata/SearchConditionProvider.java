@@ -16,10 +16,10 @@
 
 package com.epam.digital.data.platform.generator.metadata;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.List;
@@ -27,6 +27,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.epam.digital.data.platform.generator.model.template.SearchType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,15 +38,7 @@ public class SearchConditionProvider {
 
   static final String SEARCH_CONDITION_CHANGE_TYPE = "searchCondition";
   static final String SEARCH_CONDITION_COLUMN_ATTRIBUTE = "column";
-
-  static final String EQUAL_ATTRIBUTE_NAME = "equalColumn";
-  static final String NOT_EQUAL_ATTRIBUTE_NAME = "notEqualColumn";
-  static final String STARTS_WITH_ATTRIBUTE_NAME = "startsWithColumn";
-  static final String STARTS_WITH_ARRAY_ATTRIBUTE_NAME = "startsWithArrayColumn";
-  static final String CONTAINS_ATTRIBUTE_NAME = "containsColumn";
-  static final String IN_ATTRIBUTE_NAME = "inColumn";
-  static final String NOT_IN_ATTRIBUTE_NAME = "notInColumn";
-  static final String BETWEEN_ATTRIBUTE_NAME = "betweenColumn";
+  static final String LOGIC_OPERATOR_ATTRIBUTE_NAME = "logicOperator";
   static final String LIMIT_ATTRIBUTE_NAME = "limit";
   static final String PAGINATION_ATTRIBUTE_NAME = "pagination";
 
@@ -54,45 +50,53 @@ public class SearchConditionProvider {
 
   private final RlsMetadataFacade rlsMetadataFacade;
 
-  public SearchConditionProvider(MetadataFacade metadataFacade, RlsMetadataFacade rlsMetadataFacade) {
+  private final ObjectMapper mapper;
+
+  public SearchConditionProvider(MetadataFacade metadataFacade, RlsMetadataFacade rlsMetadataFacade, ObjectMapper mapper) {
     this.metadataFacade = metadataFacade;
     this.rlsMetadataFacade = rlsMetadataFacade;
+    this.mapper = mapper;
   }
 
   public SearchConditions findFor(String name) {
-    var groupedByName = metadataFacade
+    var groupedBySearchParam = metadataFacade
         .findByChangeTypeAndChangeName(SEARCH_CONDITION_CHANGE_TYPE, name)
         .collect(groupingBy(
             Metadata::getName,
             mapping(Metadata::getValue,
                 toList())));
 
+    var columnToSearchType = metadataFacade
+            .findByChangeTypeAndChangeName(SEARCH_CONDITION_CHANGE_TYPE, name)
+            .filter(metadata -> SearchType.typeValues().contains(metadata.getName()))
+            .collect(toMap(Metadata::getValue, metadata -> SearchType.findByValue(metadata.getName())));
+
     var returningColumns = metadataFacade.findByChangeType(name)
         .map(Metadata::getValue).collect(toList());
 
-    var b = new SearchConditionsBuilder()
-        .equal(groupedByName.getOrDefault(EQUAL_ATTRIBUTE_NAME, emptyList()))
-        .notEqual(groupedByName.getOrDefault(NOT_EQUAL_ATTRIBUTE_NAME, emptyList()))
-        .startsWith(groupedByName.getOrDefault(STARTS_WITH_ATTRIBUTE_NAME, emptyList()))
-        .startsWithArray(groupedByName.getOrDefault(STARTS_WITH_ARRAY_ATTRIBUTE_NAME, emptyList()))
-        .contains(groupedByName.getOrDefault(CONTAINS_ATTRIBUTE_NAME, emptyList()))
-        .in(groupedByName.getOrDefault(IN_ATTRIBUTE_NAME, emptyList()))
-        .notIn(groupedByName.getOrDefault(NOT_IN_ATTRIBUTE_NAME, emptyList()))
-        .between(groupedByName.getOrDefault(BETWEEN_ATTRIBUTE_NAME, emptyList()))
-        .returningColumns(returningColumns);
+    var searchOperationTree =
+        Optional.ofNullable(groupedBySearchParam.get(LOGIC_OPERATOR_ATTRIBUTE_NAME))
+            .map(logicOperator -> logicOperator.get(0))
+            .map(this::mapLogicOperatorToObj)
+            .orElse(null);
 
-    var limit = groupedByName.get(LIMIT_ATTRIBUTE_NAME);
+    var scParams = new SearchConditions();
+    scParams.setColumnToSearchType(columnToSearchType);
+    scParams.setSearchOperationTree(searchOperationTree);
+    scParams.setReturningColumns(returningColumns);
+
+    var limit = groupedBySearchParam.get(LIMIT_ATTRIBUTE_NAME);
     if (limit != null) {
-      b.limit(Integer.valueOf(limit.get(0)));
+      scParams.setLimit(Integer.valueOf(limit.get(0)));
     }
 
     var pagination =
-        Optional.ofNullable(groupedByName.get(PAGINATION_ATTRIBUTE_NAME))
+        Optional.ofNullable(groupedBySearchParam.get(PAGINATION_ATTRIBUTE_NAME))
             .map(paginationValue -> paginationValue.get(0))
             .orElse(null);
-    b.pagination(SearchConditionPaginationType.findByValue(pagination));
+    scParams.setPagination(SearchConditionPaginationType.findByValue(pagination));
 
-    return b.build();
+    return scParams;
   }
 
   public Map<String, Set<String>> getTableColumnMapFor(String view) {
@@ -125,5 +129,13 @@ public class SearchConditionProvider {
 
   public List<RlsMetadata> getRlsMetadata() {
     return rlsMetadataFacade.findByType(RlsMetadataFacade.METADATA_TYPE_READ).collect(toList());
+  }
+
+  private SearchConditionOperationTree mapLogicOperatorToObj(String logicOperatorMetadataJsonStr) {
+    try {
+      return mapper.readValue(logicOperatorMetadataJsonStr, SearchConditionOperationTree.class);
+    } catch (JsonProcessingException e) {
+      throw new IllegalArgumentException("Cannot parse logic operator JSON", e);
+    }
   }
 }

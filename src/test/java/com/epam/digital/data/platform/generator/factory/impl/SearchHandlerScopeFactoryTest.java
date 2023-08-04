@@ -19,13 +19,16 @@ package com.epam.digital.data.platform.generator.factory.impl;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.metadata.NestedReadEntity;
 import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionOperation;
+import com.epam.digital.data.platform.generator.metadata.SearchConditionOperationTree;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditions;
-import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
 import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.SearchConditionField;
+import com.epam.digital.data.platform.generator.model.template.SearchOperatorType;
+import com.epam.digital.data.platform.generator.model.template.SearchType;
 import com.epam.digital.data.platform.generator.model.template.SelectableField;
 import com.epam.digital.data.platform.generator.scope.SearchHandlerScope;
 import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
@@ -106,14 +109,14 @@ class SearchHandlerScopeFactoryTest {
   }
 
   private SearchConditions emptySc() {
-    return new SearchConditionsBuilder().build();
+    return new SearchConditions();
   }
 
   @Test
   void shouldCreateScopes() {
-    lenient().when(scProvider.findFor(VIEW_NAME))
-             .thenReturn(new SearchConditionsBuilder()
-             .returningColumns(Arrays.asList(FIELD, FIELD_TOO_COLUMN_NAME)).build());
+    var scInfo = new SearchConditions();
+    scInfo.setReturningColumns(Arrays.asList(FIELD, FIELD_TOO_COLUMN_NAME));
+    lenient().when(scProvider.findFor(VIEW_NAME)).thenReturn(scInfo);
 
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
@@ -142,14 +145,10 @@ class SearchHandlerScopeFactoryTest {
                     withTextColumn(FIELD_TOO_COLUMN_NAME),
                     withColumn(ONE_TO_MANY_COLUMN, UUID.class, "uuid"),
                     withColumn(MANY_TO_MANY_COLUMN, Object.class, "_uuid")));
-    lenient()
-        .when(scProvider.findFor(VIEW_NAME))
-        .thenReturn(
-            new SearchConditionsBuilder()
-                .returningColumns(
-                    Arrays.asList(
-                        FIELD, FIELD_TOO_COLUMN_NAME, ONE_TO_MANY_COLUMN, MANY_TO_MANY_COLUMN))
-                .build());
+    var scInfo = new SearchConditions();
+    scInfo.setReturningColumns(
+        Arrays.asList(FIELD, FIELD_TOO_COLUMN_NAME, ONE_TO_MANY_COLUMN, MANY_TO_MANY_COLUMN));
+    lenient().when(scProvider.findFor(VIEW_NAME)).thenReturn(scInfo);
     when(nestedReadProvider.findFor(VIEW_NAME))
         .thenReturn(
             Map.of(
@@ -205,9 +204,9 @@ class SearchHandlerScopeFactoryTest {
                     withTextColumn(FIELD_TOO_COLUMN_NAME),
                     withColumn(ONE_TO_MANY_COLUMN, UUID.class, "uuid"),
                     withColumn(MANY_TO_MANY_COLUMN, Object.class, "_uuid")));
-    lenient()
-        .when(scProvider.findFor(VIEW_NAME))
-        .thenReturn(new SearchConditionsBuilder().returningColumns(List.of(FIELD)).build());
+    var scInfo = new SearchConditions();
+    scInfo.setReturningColumns(List.of(FIELD));
+    lenient().when(scProvider.findFor(VIEW_NAME)).thenReturn(scInfo);
     when(nestedReadProvider.findFor(VIEW_NAME))
             .thenReturn(
                     Map.of(
@@ -231,18 +230,25 @@ class SearchHandlerScopeFactoryTest {
     var field = new SearchConditionField(FIELD, FIELD, true);
     var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
 
-    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder()
-        .contains(List.of(field.getColumnName(), fieldToo.getColumnName()))
-        .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(
+        Map.of(
+            field.getColumnName(),
+            SearchType.CONTAINS,
+            fieldToo.getColumnName(),
+            SearchType.CONTAINS));
+    setupSearchConditions(VIEW_NAME, scInfo);
 
     // when
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     // then
-    List<SearchConditionField> fields = resultList.get(0).getContainsFields();
-    assertThat(fields).hasSize(2);
-    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
-    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+    List<SearchConditionField> fields =
+        resultList.get(0).getSearchLogicOperations().get(0).getContainsFields();
+    assertThat(fields)
+        .hasSize(2)
+        .usingRecursiveFieldByFieldElementComparator()
+        .containsExactlyInAnyOrder(field, fieldToo);
   }
 
   @Test
@@ -251,18 +257,25 @@ class SearchHandlerScopeFactoryTest {
     var field = new SearchConditionField(FIELD, FIELD, true);
     var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
 
-    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder()
-        .startsWith(List.of(field.getColumnName(), fieldToo.getColumnName()))
-        .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(
+        Map.of(
+            field.getColumnName(),
+            SearchType.STARTS_WITH,
+            fieldToo.getColumnName(),
+            SearchType.STARTS_WITH));
+    setupSearchConditions(VIEW_NAME, scInfo);
 
     // when
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     // then
-    List<SearchConditionField> fields = resultList.get(0).getStartsWithFields();
-    assertThat(fields).hasSize(2);
-    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
-    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+    List<SearchConditionField> fields =
+        resultList.get(0).getSearchLogicOperations().get(0).getStartsWithFields();
+    assertThat(fields)
+        .hasSize(2)
+        .usingRecursiveFieldByFieldElementComparator()
+        .containsExactlyInAnyOrder(field, fieldToo);
   }
 
   @Test
@@ -271,18 +284,25 @@ class SearchHandlerScopeFactoryTest {
     var field = new SearchConditionField(FIELD, FIELD, true);
     var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
 
-    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder()
-            .startsWithArray(List.of(field.getColumnName(), fieldToo.getColumnName()))
-            .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(
+        Map.of(
+            field.getColumnName(),
+            SearchType.STARTS_WITH_ARRAY,
+            fieldToo.getColumnName(),
+            SearchType.STARTS_WITH_ARRAY));
+    setupSearchConditions(VIEW_NAME, scInfo);
 
     // when
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     // then
-    List<SearchConditionField> fields = resultList.get(0).getStartsWithArrayFields();
-    assertThat(fields).hasSize(2);
-    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
-    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+    List<SearchConditionField> fields =
+        resultList.get(0).getSearchLogicOperations().get(0).getStartsWithArrayFields();
+    assertThat(fields)
+        .hasSize(2)
+        .usingRecursiveFieldByFieldElementComparator()
+        .containsExactlyInAnyOrder(field, fieldToo);
   }
 
   @Test
@@ -291,18 +311,20 @@ class SearchHandlerScopeFactoryTest {
     var field = new SearchConditionField(FIELD, FIELD, true);
     var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
 
-    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder()
-            .in(List.of(field.getColumnName(), fieldToo.getColumnName()))
-            .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(
+        Map.of(field.getColumnName(), SearchType.IN, fieldToo.getColumnName(), SearchType.IN));
+    setupSearchConditions(VIEW_NAME, scInfo);
 
     // when
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     // then
-    List<SearchConditionField> fields = resultList.get(0).getInFields();
-    assertThat(fields).hasSize(2);
-    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
-    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+    List<SearchConditionField> fields = resultList.get(0).getSearchLogicOperations().get(0).getInFields();
+    assertThat(fields)
+        .hasSize(2)
+        .usingRecursiveFieldByFieldElementComparator()
+        .containsExactlyInAnyOrder(field, fieldToo);
   }
 
   @Test
@@ -311,18 +333,22 @@ class SearchHandlerScopeFactoryTest {
     var field = new SearchConditionField(FIELD, FIELD, true);
     var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
 
-    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder()
-        .notIn(List.of(field.getColumnName(), fieldToo.getColumnName()))
-        .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(
+        Map.of(
+            field.getColumnName(), SearchType.NOT_IN, fieldToo.getColumnName(), SearchType.NOT_IN));
+    setupSearchConditions(VIEW_NAME, scInfo);
 
     // when
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     // then
-    List<SearchConditionField> fields = resultList.get(0).getNotInFields();
-    assertThat(fields).hasSize(2);
-    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
-    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+    List<SearchConditionField> fields =
+        resultList.get(0).getSearchLogicOperations().get(0).getNotInFields();
+    assertThat(fields)
+        .hasSize(2)
+        .usingRecursiveFieldByFieldElementComparator()
+        .containsExactlyInAnyOrder(field, fieldToo);
   }
 
   @Test
@@ -331,18 +357,25 @@ class SearchHandlerScopeFactoryTest {
     var field = new SearchConditionField(FIELD, FIELD, true);
     var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
 
-    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder()
-            .between(List.of(field.getColumnName(), fieldToo.getColumnName()))
-            .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(
+        Map.of(
+            field.getColumnName(),
+            SearchType.BETWEEN,
+            fieldToo.getColumnName(),
+            SearchType.BETWEEN));
+    setupSearchConditions(VIEW_NAME, scInfo);
 
     // when
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     // then
-    List<SearchConditionField> fields = resultList.get(0).getBetweenFields();
-    assertThat(fields).hasSize(2);
-    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
-    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+    List<SearchConditionField> fields =
+        resultList.get(0).getSearchLogicOperations().get(0).getBetweenFields();
+    assertThat(fields)
+        .hasSize(2)
+        .usingRecursiveFieldByFieldElementComparator()
+        .containsExactlyInAnyOrder(field, fieldToo);
   }
 
   @Test
@@ -351,18 +384,24 @@ class SearchHandlerScopeFactoryTest {
     var field = new SearchConditionField(FIELD, FIELD, true);
     var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
 
-    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder()
-        .notEqual(List.of(field.getColumnName(), fieldToo.getColumnName()))
-        .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(
+        Map.of(
+            field.getColumnName(),
+            SearchType.NOT_EQUAL,
+            fieldToo.getColumnName(),
+            SearchType.NOT_EQUAL));
+    setupSearchConditions(VIEW_NAME, scInfo);
 
     // when
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     // then
-    List<SearchConditionField> fields = resultList.get(0).getNotEqualFields();
-    assertThat(fields).hasSize(2);
-    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
-    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+    List<SearchConditionField> fields = resultList.get(0).getSearchLogicOperations().get(0).getNotEqualFields();
+    assertThat(fields)
+        .hasSize(2)
+        .usingRecursiveFieldByFieldElementComparator()
+        .containsExactlyInAnyOrder(field, fieldToo);
   }
 
   @Test
@@ -371,18 +410,20 @@ class SearchHandlerScopeFactoryTest {
     var field = new SearchConditionField(FIELD, FIELD, true);
     var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
 
-    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder()
-        .equal(List.of(field.getColumnName(), fieldToo.getColumnName()))
-        .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(
+        Map.of(field.getColumnName(), SearchType.EQUAL, fieldToo.getColumnName(), SearchType.EQUAL));
+    setupSearchConditions(VIEW_NAME, scInfo);
 
     // when
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     // then
-    List<SearchConditionField> fields = resultList.get(0).getEqualFields();
-    assertThat(fields).hasSize(2);
-    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
-    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+    List<SearchConditionField> fields = resultList.get(0).getSearchLogicOperations().get(0).getEqualFields();
+    assertThat(fields)
+            .hasSize(2)
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(field, fieldToo);
   }
 
   @Test
@@ -391,9 +432,10 @@ class SearchHandlerScopeFactoryTest {
     var field = new SearchConditionField(FIELD, FIELD, false);
     var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, false);
 
-    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder()
-        .equal(List.of(field.getColumnName(), fieldToo.getColumnName()))
-        .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(
+        Map.of(field.getColumnName(), SearchType.EQUAL, fieldToo.getColumnName(), SearchType.EQUAL));
+    setupSearchConditions(VIEW_NAME, scInfo);
 
     override(ctx.getCatalog(),
         withTable(TABLE_NAME),
@@ -404,19 +446,68 @@ class SearchHandlerScopeFactoryTest {
     // when
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
-    //then
-    List<SearchConditionField> fields = resultList.get(0).getEqualFields();
-    assertThat(fields).hasSize(2);
-    assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
-    assertThat(fields.get(1)).usingRecursiveComparison().isEqualTo(fieldToo);
+    // then
+    List<SearchConditionField> fields =
+        resultList.get(0).getSearchLogicOperations().get(0).getEqualFields();
+    assertThat(fields)
+        .hasSize(2)
+        .usingRecursiveFieldByFieldElementComparator()
+        .containsExactlyInAnyOrder(field, fieldToo);
+  }
+
+  @Test
+  void shouldCreateBetweenFieldsForNestedLogicOperator() {
+    // given
+    var field = new SearchConditionField(FIELD, FIELD, true);
+    var fieldToo = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
+
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(
+            Map.of(
+                    field.getColumnName(),
+                    SearchType.BETWEEN,
+                    fieldToo.getColumnName(),
+                    SearchType.BETWEEN));
+    var searchTree = new SearchConditionOperationTree();
+    var operation = new SearchConditionOperation();
+    operation.setTableName(TABLE_NAME);
+    var logicOperator = new SearchConditionOperation.LogicOperator();
+    logicOperator.setType(SearchOperatorType.OR);
+    logicOperator.setColumns(List.of(FIELD_TOO_COLUMN_NAME));
+    logicOperator.setLogicOperators(null);
+    operation.setLogicOperators(List.of(logicOperator));
+    searchTree.setOperations(List.of(operation));
+    scInfo.setSearchOperationTree(searchTree);
+
+    setupSearchConditions(VIEW_NAME, scInfo);
+
+    // when
+    List<SearchHandlerScope> resultList = instance.create(ctx);
+
+    // then
+    var searchOperation = resultList.get(0).getSearchLogicOperations().get(0);
+    assertThat(searchOperation.getOperator()).isEqualTo(SearchOperatorType.AND);
+    assertThat(searchOperation.getOperationName()).isEqualTo("mainCondition");
+    var topLevelFields = searchOperation.getBetweenFields();
+    assertThat(topLevelFields).hasSize(1);
+    assertThat(topLevelFields.get(0)).usingRecursiveComparison().isEqualTo(field);
+
+    var nestedOperationFields = searchOperation.getNestedSearchOperations();
+    assertThat(nestedOperationFields).hasSize(1);
+    assertThat(nestedOperationFields.get(0).getOperator()).isEqualTo(SearchOperatorType.OR);
+    assertThat(nestedOperationFields.get(0).getOperationName()).containsPattern("orFieldToo\\d{5}");
+    assertThat(nestedOperationFields.get(0).getBetweenFields()).hasSize(1);
+    assertThat(nestedOperationFields.get(0).getBetweenFields().get(0))
+        .usingRecursiveComparison()
+        .isEqualTo(fieldToo);
   }
 
   @Test
   void shouldThrowExceptionWhenEqualFieldsIsNotFoundInTable() {
     // given
-    setupSearchConditions("view_without_fields", new SearchConditionsBuilder()
-        .equal(List.of(FIELD, FIELD_TOO))
-        .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of(FIELD, SearchType.EQUAL, FIELD_TOO, SearchType.EQUAL));
+    setupSearchConditions("view_without_fields", scInfo);
 
     // when-then
     assertThatThrownBy(() -> instance.create(ctx)).isInstanceOf(IllegalStateException.class);
@@ -425,7 +516,9 @@ class SearchHandlerScopeFactoryTest {
   @Test
   void shouldSetLimitWhenPresent() {
     int limit = 1;
-    setupSearchConditions(VIEW_NAME, new SearchConditionsBuilder().limit(limit).build());
+    var scInfo = new SearchConditions();
+    scInfo.setLimit(limit);
+    setupSearchConditions(VIEW_NAME, scInfo);
 
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
@@ -443,9 +536,9 @@ class SearchHandlerScopeFactoryTest {
 
   @Test
   void shouldSetPaginationWhenPresent() {
-    setupSearchConditions(
-        VIEW_NAME,
-        new SearchConditionsBuilder().pagination(SearchConditionPaginationType.TRUE).build());
+    var scInfo = new SearchConditions();
+    scInfo.setPagination(SearchConditionPaginationType.TRUE);
+    setupSearchConditions(VIEW_NAME, scInfo);
 
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
@@ -470,9 +563,9 @@ class SearchHandlerScopeFactoryTest {
 
     var field = new SearchConditionField("status", "status", false);
 
-    setupSearchConditions("find_by_enum", new SearchConditionsBuilder()
-        .equal(List.of(field.getColumnName()))
-        .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of(field.getColumnName(), SearchType.EQUAL));
+    setupSearchConditions("find_by_enum", scInfo);
 
     override(ctx.getCatalog(),
         withTable(TABLE_NAME),
@@ -482,7 +575,7 @@ class SearchHandlerScopeFactoryTest {
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     //then
-    List<SearchConditionField> fields = resultList.get(0).getEqualFields();
+    List<SearchConditionField> fields = resultList.get(0).getSearchLogicOperations().get(0).getEqualFields();
     assertThat(fields).hasSize(1);
     assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
     assertThat(resultList.get(0).getEnumSearchConditionFields()).containsExactly("status");
@@ -497,9 +590,9 @@ class SearchHandlerScopeFactoryTest {
 
     var field = new SearchConditionField("status", "status", false);
 
-    setupSearchConditions("find_by_enum", new SearchConditionsBuilder()
-            .in(List.of(field.getColumnName()))
-            .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of(field.getColumnName(), SearchType.IN));
+    setupSearchConditions("find_by_enum", scInfo);
 
     override(ctx.getCatalog(),
             withTable(TABLE_NAME),
@@ -509,7 +602,7 @@ class SearchHandlerScopeFactoryTest {
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     //then
-    List<SearchConditionField> fields = resultList.get(0).getInFields();
+    List<SearchConditionField> fields = resultList.get(0).getSearchLogicOperations().get(0).getInFields();
     assertThat(fields).hasSize(1);
     assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
   }
@@ -523,9 +616,9 @@ class SearchHandlerScopeFactoryTest {
 
     var field = new SearchConditionField("status", "status", false);
 
-    setupSearchConditions("find_by_enum", new SearchConditionsBuilder()
-            .between(List.of(field.getColumnName()))
-            .build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of(field.getColumnName(), SearchType.BETWEEN));
+    setupSearchConditions("find_by_enum", scInfo);
 
     override(ctx.getCatalog(),
             withTable(TABLE_NAME),
@@ -535,7 +628,7 @@ class SearchHandlerScopeFactoryTest {
     List<SearchHandlerScope> resultList = instance.create(ctx);
 
     //then
-    List<SearchConditionField> fields = resultList.get(0).getBetweenFields();
+    List<SearchConditionField> fields = resultList.get(0).getSearchLogicOperations().get(0).getBetweenFields();
     assertThat(fields).hasSize(1);
     assertThat(fields.get(0)).usingRecursiveComparison().isEqualTo(field);
   }

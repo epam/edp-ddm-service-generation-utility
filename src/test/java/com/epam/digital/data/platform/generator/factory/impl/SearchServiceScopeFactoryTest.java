@@ -18,7 +18,7 @@ package com.epam.digital.data.platform.generator.factory.impl;
 
 import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
-import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
+import com.epam.digital.data.platform.generator.metadata.SearchConditions;
 import com.epam.digital.data.platform.generator.scope.SearchServiceScope;
 import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,8 +50,7 @@ class SearchServiceScopeFactoryTest {
 
   @Test
   void successfulTest() {
-    when(searchConditionProvider.findFor(VIEW_NAME))
-        .thenReturn(new SearchConditionsBuilder().build());
+    when(searchConditionProvider.findFor(VIEW_NAME)).thenReturn(new SearchConditions());
 
     List<SearchServiceScope> scopes = instance.create(getContext());
 
@@ -66,9 +65,9 @@ class SearchServiceScopeFactoryTest {
 
   @Test
   void expectGenerateScopeForPagingResponse() {
-    when(searchConditionProvider.findFor(VIEW_NAME))
-        .thenReturn(
-            new SearchConditionsBuilder().pagination(SearchConditionPaginationType.PAGE).build());
+    var scInfo = new SearchConditions();
+    scInfo.setPagination(SearchConditionPaginationType.PAGE);
+    when(searchConditionProvider.findFor(VIEW_NAME)).thenReturn(scInfo);
 
     List<SearchServiceScope> scopes = instance.create(getContext());
 

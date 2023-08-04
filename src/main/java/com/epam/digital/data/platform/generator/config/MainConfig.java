@@ -21,6 +21,7 @@ import com.epam.digital.data.platform.generator.metadata.AsyncDataProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.Settings;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.File;
@@ -67,7 +68,9 @@ public class MainConfig {
 
   @Bean
   public ObjectMapper yamlMapper() {
-    return new ObjectMapper(new YAMLFactory());
+    var mapper = new ObjectMapper(new YAMLFactory());
+    mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+    return mapper;
   }
 
   @Bean

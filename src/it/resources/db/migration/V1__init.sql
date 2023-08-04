@@ -18,10 +18,10 @@ values (1, 'searchCondition', 'pd_processing_consent_2',
         'equalColumn', 'person_full_name'
         ),
         (2, 'searchCondition', 'pd_processing_consent_2',
-        'startsWithColumn', 'person_full_name'
+        'startsWithColumn', 'person_full_name2'
         ),
         (3, 'searchCondition', 'pd_processing_consent_2',
-        'containsColumn', 'person_full_name'
+        'containsColumn', 'person_full_name3'
         ),
         (4, 'searchCondition', 'pd_processing_consent_2',
         'equalColumn', 'person_pass_number'
@@ -35,9 +35,11 @@ values (1, 'searchCondition', 'pd_processing_consent_2',
         (7, 'anotherType', 'withoutLimit',
         'equalColumn', 'person_pass_number'
         ),
-       (8, 'searchCondition', 'pd_processing_consent_2',
-        'startsWithArrayColumn', 'person_full_name'
-       );
+        (8, 'searchCondition', 'pd_processing_consent_2',
+        'startsWithArrayColumn', 'person_full_name4'
+        ),
+        (9, 'searchCondition', 'pd_processing_consent_2',
+        'logicOperator', '{"operations":[{"tableName":"pd_processing_consent","logicOperators":[{"type": "or","columns": ["person_pass_number"],"logicOperators":[{"type":"and","columns":["person_full_name3","person_full_name4"],"logicOperators":[]}]}]}]}');
 
 --changeset platform:table-ddm_rls_metadata
 CREATE TABLE ddm_rls_metadata

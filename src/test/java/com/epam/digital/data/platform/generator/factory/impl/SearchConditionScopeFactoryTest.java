@@ -23,7 +23,6 @@ import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.wi
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withTable;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withTextColumn;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,12 +35,14 @@ import com.epam.digital.data.platform.generator.constraints.impl.MarshalingConst
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
-import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
+import com.epam.digital.data.platform.generator.metadata.SearchConditions;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.Field;
+import com.epam.digital.data.platform.generator.model.template.SearchType;
 import com.epam.digital.data.platform.generator.scope.ModelScope;
 import com.epam.digital.data.platform.generator.utils.ContextTestUtils;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -88,7 +89,7 @@ class SearchConditionScopeFactoryTest {
 
   @Test
   void shouldCreateEntityScopesForSearchConditionViews() {
-    given(searchConditionProvider.findFor(any())).willReturn(new SearchConditionsBuilder().build());
+    given(searchConditionProvider.findFor(any())).willReturn(new SearchConditions());
     override(
         context.getCatalog(),
         withSearchConditionView("test_table_search"),
@@ -102,7 +103,7 @@ class SearchConditionScopeFactoryTest {
 
   @Test
   void shouldCreateSearchConditionScopesForSearchConditionViews() {
-    given(searchConditionProvider.findFor(any())).willReturn(new SearchConditionsBuilder().build());
+    given(searchConditionProvider.findFor(any())).willReturn(new SearchConditions());
     override(
         context.getCatalog(),
         withSearchConditionView("test_table_search"),
@@ -116,10 +117,12 @@ class SearchConditionScopeFactoryTest {
 
   @Test
   void shouldCreateSearchConditionFieldsForSearchConditionViews() {
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of("test_search_col", SearchType.CONTAINS));
+    var scInfo2 = new SearchConditions();
+    scInfo2.setColumnToSearchType(Map.of("test_2nd_search_col", SearchType.CONTAINS));
     given(searchConditionProvider.findFor(any()))
-        .willReturn(
-            new SearchConditionsBuilder().contains(singletonList("test_search_col")).build(),
-            new SearchConditionsBuilder().contains(singletonList("test_2nd_search_col")).build());
+        .willReturn(scInfo, scInfo2);
     override(
         context.getCatalog(),
         withSearchConditionView("test_table_search", withTextColumn("test_search_col")),
@@ -139,8 +142,10 @@ class SearchConditionScopeFactoryTest {
 
   @Test
   void shouldCreateSearchConditionInFieldsForSearchConditionViews() {
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of("test_in_search_col", SearchType.IN));
     given(searchConditionProvider.findFor(any()))
-        .willReturn(new SearchConditionsBuilder().in(singletonList("test_in_search_col")).build());
+        .willReturn(scInfo);
     override(
         context.getCatalog(),
         withSearchConditionView("test_table_search", withTextColumn("test_in_search_col")));
@@ -157,8 +162,9 @@ class SearchConditionScopeFactoryTest {
 
   @Test
   void shouldCreateSearchConditionNotInFieldsForSearchConditionViews() {
-    given(searchConditionProvider.findFor(any()))
-        .willReturn(new SearchConditionsBuilder().notIn(singletonList("test_not_in_search_col")).build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of("test_not_in_search_col", SearchType.NOT_IN));
+    given(searchConditionProvider.findFor(any())).willReturn(scInfo);
     override(
         context.getCatalog(),
         withSearchConditionView("test_table_search", withTextColumn("test_not_in_search_col")));
@@ -175,8 +181,9 @@ class SearchConditionScopeFactoryTest {
 
   @Test
   void shouldCreateSearchConditionNotEqualFieldsForSearchConditionViews() {
-    given(searchConditionProvider.findFor(any()))
-        .willReturn(new SearchConditionsBuilder().notIn(singletonList("test_not_equal_search_col")).build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of("test_not_equal_search_col", SearchType.NOT_IN));
+    given(searchConditionProvider.findFor(any())).willReturn(scInfo);
     override(
         context.getCatalog(),
         withSearchConditionView("test_table_search", withTextColumn("test_not_equal_search_col")));
@@ -193,8 +200,10 @@ class SearchConditionScopeFactoryTest {
 
   @Test
   void shouldCreateSearchConditionBetweenFieldsForSearchConditionViews() {
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of("test_between_search_col", SearchType.BETWEEN));
     given(searchConditionProvider.findFor(any()))
-            .willReturn(new SearchConditionsBuilder().between(singletonList("test_between_search_col")).build());
+            .willReturn(scInfo);
     override(
             context.getCatalog(),
             withSearchConditionView("test_table_search", withTextColumn("test_between_search_col")));
@@ -217,8 +226,9 @@ class SearchConditionScopeFactoryTest {
         withSearchConditionView("test_table",
             withColumn("status", String.class, "en_status")));
     given(enumProvider.findFor("en_status")).willReturn(Set.of("en_status"));
-    given(searchConditionProvider.findFor(any()))
-        .willReturn(new SearchConditionsBuilder().equal(List.of("status")).build());
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of("status", SearchType.EQUAL));
+    given(searchConditionProvider.findFor(any())).willReturn(scInfo);
 
     List<ModelScope> scopes = instance.create(context);
 
@@ -237,8 +247,9 @@ class SearchConditionScopeFactoryTest {
         withSearchConditionView("test_table",
             withColumn("status", String.class, "en_status")));
 
-    given(searchConditionProvider.findFor(any()))
-        .willReturn(new SearchConditionsBuilder().pagination(SearchConditionPaginationType.OFFSET).build());
+    var scInfo = new SearchConditions();
+    scInfo.setPagination(SearchConditionPaginationType.OFFSET);
+    given(searchConditionProvider.findFor(any())).willReturn(scInfo);
 
     List<ModelScope> result = instance.create(context).stream()
         .filter(x -> x.getClassName().equals("TestTableSearchConditions"))
@@ -259,9 +270,9 @@ class SearchConditionScopeFactoryTest {
             withSearchConditionView("test_table",
                     withColumn("status", String.class, "en_status")));
 
-    given(searchConditionProvider.findFor(any()))
-            .willReturn(
-                    new SearchConditionsBuilder().pagination(SearchConditionPaginationType.NONE).build());
+    var scInfo = new SearchConditions();
+    scInfo.setPagination(SearchConditionPaginationType.NONE);
+    given(searchConditionProvider.findFor(any())).willReturn(scInfo);
 
     List<ModelScope> result = instance.create(context).stream()
             .filter(x -> x.getClassName().equals("TestTableSearchConditions"))
@@ -280,9 +291,9 @@ class SearchConditionScopeFactoryTest {
             withSearchConditionView("test_table",
                     withColumn("status", String.class, "en_status")));
 
-    given(searchConditionProvider.findFor(any()))
-        .willReturn(
-            new SearchConditionsBuilder().pagination(SearchConditionPaginationType.PAGE).build());
+    var scInfo = new SearchConditions();
+    scInfo.setPagination(SearchConditionPaginationType.PAGE);
+    given(searchConditionProvider.findFor(any())).willReturn(scInfo);
 
     List<ModelScope> result = instance.create(context).stream()
             .filter(x -> x.getClassName().equals("TestTableSearchConditions"))

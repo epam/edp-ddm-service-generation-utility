@@ -27,10 +27,12 @@ import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginati
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.Field;
+import com.epam.digital.data.platform.generator.model.template.SearchType;
 import com.epam.digital.data.platform.generator.scope.ModelScope;
 import com.epam.digital.data.platform.generator.utils.DbTypeConverter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
@@ -78,30 +80,49 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
   private List<Field> getSearchConditionFields(Table table) {
     var searchConditions = searchConditionProvider.findFor(getCutTableName(table));
 
+    var columnToSearchTypeMap = searchConditions.getColumnToSearchType();
     List<Field> fields = new ArrayList<>();
-    fields.addAll(searchConditions.getEqual().stream()
-            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
-            .collect(toList()));
-    fields.addAll(searchConditions.getNotEqual().stream()
-            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
-            .collect(toList()));
-    fields.addAll(searchConditions.getContains().stream()
-            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
-            .collect(toList()));
-    fields.addAll(searchConditions.getStartsWith().stream()
-            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
-            .collect(toList()));
-    fields.addAll(searchConditions.getStartsWithArray().stream()
-            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
-            .collect(toList()));
-    fields.addAll(searchConditions.getIn().stream()
-            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::getFieldTypeForIn))
-            .collect(toList()));
-    fields.addAll(searchConditions.getNotIn().stream()
-            .map(sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::getFieldTypeForIn))
+    fields.addAll(
+        getColumnsOfSearchType(columnToSearchTypeMap, SearchType.EQUAL)
+            .map(
+                sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
             .collect(toList()));
     fields.addAll(
-        searchConditions.getBetween().stream()
+        getColumnsOfSearchType(columnToSearchTypeMap, SearchType.NOT_EQUAL)
+            .map(
+                sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
+            .collect(toList()));
+    fields.addAll(
+        getColumnsOfSearchType(columnToSearchTypeMap, SearchType.CONTAINS)
+            .map(
+                sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
+            .collect(toList()));
+    fields.addAll(
+        getColumnsOfSearchType(columnToSearchTypeMap, SearchType.STARTS_WITH)
+            .map(
+                sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
+            .collect(toList()));
+    fields.addAll(
+        getColumnsOfSearchType(columnToSearchTypeMap, SearchType.STARTS_WITH_ARRAY)
+            .map(
+                sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
+            .collect(toList()));
+    fields.addAll(
+        getColumnsOfSearchType(columnToSearchTypeMap, SearchType.IN)
+            .map(
+                sc ->
+                    mapColumnConditionToField(
+                        table, sc, getPropertyName(sc), this::getFieldTypeForIn))
+            .collect(toList()));
+    fields.addAll(
+        getColumnsOfSearchType(columnToSearchTypeMap, SearchType.NOT_IN)
+            .map(
+                sc ->
+                    mapColumnConditionToField(
+                        table, sc, getPropertyName(sc), this::getFieldTypeForIn))
+            .collect(toList()));
+    fields.addAll(
+        getColumnsOfSearchType(columnToSearchTypeMap, SearchType.BETWEEN)
             .flatMap(
                 sc ->
                     Stream.of(
@@ -123,6 +144,12 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
     }
 
     return fields;
+  }
+
+  private Stream<String> getColumnsOfSearchType(Map<String, SearchType> columnToSearchTypeMap, SearchType searchType) {
+    return columnToSearchTypeMap.entrySet()
+            .stream().filter(entry -> searchType.equals(entry.getValue()))
+            .map(Map.Entry::getKey);
   }
 
   private Field mapColumnConditionToField(

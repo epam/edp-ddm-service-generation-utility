@@ -38,7 +38,7 @@ import com.epam.digital.data.platform.generator.metadata.NestedReadEntity;
 import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
-import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
+import com.epam.digital.data.platform.generator.metadata.SearchConditions;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
 
@@ -89,7 +89,7 @@ class SearchControllerScopeFactoryTest {
         new SearchControllerScopeFactory(
             searchConditionProvider, permissionMap, nestedReadProvider);
 
-    given(searchConditionProvider.findFor(any())).willReturn(new SearchConditionsBuilder().build());
+    given(searchConditionProvider.findFor(any())).willReturn(new SearchConditions());
   }
 
   private void setupReadExpressions(String tableName, String columnName, Set<String> expressions) {
@@ -119,9 +119,9 @@ class SearchControllerScopeFactoryTest {
 
   @Test
   void expectControllerScopeWithPagingResponseIsGenerated() {
-    when(searchConditionProvider.findFor(VIEW_NAME))
-        .thenReturn(
-            new SearchConditionsBuilder().pagination(SearchConditionPaginationType.PAGE).build());
+    var scInfo = new SearchConditions();
+    scInfo.setPagination(SearchConditionPaginationType.PAGE);
+    when(searchConditionProvider.findFor(VIEW_NAME)).thenReturn(scInfo);
 
     List<SearchControllerScope> scopes = instance.create(context);
 

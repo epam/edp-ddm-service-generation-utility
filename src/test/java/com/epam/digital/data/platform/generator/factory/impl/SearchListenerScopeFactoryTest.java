@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
-import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
+import com.epam.digital.data.platform.generator.metadata.SearchConditions;
 import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.SearchListenerScope;
@@ -62,7 +62,7 @@ class SearchListenerScopeFactoryTest {
         ContextTestUtils.getCatalog(), new AsyncData(new HashSet<>(), searchConditions));
 
     when(searchConditionProvider.findFor(VIEW_NAME))
-        .thenReturn(new SearchConditionsBuilder().build());
+        .thenReturn(new SearchConditions());
 
     List<SearchListenerScope> resultList = listenerScopeFactory.create(context);
 
@@ -86,9 +86,9 @@ class SearchListenerScopeFactoryTest {
     Context context = new Context(ContextTestUtils.getSettings(),
             ContextTestUtils.getCatalog(), new AsyncData(new HashSet<>(), searchConditions));
 
-    when(searchConditionProvider.findFor(VIEW_NAME))
-        .thenReturn(
-            new SearchConditionsBuilder().pagination(SearchConditionPaginationType.PAGE).build());
+    var scInfo = new SearchConditions();
+    scInfo.setPagination(SearchConditionPaginationType.PAGE);
+    when(searchConditionProvider.findFor(VIEW_NAME)).thenReturn(scInfo);
 
     List<SearchListenerScope> resultList = listenerScopeFactory.create(context);
 

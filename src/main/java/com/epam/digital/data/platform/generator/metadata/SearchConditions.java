@@ -16,90 +16,58 @@
 
 package com.epam.digital.data.platform.generator.metadata;
 
-import java.util.List;
+import com.epam.digital.data.platform.generator.model.template.SearchType;
 
-import static java.util.Collections.unmodifiableList;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SearchConditions {
 
-  private final List<String> equal;
-  private final List<String> notEqual;
-  private final List<String> startsWith;
-  private final List<String> startsWithArray;
-  private final List<String> contains;
-  private final List<String> in;
-  private final List<String> notIn;
-  private final List<String> between;
-  private final List<String> returningColumns;
-  private final Integer limit;
-  private final SearchConditionPaginationType pagination;
-
-  SearchConditions(
-      List<String> equal,
-      List<String> notEqual,
-      List<String> startsWith,
-      List<String> startsWithArray,
-      List<String> contains,
-      List<String> in,
-      List<String> notIn,
-      List<String> between,
-      List<String> returningColumns,
-      Integer limit,
-      SearchConditionPaginationType pagination) {
-    this.equal = unmodifiableList(equal);
-    this.notEqual = unmodifiableList(notEqual);
-    this.startsWith = unmodifiableList(startsWith);
-    this.startsWithArray = unmodifiableList(startsWithArray);
-    this.contains = unmodifiableList(contains);
-    this.in = unmodifiableList(in);
-    this.notIn = unmodifiableList(notIn);
-    this.between = unmodifiableList(between);
-    this.returningColumns = unmodifiableList(returningColumns);
-    this.limit = limit;
-    this.pagination = pagination;
-  }
-
-  public List<String> getEqual() {
-    return equal;
-  }
-
-  public List<String> getNotEqual() {
-    return notEqual;
-  }
-
-  public List<String> getStartsWith() {
-    return startsWith;
-  }
-
-  public List<String> getStartsWithArray() {
-    return startsWithArray;
-  }
-
-  public List<String> getContains() {
-    return contains;
-  }
-
-  public List<String> getIn() {
-    return in;
-  }
-
-  public List<String> getNotIn() {
-    return notIn;
-  }
-
-  public List<String> getBetween() {
-    return between;
-  }
+  private List<String> returningColumns = new ArrayList<>();
+  private Map<String, SearchType> columnToSearchType = new HashMap<>();
+  private SearchConditionOperationTree searchOperationTree;
+  private Integer limit;
+  private SearchConditionPaginationType pagination;
 
   public List<String> getReturningColumns() {
     return returningColumns;
+  }
+
+  public void setReturningColumns(List<String> returningColumns) {
+    this.returningColumns = returningColumns;
+  }
+
+  public Map<String, SearchType> getColumnToSearchType() {
+    return columnToSearchType;
+  }
+
+  public void setColumnToSearchType(Map<String, SearchType> columnToSearchType) {
+    this.columnToSearchType = columnToSearchType;
+  }
+
+  public SearchConditionOperationTree getSearchOperationTree() {
+    return searchOperationTree;
+  }
+
+  public void setSearchOperationTree(SearchConditionOperationTree searchOperationTree) {
+    this.searchOperationTree = searchOperationTree;
   }
 
   public Integer getLimit() {
     return limit;
   }
 
+  public void setLimit(Integer limit) {
+    this.limit = limit;
+  }
+
   public SearchConditionPaginationType getPagination() {
     return pagination;
+  }
+
+  public void setPagination(SearchConditionPaginationType pagination) {
+    this.pagination = pagination;
   }
 }

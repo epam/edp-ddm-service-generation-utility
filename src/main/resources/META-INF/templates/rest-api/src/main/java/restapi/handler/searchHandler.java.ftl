@@ -1,3 +1,85 @@
+<#macro dslConditionCalc searchOperations>
+  <#list searchOperations as operationDef>
+    var ${operationDef.operationName} = DSL.noCondition();
+    <#list operationDef.equalFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").equal<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
+    }
+    </#list>
+    <#list operationDef.notEqualFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").notEqual<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
+    }
+    </#list>
+    <#list operationDef.startsWithFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").startsWith<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
+    }
+    </#list>
+    <#list operationDef.startsWithArrayFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      var s = searchConditions.get${field.name?cap_first}().split(",");
+      var inner = DSL.noCondition();
+      for (String e: s) {
+        inner = inner.or(DSL.field("${field.columnName}")
+          .startsWith<#if field.ignoreCase>IgnoreCase</#if>(e)
+          .toString());
+      }
+
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(inner);
+    }
+    </#list>
+    <#list operationDef.containsFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").contains<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
+    }
+    </#list>
+    <#list operationDef.inFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      <#if field.ignoreCase>
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.lower(DSL.field("${field.columnName}", String.class))
+        .in(searchConditions.get${field.name?cap_first}().stream()
+        .map(DSL::lower)
+        .collect(Collectors.toList())));
+      <#else>
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").in(searchConditions.get${field.name?cap_first}()));
+      </#if>
+    }
+    </#list>
+    <#list operationDef.notInFields as field>
+    if (searchConditions.get${field.name?cap_first}() != null) {
+      <#if field.ignoreCase>
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.lower(DSL.field("${field.columnName}", String.class))
+        .notIn(searchConditions.get${field.name?cap_first}().stream()
+        .map(DSL::lower)
+        .collect(Collectors.toList())));
+      <#else>
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").notIn(searchConditions.get${field.name?cap_first}()));
+      </#if>
+    }
+    </#list>
+    <#list operationDef.betweenFields as field>
+    if (searchConditions.get${field.name?cap_first}From() != null
+          && searchConditions.get${field.name?cap_first}To() != null) {
+      <#if field.ignoreCase>
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.lower(DSL.field("${field.columnName}", String.class))
+        .between(
+            DSL.lower(searchConditions.get${field.name?cap_first}From()),
+            DSL.lower(searchConditions.get${field.name?cap_first}To())));
+      <#else>
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}")
+        .between(
+            searchConditions.get${field.name?cap_first}From(),
+            searchConditions.get${field.name?cap_first}To()));
+      </#if>
+    }
+    </#list>
+    <@dslConditionCalc searchOperations=operationDef.nestedSearchOperations />
+    <#list operationDef.nestedSearchOperations as nestedOper>
+    ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(${nestedOper.operationName});
+    </#list>
+  </#list>
+</#macro>
 package ${basePackage}.restapi.handler;
 
 import com.epam.digital.data.platform.restapi.core.searchhandler.AbstractSearchHandler;
@@ -50,83 +132,8 @@ public class ${className}
 
   @Override
   protected Condition whereClause(${schemaName}SearchConditions searchConditions) {
-    var c = DSL.noCondition();
-
-  <#list equalFields as field>
-    if (searchConditions.get${field.name?cap_first}() != null) {
-      c = c.and(DSL.field("${field.columnName}").equal<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
-    }
-  </#list>
-  <#list notEqualFields as field>
-    if (searchConditions.get${field.name?cap_first}() != null) {
-      c = c.and(DSL.field("${field.columnName}").notEqual<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
-    }
-  </#list>
-  <#list startsWithFields as field>
-    if (searchConditions.get${field.name?cap_first}() != null) {
-      c = c.and(DSL.field("${field.columnName}").startsWith<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
-    }
-  </#list>
-  <#list startsWithArrayFields as field>
-    if (searchConditions.get${field.name?cap_first}() != null) {
-      var s = searchConditions.get${field.name?cap_first}().split(",");
-
-      var inner = DSL.noCondition();
-      for (String e: s) {
-        inner = inner.or(DSL.field("${field.columnName}")
-            .startsWith<#if field.ignoreCase>IgnoreCase</#if>(e)
-            .toString());
-      }
-
-      c = c.and(inner);
-    }
-  </#list>
-  <#list containsFields as field>
-    if (searchConditions.get${field.name?cap_first}() != null) {
-      c = c.and(DSL.field("${field.columnName}").contains<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
-    }
-  </#list>
-  <#list inFields as field>
-    if (searchConditions.get${field.name?cap_first}() != null) {
-    <#if field.ignoreCase>
-      c = c.and(DSL.lower(DSL.field("${field.columnName}", String.class))
-        .in(searchConditions.get${field.name?cap_first}().stream()
-        .map(DSL::lower)
-        .collect(Collectors.toList())));
-    <#else>
-      c = c.and(DSL.field("${field.columnName}").in(searchConditions.get${field.name?cap_first}()));
-    </#if>
-    }
-  </#list>
-  <#list notInFields as field>
-    if (searchConditions.get${field.name?cap_first}() != null) {
-    <#if field.ignoreCase>
-      c = c.and(DSL.lower(DSL.field("${field.columnName}", String.class))
-        .notIn(searchConditions.get${field.name?cap_first}().stream()
-        .map(DSL::lower)
-        .collect(Collectors.toList())));
-    <#else>
-      c = c.and(DSL.field("${field.columnName}").notIn(searchConditions.get${field.name?cap_first}()));
-    </#if>
-    }
-  </#list>
-  <#list betweenFields as field>
-    if (searchConditions.get${field.name?cap_first}From() != null
-        && searchConditions.get${field.name?cap_first}To() != null) {
-    <#if field.ignoreCase>
-      c = c.and(DSL.lower(DSL.field("${field.columnName}", String.class))
-        .between(
-          DSL.lower(searchConditions.get${field.name?cap_first}From()),
-          DSL.lower(searchConditions.get${field.name?cap_first}To())));
-    <#else>
-      c = c.and(DSL.field("${field.columnName}")
-        .between(
-          searchConditions.get${field.name?cap_first}From(),
-          searchConditions.get${field.name?cap_first}To()));
-    </#if>
-    }
-  </#list>
-    return c;
+    <@dslConditionCalc searchOperations=searchLogicOperations />
+    return ${searchLogicOperations[0].operationName};
   }
 
   @Override

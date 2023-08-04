@@ -21,7 +21,7 @@ import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.metadata.NestedReadEntity;
 import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
-import com.epam.digital.data.platform.generator.metadata.SearchConditionsBuilder;
+import com.epam.digital.data.platform.generator.metadata.SearchConditions;
 import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.Constraint;
@@ -101,12 +101,9 @@ class SearchConditionResponseScopeFactoryTest {
             withTextColumn("my_col"),
             withTextColumn("another_col"),
             withTextColumn("not_returning_column")));
-    given(searchConditionProvider.findFor("test_table_search"))
-        .willReturn(
-            new SearchConditionsBuilder()
-                .returningColumns(List.of("my_col", "another_col"))
-                .build());
-
+    var scInfo = new SearchConditions();
+    scInfo.setReturningColumns(List.of("my_col", "another_col"));
+    given(searchConditionProvider.findFor("test_table_search")).willReturn(scInfo);
 
     List<ModelScope> scopes = instance.create(context);
 
@@ -126,11 +123,10 @@ class SearchConditionResponseScopeFactoryTest {
             withSearchConditionView("test_table_search",
                     withColumn("status", String.class, "en_status")));
     given(enumProvider.findFor("en_status")).willReturn(Set.of("en_status"));
+    var scInfo = new SearchConditions();
+    scInfo.setReturningColumns(List.of("status"));
     given(searchConditionProvider.findFor("test_table_search"))
-            .willReturn(
-                    new SearchConditionsBuilder()
-                            .returningColumns(List.of("status"))
-                            .build());
+            .willReturn(scInfo);
 
     List<ModelScope> scopes = instance.create(context);
 
@@ -153,11 +149,10 @@ class SearchConditionResponseScopeFactoryTest {
                     anotherColumn,
                     withTextColumn("not_returning_column")),
             withTable("related_table"));
+    var scInfo = new SearchConditions();
+    scInfo.setReturningColumns(List.of("my_col", "another_col"));
     given(searchConditionProvider.findFor("test_table_search"))
-            .willReturn(
-                    new SearchConditionsBuilder()
-                            .returningColumns(List.of("my_col", "another_col"))
-                            .build());
+            .willReturn(scInfo);
     NestedReadEntity m2mNestedReadEntity =
         new NestedReadEntity("test_table_search", "my_col", "related_table");
     NestedReadEntity o2mNestedReadEntity = new NestedReadEntity("test_table_search", "another_col",

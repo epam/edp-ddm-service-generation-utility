@@ -22,22 +22,15 @@ import java.util.Map;
 import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.model.template.NestedSelectableFieldsGroup;
+import com.epam.digital.data.platform.generator.model.template.SearchOperation;
 import com.epam.digital.data.platform.generator.model.template.SelectableField;
-import com.epam.digital.data.platform.generator.model.template.SearchConditionField;
 
 public class SearchHandlerScope extends ClassScope {
 
   private String schemaName;
   private Integer limit;
   private String tableName;
-  private List<SearchConditionField> equalFields;
-  private List<SearchConditionField> notEqualFields;
-  private List<SearchConditionField> startsWithFields;
-  private List<SearchConditionField> startsWithArrayFields;
-  private List<SearchConditionField> containsFields;
-  private List<SearchConditionField> inFields;
-  private List<SearchConditionField> notInFields;
-  private List<SearchConditionField> betweenFields;
+  private List<SearchOperation> searchLogicOperations;
   private List<String> enumSearchConditionFields;
   private List<SelectableField> simpleSelectableFields;
   private SearchConditionPaginationType pagination;
@@ -70,69 +63,12 @@ public class SearchHandlerScope extends ClassScope {
     this.tableName = tableName;
   }
 
-  public List<SearchConditionField> getEqualFields() {
-    return equalFields;
+  public List<SearchOperation> getSearchLogicOperations() {
+    return searchLogicOperations;
   }
 
-  public void setEqualFields(List<SearchConditionField> equalFields) {
-    this.equalFields = equalFields;
-  }
-
-  public List<SearchConditionField> getNotEqualFields() {
-    return notEqualFields;
-  }
-
-  public void setNotEqualFields(
-      List<SearchConditionField> notEqualFields) {
-    this.notEqualFields = notEqualFields;
-  }
-
-  public List<SearchConditionField> getStartsWithFields() {
-    return startsWithFields;
-  }
-
-  public void setStartsWithFields(List<SearchConditionField> startsWithFields) {
-    this.startsWithFields = startsWithFields;
-  }
-
-  public List<SearchConditionField> getStartsWithArrayFields() {
-    return startsWithArrayFields;
-  }
-
-  public void setStartsWithArrayFields(List<SearchConditionField> startsWithArrayFields) {
-    this.startsWithArrayFields = startsWithArrayFields;
-  }
-
-  public List<SearchConditionField> getContainsFields() {
-    return containsFields;
-  }
-
-  public void setContainsFields(List<SearchConditionField> containsFields) {
-    this.containsFields = containsFields;
-  }
-
-  public List<SearchConditionField> getInFields() {
-    return inFields;
-  }
-
-  public void setInFields(List<SearchConditionField> inFields) {
-    this.inFields = inFields;
-  }
-
-  public List<SearchConditionField> getNotInFields() {
-    return notInFields;
-  }
-
-  public void setNotInFields(List<SearchConditionField> notInFields) {
-    this.notInFields = notInFields;
-  }
-
-  public List<SearchConditionField> getBetweenFields() {
-    return betweenFields;
-  }
-
-  public void setBetweenFields(List<SearchConditionField> betweenFields) {
-    this.betweenFields = betweenFields;
+  public void setSearchLogicOperations(List<SearchOperation> searchLogicOperations) {
+    this.searchLogicOperations = searchLogicOperations;
   }
 
   public List<String> getEnumSearchConditionFields() {
