@@ -42,7 +42,7 @@
         .map(DSL::lower)
         .collect(Collectors.toList())));
       <#else>
-        ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").in(searchConditions.get${field.name?cap_first}()));
+        ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").in(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
       </#if>
       }
     </#list>
@@ -54,7 +54,7 @@
         .map(DSL::lower)
         .collect(Collectors.toList())));
       <#else>
-        ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").notIn(searchConditions.get${field.name?cap_first}()));
+        ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").notIn(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
       </#if>
       }
     </#list>
