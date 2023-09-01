@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import com.epam.digital.data.platform.restapi.core.utils.ResponseResolverUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,6 +44,19 @@ public class ${className} {
       @HttpRequestContext RequestContext context,
       @HttpSecurityContext SecurityContext securityContext) {
     log.info("GET ${endpoint} called");
+    var request = new Request<>(searchConditions, context, securityContext);
+    var response = searchService.request(request);
+    return ResponseResolverUtil.getHttpResponseFromKafka(response);
+  }
+
+  @AuditableController
+<@PreAuthorize roles=readRoles />
+  @PostMapping
+  public ResponseEntity<${responseType}<${schemaName}SearchConditionResponse>> searchPost(
+      @RequestBody ${schemaName}SearchConditions searchConditions,
+      @HttpRequestContext RequestContext context,
+      @HttpSecurityContext SecurityContext securityContext) {
+    log.info("POST ${endpoint} called");
     var request = new Request<>(searchConditions, context, securityContext);
     var response = searchService.request(request);
     return ResponseResolverUtil.getHttpResponseFromKafka(response);

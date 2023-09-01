@@ -11,7 +11,7 @@ spec:
   rules:
     - to:
       - operation:
-          methods: [ "GET" ]
+          methods: [ "GET", "POST" ]
           paths:
             - /actuator*
             - /openapi

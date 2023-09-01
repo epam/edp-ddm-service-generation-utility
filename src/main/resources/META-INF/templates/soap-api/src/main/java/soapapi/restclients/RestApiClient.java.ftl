@@ -1,8 +1,8 @@
 package ${basePackage}.soapapi.restclients;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.cloud.openfeign.SpringQueryMap;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 <#list schemaNames as schema>
@@ -18,9 +18,9 @@ public interface RestApiClient {
 </#noparse>
 
 <#list searchScopes as scope>
-  @GetMapping("${scope.endpoint}")
+  @PostMapping("${scope.endpoint}")
   ${scope.responseType}<${scope.schemaName}SearchConditionResponse> search${scope.schemaName}(
-      @SpringQueryMap ${scope.schemaName}SearchConditions searchConditions,
+      @RequestBody ${scope.schemaName}SearchConditions searchConditions,
       @RequestHeader Map<String, Object> headers);
 
 </#list>

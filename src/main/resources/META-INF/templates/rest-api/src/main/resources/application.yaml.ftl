@@ -248,3 +248,6 @@ data-platform:
         - /*/csv/validation
         - /v2/*/csv/validation
         - /v2/nested/*/csv/validation
+        <#list searchPaths as path>
+        - /${path}
+        </#list>

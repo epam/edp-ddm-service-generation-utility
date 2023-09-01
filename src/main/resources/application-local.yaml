@@ -6,6 +6,6 @@ spring:
     password: qwerty
     
 schema-crawler:
-  schema: public
+  schema: registry
 
 PLATFORM_VALUES_PATH: src/test/resources/registryConfigurationValues.yaml
