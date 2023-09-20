@@ -8,7 +8,9 @@ metadata:
   annotations:
     configmap.reloader.stakater.com/reload: "kafka-api-properties"
 spec:
-  replicas: 1
+  {{- if not .Values.global.registry.kafkaApi.hpa.enabled }}
+  replicas: {{ .Values.global.registry.kafkaApi.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{.Values.name}}
@@ -46,7 +48,7 @@ spec:
               name: jmx
               protocol: TCP
           imagePullPolicy: Always
-          {{- if not .Values.global.disableRequestsLimits }}
+          {{- if or .Values.global.registry.kafkaApi.container.resources.requests .Values.global.registry.kafkaApi.container.resources.limits }}
           resources:
             {{- toYaml .Values.global.registry.kafkaApi.container.resources | nindent 12 }}
           {{- end }}

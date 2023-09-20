@@ -1,4 +1,4 @@
-{{- range $serviceName := compact (list .Values.name ((.Values.externalService).name)) }}
+{{- range $serviceName := compact (list .Values.name ((.Values.externalService).name) ((.Values.publicService).name)) }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:

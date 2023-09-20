@@ -1,4 +1,4 @@
-{{- if not .Values.global.disableRequestsLimits }}
+{{- if .Values.global.registry.restApi.hpa.enabled }}
 {{- range $serviceName := compact (list .Values.name ((.Values.externalService).name) ((.Values.publicService).name)) }}
 kind: HorizontalPodAutoscaler
 apiVersion: {{ include "horizontalPodAutoscaler.apiVersion" $ }}
@@ -12,8 +12,8 @@ spec:
     kind: Deployment
     name: {{ $serviceName }}-deployment
     apiVersion: apps/v1
-  minReplicas: 1
-  maxReplicas: 3
+  minReplicas: {{ $.Values.global.registry.restApi.hpa.minReplicas }}
+  maxReplicas: {{ $.Values.global.registry.restApi.hpa.maxReplicas }}
   metrics:
     - type: Resource
       resource:

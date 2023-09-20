@@ -1,7 +1,11 @@
 global:
-  disableRequestsLimits: false
   registry:
     soapApi:
+      replicas: 1
+      hpa:
+        enabled: false
+        minReplicas: 1
+        maxReplicas: 3
       istio:
         sidecar:
           enabled: true
@@ -9,7 +13,9 @@ global:
             requests: {}
             limits: {}
       container:
-        resources: {}
+        resources:
+          requests: {}
+          limits: {}
         envVars: {}
   
 name: ${register}-soap-api

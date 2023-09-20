@@ -1,8 +1,12 @@
 global:
-  disableRequestsLimits: false
   deploymentMode: development
   registry:
     restApi:
+      replicas: 1
+      hpa:
+        enabled: false
+        minReplicas: 1
+        maxReplicas: 3
       istio:
         sidecar:
           enabled: true
@@ -10,7 +14,9 @@ global:
             requests: {}
             limits: {}
       container:
-        resources: {}
+        resources:
+          requests: {}
+          limits: {}
         envVars: {}
       datasource:
         maxPoolSize: 10
@@ -161,6 +167,12 @@ redis:
   secretName: redis-auth
 
 edpComponent:
-  description: "Веб-інтерфейс для перегляду API-документації Підсистеми управління даними реєстру з ціллю подальшого використання при побудові взаємодії через типові розширення-конектори у бізнес-процесах"
+  description: "Веб-інтерфейс для перегляду API-документації Підсистеми управління даними реєстру з ціллю подальшого використання при побудові взаємодії через типові розширення-конектори у бізнес-процесах."
   displayName: "API документація сервісу управління даними реєстру (Swagger)"
+  operationalZone: "registry-administration-zone"
+
+publicApiEdpComponent:
+  name: "swagger-public-api"
+  description: "Веб-інтерфейс для перегляду API-документації Підсистеми управління даними реєстру для публічних даних з ціллю подальшого використання при побудові взаємодії з неавтентифікованими користувачами та зовнішніми системами"
+  displayName: "API документація сервісу управління даними реєстру (Swagger) для публічних даних"
   operationalZone: "registry-administration-zone"

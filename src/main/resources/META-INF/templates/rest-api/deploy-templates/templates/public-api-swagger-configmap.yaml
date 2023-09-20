@@ -19,4 +19,5 @@ data:
     openapi:
       request:
         groups: []
+        headers: []
 {{- end }}

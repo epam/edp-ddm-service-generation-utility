@@ -9,7 +9,9 @@ metadata:
   annotations:
     configmap.reloader.stakater.com/reload: "rest-api-properties"
 spec:
-  replicas: 1
+  {{- if not $.Values.global.registry.restApi.hpa.enabled }}
+  replicas: {{ $.Values.global.registry.restApi.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{ $serviceName }}
@@ -61,7 +63,7 @@ spec:
             periodSeconds: 20
             successThreshold: 1
             timeoutSeconds: 5
-          {{- if not $.Values.global.disableRequestsLimits }}
+          {{- if or $.Values.global.registry.restApi.container.resources.requests $.Values.global.registry.restApi.container.resources.limits }}
           resources:
             {{- toYaml $.Values.global.registry.restApi.container.resources | nindent 12 }}
           {{- end }}

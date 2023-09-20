@@ -8,7 +8,9 @@ metadata:
     app: {{ .Values.publicService.name }}
     version: {{ .Values.version | squote }}
 spec:
-  replicas: 1
+  {{- if not .Values.global.registry.restApi.hpa.enabled }}
+  replicas: {{ .Values.global.registry.restApi.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{ .Values.publicService.name }}
@@ -60,7 +62,7 @@ spec:
             periodSeconds: 20
             successThreshold: 1
             timeoutSeconds: 5
-          {{- if not .Values.global.disableRequestsLimits }}
+          {{- if or .Values.global.registry.restApi.container.resources.requests .Values.global.registry.restApi.container.resources.limits }}
           resources:
             {{- toYaml .Values.global.registry.restApi.container.resources | nindent 12 }}
           {{- end }}
