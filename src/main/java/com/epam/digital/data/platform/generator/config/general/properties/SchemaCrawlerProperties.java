@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epam.digital.data.platform.generator.config.properties;
+package com.epam.digital.data.platform.generator.config.general.properties;
 
 import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;

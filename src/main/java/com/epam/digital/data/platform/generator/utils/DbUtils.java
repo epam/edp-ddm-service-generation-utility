@@ -51,6 +51,18 @@ public class DbUtils {
     return column.getColumnDataType().getName().startsWith("_");
   }
 
+  public static boolean isColumnOfFileType(Column column) {
+    return column.getColumnDataType().getName().startsWith("type_file");
+  }
+
+  public static boolean isColumnOfFileArrayType(Column column) {
+    return column.getColumnDataType().getName().startsWith("_type_file");
+  }
+
+  public static boolean isColumnFileOrFileArray(Column column) {
+    return isColumnOfFileType(column) || isColumnOfFileArrayType(column);
+  }
+
   public static boolean isColumnOfArrayType(String columnName, Table table) {
     return isColumnOfArrayType(findColumn(columnName, table));
   }

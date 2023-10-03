@@ -16,10 +16,10 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import com.epam.digital.data.platform.generator.model.Context;
-import org.springframework.stereotype.Component;
 import com.epam.digital.data.platform.generator.factory.AbstractServiceScope;
+import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.CreateServiceScope;
+import org.springframework.stereotype.Component;
 import schemacrawler.schema.Table;
 
 @Component
@@ -33,7 +33,7 @@ public class CreateServiceScopeFactory extends AbstractServiceScope<CreateServic
   @Override
   protected CreateServiceScope map(Table table, Context context) {
     var scope = super.map(table, context);
-    scope.setRls(getRlsMetadata(table.getName()));
+    scope.setRls(getRlsRestriction(table.getName()));
     return scope;
   }
 

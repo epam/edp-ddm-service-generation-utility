@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/preserve-host: 'false'
+    konghq.com/protocols: 'http,https'
+    konghq.com/strip-path: 'true'
+    konghq.com/methods: 'POST'
+  labels:
+  {{- include "external-system-api.metaLabels" . | nindent 4 }}
+  name: {{ .Values.externalSystem.service.name }}
+spec:
+  ingressClassName: kong
+  rules:
+    - host: {{ template "external-system-api.hostname" . }}
+      http:
+        paths:
+          - path: {{ print .Values.kong.route.rootPath .Values.kong.route.proxyPath }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ .Values.externalSystem.service.name }}
+                port:
+                  number: {{ .Values.service.port }}

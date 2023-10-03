@@ -16,7 +16,7 @@
 
 package com.epam.digital.data.platform.generator.config;
 
-import com.epam.digital.data.platform.generator.config.properties.SchemaCrawlerProperties;
+import com.epam.digital.data.platform.generator.config.general.properties.SchemaCrawlerProperties;
 import java.sql.SQLException;
 import java.util.Arrays;
 import javax.sql.DataSource;

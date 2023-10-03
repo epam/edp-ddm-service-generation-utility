@@ -1,8 +1,24 @@
 global:
+  container:
+    requestsLimitsEnabled: true
+  istio:
+    sidecar:
+      requestsLimitsEnabled: true
+      resources:
+        requests: {}
+        limits: {}
   deploymentMode: development
   registry:
     restApi:
-      replicas: 1
+      container:
+        envVars: {}
+        resources:
+          requests: {}
+          limits: {}
+      datasource:
+        maxPoolSize: 10
+      kafka:
+        timeoutInSeconds: 30
       hpa:
         enabled: false
         minReplicas: 1
@@ -13,14 +29,8 @@ global:
           resources:
             requests: {}
             limits: {}
-      container:
-        resources:
-          requests: {}
-          limits: {}
-        envVars: {}
-      datasource:
-        maxPoolSize: 10
-  
+      replicas: 1
+
 name: ${register}-rest-api
 
 podAnnotations: {}
@@ -44,6 +54,8 @@ kafka:
   sslUserKey: ${KAFKA_USER_KEYSTORE_KEY}
   sslUserCertificate: ${KAFKA_USER_KEYSTORE_CERTIFICATE}
   sslClusterCertificate: ${KAFKA_CLUSTER_TRUSTSTORE}
+  requestReply:
+    groupId: ${KAFKA_OUTBOUND_CONSUMER_GROUP}
 </#noparse>
   numPartitions: 3
   replicationFactor: ${replicationFactor?c}
@@ -91,38 +103,47 @@ s3:
     options:
       pathStyleAccess: true
 
-<#if exposedToPlatformPaths?has_content || exposedToExternalPaths?has_content>
+<#if exposedToPlatformInfo.paths?has_content || exposedToExternalInfo.paths?has_content>
 externalService:
   name: ${register}-rest-api-ext
 </#if>
 
-<#if exposedToPublicPaths?has_content>
+<#if exposedToPublicInfo.paths?has_content>
 publicService:
   name: ${register}-rest-api-public
 </#if>
 
-<#if exposedToPlatformPaths?has_content || exposedToExternalPaths?has_content || exposedToPublicPaths?has_content>
+<#if exposedToPlatformInfo.paths?has_content || exposedToExternalInfo.paths?has_content || exposedToPublicInfo.paths?has_content>
 exposeSearchConditions:
-  <#if exposedToPlatformPaths?has_content>
+  <#if exposedToPlatformInfo.paths?has_content>
   platform:
     paths:
-    <#list exposedToPlatformPaths as path>
+    <#list exposedToPlatformInfo.paths as path>
       - ${path}
     </#list>
+    <#if exposedToPlatformInfo.anyResponseContainsFile>
+      - /files/*
+    </#if>
   </#if>
-  <#if exposedToExternalPaths?has_content>
+  <#if exposedToExternalInfo.paths?has_content>
   external:
     paths:
-    <#list exposedToExternalPaths as path>
+    <#list exposedToExternalInfo.paths as path>
       - ${path}
     </#list>
+    <#if exposedToExternalInfo.anyResponseContainsFile>
+      - /files/*
+    </#if>
   </#if>
-  <#if exposedToPublicPaths?has_content>
+  <#if exposedToPublicInfo.paths?has_content>
   public:
     paths:
-    <#list exposedToPublicPaths as path>
+    <#list exposedToPublicInfo.paths as path>
       - ${path}
     </#list>
+    <#if exposedToPublicInfo.anyResponseContainsFile>
+      - /files/*
+    </#if>
   </#if>
 </#if>
 dso:

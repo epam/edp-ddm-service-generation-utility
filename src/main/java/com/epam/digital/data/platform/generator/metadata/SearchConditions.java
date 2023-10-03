@@ -26,6 +26,7 @@ import java.util.Map;
 public class SearchConditions {
 
   private List<String> returningColumns = new ArrayList<>();
+  private List<String> requiredColumns = new ArrayList<>();
   private Map<String, SearchType> columnToSearchType = new HashMap<>();
   private SearchConditionOperationTree searchOperationTree;
   private Integer limit;
@@ -69,5 +70,13 @@ public class SearchConditions {
 
   public void setPagination(SearchConditionPaginationType pagination) {
     this.pagination = pagination;
+  }
+
+  public List<String> getRequiredColumns() {
+    return requiredColumns;
+  }
+
+  public void setRequiredColumns(List<String> requiredColumns) {
+    this.requiredColumns = requiredColumns;
   }
 }

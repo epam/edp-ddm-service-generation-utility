@@ -30,7 +30,11 @@ spec:
         {{- if .Values.global.registry.kafkaApi.istio.sidecar.enabled }}
         traffic.sidecar.istio.io/excludeOutboundPorts: '8080,5432'
         sidecar.istio.io/inject: 'true'
+        {{- if .Values.global.istio.sidecar.requestsLimitsEnabled }}
         {{- include "kafkaApi.istioResources" . | nindent 8 }}
+        {{- else }}
+        inject.istio.io/templates: 'sidecar,emptyRequestsLimits'
+        {{- end }}
         {{- end }}
       {{- end }}
     spec:
@@ -48,7 +52,7 @@ spec:
               name: jmx
               protocol: TCP
           imagePullPolicy: Always
-          {{- if or .Values.global.registry.kafkaApi.container.resources.requests .Values.global.registry.kafkaApi.container.resources.limits }}
+          {{- if .Values.global.container.requestsLimitsEnabled }}
           resources:
             {{- toYaml .Values.global.registry.kafkaApi.container.resources | nindent 12 }}
           {{- end }}
@@ -58,6 +62,9 @@ spec:
             httpGet:
               path: {{ .Values.probes.liveness.path }}
               port: {{ .Values.port }}
+              httpHeaders:
+                - name: X-B3-Sampled
+                  value: "0"
             failureThreshold: 1
             initialDelaySeconds: 180
             periodSeconds: 20
@@ -67,6 +74,9 @@ spec:
             httpGet:
               path: {{ .Values.probes.readiness.path }}
               port: {{ .Values.port }}
+              httpHeaders:
+                - name: X-B3-Sampled
+                  value: "0"
             failureThreshold: 5
             initialDelaySeconds: 60
             periodSeconds: 20
@@ -95,7 +105,7 @@ spec:
           env:
             {{- range $name, $value := .Values.global.registry.kafkaApi.container.envVars }}
             - name: {{ $name }}
-              value: {{ $value | quote}}
+              value: {{ $value | quote }}
             {{- end }}
             - name: KAFKA_BROKER
               value: {{ .Values.kafka.service }}

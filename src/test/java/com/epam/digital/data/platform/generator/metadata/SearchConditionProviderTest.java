@@ -276,7 +276,7 @@ class SearchConditionProviderTest {
 
     @Test
     void shouldMapViewOnTablesAndColumns() {
-      var set = instance.getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA);
+      var set = instance.getExposedSearchConditionsByType(ExposeSearchConditionOption.TREMBITA);
 
       assertThat(set).hasSize(1);
       assertThat(set.stream().findFirst().get()).isEqualTo(EXPOSED_VIEW);
@@ -284,10 +284,17 @@ class SearchConditionProviderTest {
 
     @Test
     void shouldGetExposedSearchConditionForPublicAccess() {
-      var set = instance.getExposedSearchConditions(ExposeSearchConditionOption.PUBLIC_ACCESS);
+      var set = instance.getExposedSearchConditionsByType(ExposeSearchConditionOption.PUBLIC_ACCESS);
 
       assertThat(set).hasSize(1);
       assertThat(set.stream().findFirst()).contains(EXPOSED_PUBLIC_VIEW);
+    }
+
+    @Test
+    void shouldGetAllExposedSearchConditions() {
+      var set = instance.getAllExposedSearchConditions();
+
+      assertThat(set).containsExactly(EXPOSED_VIEW, SOME_VIEW_NAME, EXPOSED_PUBLIC_VIEW);
     }
   }
 

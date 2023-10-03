@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epam.digital.data.platform.generator.config;
+package com.epam.digital.data.platform.generator.config.general;
 
 import com.epam.digital.data.platform.generator.model.Settings;
 import freemarker.template.TemplateExceptionHandler;

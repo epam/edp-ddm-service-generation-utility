@@ -22,6 +22,11 @@ public class SelectableField {
   private String table;
   private String converter;
 
+  public SelectableField(String name, String converter) {
+    this.name = name;
+    this.converter = converter;
+  }
+
   public SelectableField(String name, String table, String converter) {
     this.name = name;
     this.table = table;

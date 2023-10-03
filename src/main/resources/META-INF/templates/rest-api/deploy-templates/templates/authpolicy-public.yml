@@ -14,4 +14,11 @@ spec:
         - name: X-Access-Token
       issuer: {{ template "issuer.external" . }}
       jwksUri: {{ template "jwksUri.external" . }}
+      {{- if .Values.keycloak.customHost }}
+    - forwardOriginalToken: true
+      fromHeaders:
+        - name: X-Access-Token
+      issuer: {{ template "custom-issuer.external" . }}
+      jwksUri: {{ template "jwksUri.external" . }}
+      {{- end }}
 {{end}}

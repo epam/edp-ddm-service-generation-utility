@@ -1,4 +1,4 @@
-FROM ${dockerProxyRegistry}/${globalNexusNamespace}/rest-api-core-base-image-master:1.9.6.15 AS builder
+FROM ${dockerProxyRegistry}/${globalNexusNamespace}/rest-api-core-base-image-1-9-8-hotfix:1.9.8-1.9.8-HOTFIX.5 AS builder
 ARG NEXUS_USR
 ARG NEXUS_PASS
 WORKDIR /app/forbuild
@@ -20,4 +20,3 @@ COPY --from=restlayer app/spring-boot-loader/ ./
 COPY --from=restlayer app/snapshot-dependencies/ ./
 COPY --from=restlayer app/application/ ./
 ENTRYPOINT ["/bin/sh", "-c", "java \$JAVA_OPTS org.springframework.boot.loader.JarLauncher"]
-

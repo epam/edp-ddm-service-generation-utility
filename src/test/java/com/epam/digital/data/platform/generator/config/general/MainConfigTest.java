@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.epam.digital.data.platform.generator.config;
+package com.epam.digital.data.platform.generator.config.general;
 
-import static com.epam.digital.data.platform.generator.config.MainConfigTest.Row.KAFKA;
-import static com.epam.digital.data.platform.generator.config.MainConfigTest.Row.READ;
-import static com.epam.digital.data.platform.generator.config.MainConfigTest.Row.RETENTION_POLICY;
-import static com.epam.digital.data.platform.generator.config.MainConfigTest.Row.WRITE;
+import static com.epam.digital.data.platform.generator.config.general.MainConfigTest.Row.KAFKA;
+import static com.epam.digital.data.platform.generator.config.general.MainConfigTest.Row.READ;
+import static com.epam.digital.data.platform.generator.config.general.MainConfigTest.Row.RETENTION_POLICY;
+import static com.epam.digital.data.platform.generator.config.general.MainConfigTest.Row.WRITE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.epam.digital.data.platform.generator.model.Settings;

@@ -41,6 +41,7 @@ public class SearchConditionProvider {
   static final String LOGIC_OPERATOR_ATTRIBUTE_NAME = "logicOperator";
   static final String LIMIT_ATTRIBUTE_NAME = "limit";
   static final String PAGINATION_ATTRIBUTE_NAME = "pagination";
+  static final String REQUIRED_COLUMN_ATTRIBUTE = "requiredColumn";
 
   static final String EXPOSE = "expose";
   static final String TREMBITA = "trembita";
@@ -80,10 +81,16 @@ public class SearchConditionProvider {
             .map(this::mapLogicOperatorToObj)
             .orElse(null);
 
+    List<String> requiredColumns = metadataFacade.findByChangeTypeAndChangeName(SEARCH_CONDITION_CHANGE_TYPE, name)
+        .filter(metadata -> REQUIRED_COLUMN_ATTRIBUTE.equals(metadata.getName()))
+        .map(Metadata::getValue)
+        .collect(Collectors.toList());
+
     var scParams = new SearchConditions();
     scParams.setColumnToSearchType(columnToSearchType);
     scParams.setSearchOperationTree(searchOperationTree);
     scParams.setReturningColumns(returningColumns);
+    scParams.setRequiredColumns(requiredColumns);
 
     var limit = groupedBySearchParam.get(LIMIT_ATTRIBUTE_NAME);
     if (limit != null) {
@@ -115,9 +122,16 @@ public class SearchConditionProvider {
                 toSet())));
   }
 
-  public Set<String> getExposedSearchConditions(ExposeSearchConditionOption option) {
+  public Set<String> getExposedSearchConditionsByType(ExposeSearchConditionOption option) {
     return metadataFacade
         .findByChangeTypeAndChangeNameAndName(EXPOSE, option.getValue(), EXPOSED_CHANGE_NAME)
+        .map(Metadata::getValue)
+        .collect(Collectors.toSet());
+  }
+
+  public Set<String> getAllExposedSearchConditions() {
+    return metadataFacade
+        .findByChangeType(EXPOSE)
         .map(Metadata::getValue)
         .collect(Collectors.toSet());
   }

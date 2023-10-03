@@ -3,11 +3,11 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ printf "ext-system-api-%d-%s" $index (trimPrefix "/" $path) | trunc 63 | trimSuffix "-" }}
+  name: {{ printf "ext-system-api-%d%s" $index $path | replace "/" "-" | replace "*" "" | trunc 63 | trimSuffix "-" }}
   labels:
   {{- include "external-system-api.metaLabels" $ | nindent 4 }}
   annotations:
-    konghq.com/path: {{ $path }}
+    konghq.com/path: {{ $path | replace "/*" "" }}
     konghq.com/protocol: 'http'
     konghq.com/override: {{ $.Values.kong.ingressName }}
     konghq.com/plugins: {{ $.Values.kong.noPublicOidcPlugin }}

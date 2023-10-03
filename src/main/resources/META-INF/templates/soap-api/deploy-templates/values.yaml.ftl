@@ -1,7 +1,19 @@
 global:
+  container:
+    requestsLimitsEnabled: true
+  istio:
+    sidecar:
+      requestsLimitsEnabled: true
+      resources:
+        requests: {}
+        limits: {}
   registry:
     soapApi:
-      replicas: 1
+      container:
+        envVars: {}
+        resources:
+          requests: {}
+          limits: {}
       hpa:
         enabled: false
         minReplicas: 1
@@ -12,12 +24,8 @@ global:
           resources:
             requests: {}
             limits: {}
-      container:
-        resources:
-          requests: {}
-          limits: {}
-        envVars: {}
-  
+      replicas: 1
+
 name: ${register}-soap-api
 
 podAnnotations: {}

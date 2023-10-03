@@ -20,11 +20,14 @@ import com.epam.digital.data.platform.generator.factory.AbstractScope;
 import com.epam.digital.data.platform.generator.metadata.NestedStructureProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.CreateServiceScope;
+import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import schemacrawler.schema.NamedObject;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Component
 public class NestedServiceScopeFactory extends AbstractScope<CreateServiceScope> {
@@ -37,6 +40,9 @@ public class NestedServiceScopeFactory extends AbstractScope<CreateServiceScope>
 
   @Override
   public List<CreateServiceScope> create(Context context) {
+    var tablesMap = context.getCatalog().getTables()
+        .stream()
+        .collect(toMap(NamedObject::getName, Function.identity()));
     return nestedStructureProvider.findAll().stream()
         .map(
             nestedStructure -> {
@@ -45,6 +51,7 @@ public class NestedServiceScopeFactory extends AbstractScope<CreateServiceScope>
               var schemaName = getSchemaName(nestedStructure.getName(), tableName) + "Nested";
               scope.setClassName(schemaName + "UpsertService");
               scope.setSchemaName(schemaName);
+              scope.setPkName(getPkName(tablesMap.get(tableName)));
               scope.setRequestType(
                   "upsert-"
                       + toHyphenTableName(nestedStructure.getName())

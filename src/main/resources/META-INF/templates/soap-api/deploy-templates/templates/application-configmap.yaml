@@ -8,7 +8,11 @@ data:
       endpoints:
         web:
           exposure:
-            include: 'health, prometheus'    
+            include: 'health, prometheus'
+      metrics:
+        distribution:
+          percentiles-histogram[http.server.requests]: true
+          percentiles[http.server.requests]: 0.95
     rest-api:
       url: {{ .Values.restApi.url }}.{{ .Values.ciProject }}.svc:8080
 

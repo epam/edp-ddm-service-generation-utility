@@ -16,18 +16,16 @@
 
 package com.epam.digital.data.platform.generator.model.template;
 
-import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
-
 public class GeoserverRlsEntry {
 
-  private RlsMetadata rls;
+  private RlsFieldRestriction rls;
   private String geometryColumn;
 
-  public RlsMetadata getRls() {
+  public RlsFieldRestriction getRls() {
     return rls;
   }
 
-  public void setRls(RlsMetadata rls) {
+  public void setRls(RlsFieldRestriction rls) {
     this.rls = rls;
   }
 

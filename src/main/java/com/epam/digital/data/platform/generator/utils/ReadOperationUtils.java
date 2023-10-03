@@ -58,6 +58,10 @@ public class ReadOperationUtils {
     return getSelectableFields(table.getName(), table.getColumns(), context);
   }
 
+  public static SelectableField getSyncSelectableFieldFromColumn(Column column) {
+    return new SelectableField(column.getName(), EntityFieldConverter.getConverterCode(column, SYNC_READ_TYPE));
+  }
+
   private static String defineReadType(String tableName, Context context) {
     if (isAsyncTable(tableName, context) || isAsyncSearchCondition(tableName, context)) {
       return ASYNC_READ_TYPE;

@@ -11,6 +11,7 @@ import java.util.List;
 import ${basePackage}.model.dto.${schemaName};
 import ${basePackage}.restapi.tabledata.${tableDataProviderName};
 <#if rls??>
+import org.jooq.Condition;
 import com.epam.digital.data.platform.model.core.kafka.Request;
 import com.epam.digital.data.platform.restapi.core.exception.ForbiddenOperationException;
 import com.epam.digital.data.platform.restapi.core.service.JwtInfoProvider;
@@ -40,19 +41,6 @@ public class ${className} extends
   @Override
   public Class<${schemaName}> entityType() {
     return ${schemaName}.class;
-  }
-
-  @Override
-  public List<FieldsAccessCheckDto> getFieldsToCheckAccess() {
-    return List.of(
-        <#list tableAccessCheckFields as table, columns>
-        new FieldsAccessCheckDto("${table}", List.of(
-                <#list columns as columnName>
-                  "${columnName}"<#sep>,</#sep>
-                </#list>
-        ))<#sep>,</#sep>
-        </#list>
-        );
   }
 
   @Override

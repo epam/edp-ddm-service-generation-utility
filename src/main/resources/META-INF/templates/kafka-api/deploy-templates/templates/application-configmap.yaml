@@ -9,6 +9,10 @@ data:
         web:
           exposure:
             include: 'health, prometheus'
+      metrics:
+        distribution:
+          percentiles-histogram[http.server.requests]: true
+          percentiles[http.server.requests]: 0.95
     data-platform:
       datasource:
         url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}?ApplicationName={{ .Chart.Name }}
@@ -24,6 +28,7 @@ data:
           keystore-key: {{ .Values.kafka.sslUserKey }}
           truststore-certificate: {{ .Values.kafka.sslClusterCertificate }}
         consumer:
+          concurrency: {{ .Values.kafka.consumer.concurrency }}
           custom-config: {{ .Values.kafka.consumerConfigs | toYaml | nindent 12 }}
         producer:
           custom-config: {{ .Values.kafka.producerConfigs | toYaml | nindent 12 }}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2023 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import com.epam.digital.data.platform.generator.config.MainConfig;
+import com.epam.digital.data.platform.generator.config.dbdependentmode.DbDependentModeBeanConfig;
+import com.epam.digital.data.platform.generator.config.general.MainConfig;
 import com.epam.digital.data.platform.generator.model.Context;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,12 +34,13 @@ class KafkaApiValuesScopeFactoryTest {
 
   private final Context context = getContext();
   private final MainConfig mainConfig = new MainConfig();
+  private final DbDependentModeBeanConfig dbDependentModeBeanConfig = new DbDependentModeBeanConfig();
 
   private KafkaApiValuesScopeFactory instance;
 
   @BeforeEach
   void init() throws IOException {
-    instance = new KafkaApiValuesScopeFactory(mainConfig.values(file, mainConfig.yamlMapper()));
+    instance = new KafkaApiValuesScopeFactory(dbDependentModeBeanConfig.values(file, mainConfig.yamlMapper()));
   }
 
   @Test

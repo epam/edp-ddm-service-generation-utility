@@ -59,6 +59,37 @@ springdoc:
         url: /v3/api-docs/nested
 </#if>
     urls-primary-name: all
+  group-configs:
+    - group: all
+      paths-to-match:
+        - /**
+<#if enumPresent>
+    - group: enum
+      paths-to-match:
+        - /enum/**
+</#if>
+<#list entityPaths as group, paths>
+    - group: ${group}
+      paths-to-match:
+    <#list paths as path>
+        - /${path}/**
+    </#list>
+</#list>
+<#if searchPaths?has_content>
+    - group: search
+      paths-to-match:
+    <#list searchPaths as path>
+        - /${path}/**
+        - /search/${path}/**
+    </#list>
+</#if>
+<#if nestedPaths?has_content>
+    - group: nested
+      paths-to-match:
+    <#list nestedPaths as path>
+        - /${path}/**
+    </#list>
+</#if>
 
 openapi:
   request:
@@ -73,42 +104,15 @@ openapi:
       - X-Source-Business-Process-Instance-Id
       - X-Source-Business-Activity
       - X-Source-Business-Activity-Instance-Id
-
-    groups:
-<#if enumPresent>
-      - name: enum
-        endpoints:
-          - enum
-</#if>
-<#list entityPaths as group, paths>
-      - name: ${group}
-        endpoints:
-    <#list paths as path>
-          - ${path}
-    </#list>
-</#list>
-<#if searchPaths?has_content>
-      - name: search
-        endpoints:
-    <#list searchPaths as path>
-          - ${path}
-    </#list>
-</#if>
-<#if nestedPaths?has_content>
-      - name: nested
-        endpoints:
-    <#list nestedPaths as path>
-          - ${path}
-    </#list>
-</#if>
   response:
     codes:
       delete: 204, 400, 401, 403, 409, 412, 500, 501
       get-enum-labels: 200, 401, 500, 501
       get-enum-label: 200, 401, 404, 500, 501
       get-by-id: 200, 400, 401, 404, 500, 501
-      get-multiple: 200, 400, 401, 500, 501
-      post: 201, 400, 401, 403, 409, 412, 422, 500, 501
+      search: 200, 400, 401, 500, 501
+      post-validate: 200, 400, 401, 422, 500, 501
+      post-create: 201, 400, 401, 403, 409, 412, 422, 500, 501
       put: 204, 400, 401, 403, 409, 412, 422, 500, 501
       put-upsert: 200, 400, 401, 403, 409, 412, 422, 500, 501
 
@@ -144,7 +148,6 @@ management:
         services:
 <#noparse>
           - ${dso.url}/actuator/health/readiness
-          - ${keycloak.url}
 </#noparse>
 
 probes:
@@ -249,5 +252,5 @@ data-platform:
         - /v2/*/csv/validation
         - /v2/nested/*/csv/validation
         <#list searchPaths as path>
-        - /${path}
+        - /search/${path}
         </#list>

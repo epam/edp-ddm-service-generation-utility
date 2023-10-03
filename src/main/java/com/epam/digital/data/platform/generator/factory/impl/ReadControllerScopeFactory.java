@@ -49,7 +49,7 @@ public class ReadControllerScopeFactory extends CrudAbstractScope<ReadController
     scope.setSchemaName(getSchemaName(table) + "Read");
     var nestedEntitiesMap = nestedReadProvider.findFor(table.getName());
     if (nestedEntitiesMap.isEmpty()) {
-      scope.setReadRoles(new ArrayList<>(permissionMap.getReadExpressionsFor(table.getName())));
+      scope.setReadRoles(new ArrayList<>(permissionMap.getReadExpressionsForTable(table.getName())));
     } else {
       var nestedTables =
           nestedEntitiesMap.values().stream()
@@ -59,7 +59,7 @@ public class ReadControllerScopeFactory extends CrudAbstractScope<ReadController
           Sets.union(Collections.singleton(table.getName()), nestedTables);
       scope.setReadRoles(
           new ArrayList<>(
-              permissionMap.getReadExpressionsFor(tablesToCheckPermission)));
+              permissionMap.getReadExpressionsForTables(tablesToCheckPermission)));
     }
     scope.setEndpoint(getEndpoint(table.getName()));
     scope.setPkName(getPkName(table));

@@ -22,9 +22,9 @@ public class RestApiValuesScope {
 
   private int replicationFactor;
   private String s3Signer;
-  private Set<String> exposedToPlatformPaths;
-  private Set<String> exposedToExternalPaths;
-  private Set<String> exposedToPublicPaths;
+  private ExposedSearchConditionsInfo exposedToPlatformInfo;
+  private ExposedSearchConditionsInfo exposedToExternalInfo;
+  private ExposedSearchConditionsInfo exposedToPublicInfo;
   private String stageName;
 
   public int getReplicationFactor() {
@@ -43,20 +43,28 @@ public class RestApiValuesScope {
     this.s3Signer = s3Signer;
   }
 
-  public Set<String> getExposedToPlatformPaths() {
-    return exposedToPlatformPaths;
+  public ExposedSearchConditionsInfo getExposedToPlatformInfo() {
+    return exposedToPlatformInfo;
   }
 
-  public void setExposedToPlatformPaths(Set<String> exposedToPlatformPaths) {
-    this.exposedToPlatformPaths = exposedToPlatformPaths;
+  public void setExposedToPlatformInfo(ExposedSearchConditionsInfo exposedToPlatformInfo) {
+    this.exposedToPlatformInfo = exposedToPlatformInfo;
   }
 
-  public Set<String> getExposedToExternalPaths() {
-    return exposedToExternalPaths;
+  public ExposedSearchConditionsInfo getExposedToExternalInfo() {
+    return exposedToExternalInfo;
   }
 
-  public void setExposedToExternalPaths(Set<String> exposedToExternalPaths) {
-    this.exposedToExternalPaths = exposedToExternalPaths;
+  public void setExposedToExternalInfo(ExposedSearchConditionsInfo exposedToExternalInfo) {
+    this.exposedToExternalInfo = exposedToExternalInfo;
+  }
+
+  public ExposedSearchConditionsInfo getExposedToPublicInfo() {
+    return exposedToPublicInfo;
+  }
+
+  public void setExposedToPublicInfo(ExposedSearchConditionsInfo exposedToPublicInfo) {
+    this.exposedToPublicInfo = exposedToPublicInfo;
   }
 
   public String getStageName() {
@@ -67,11 +75,24 @@ public class RestApiValuesScope {
     this.stageName = stageName;
   }
 
-  public Set<String> getExposedToPublicPaths() {
-    return exposedToPublicPaths;
-  }
+  public static class ExposedSearchConditionsInfo {
+    private Set<String> paths;
+    private boolean anyResponseContainsFile;
 
-  public void setExposedToPublicPaths(Set<String> exposedToPublicPaths) {
-    this.exposedToPublicPaths = exposedToPublicPaths;
+    public Set<String> getPaths() {
+      return paths;
+    }
+
+    public void setPaths(Set<String> paths) {
+      this.paths = paths;
+    }
+
+    public boolean isAnyResponseContainsFile() {
+      return anyResponseContainsFile;
+    }
+
+    public void setAnyResponseContainsFile(boolean anyResponseContainsFile) {
+      this.anyResponseContainsFile = anyResponseContainsFile;
+    }
   }
 }

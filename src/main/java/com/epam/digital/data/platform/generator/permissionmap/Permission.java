@@ -34,15 +34,18 @@ class Permission {
 
   private String operation;
 
+  private String objectType;
+
   @Column("role_name")
   private String role;
 
-  public Permission(Long id, String tableName, String columnName, String operation, String role) {
+  public Permission(Long id, String tableName, String columnName, String operation, String role, String objectType) {
     this.id = id;
     this.tableName = tableName;
     this.columnName = columnName;
     this.operation = operation;
     this.role = role;
+    this.objectType = objectType;
   }
 
   public Long getId() {
@@ -65,14 +68,12 @@ class Permission {
     return role;
   }
 
+  public String getObjectType() {return objectType; }
+
   @Override
   public String toString() {
-    return "Permission{" +
-        "id=" + id +
-        ", tableName='" + tableName + '\'' +
-        ", columnName='" + columnName + '\'' +
-        ", operation='" + operation + '\'' +
-        ", role='" + role + '\'' +
-        '}';
+    return "Permission{id=" + id + ", tableName='" + tableName + '\''
+        + ", columnName='" + columnName + '\'' + ", operation='" + operation + '\''
+        + ", role='" + role + '\'' + ", objectType='" + objectType + '\'' + '}';
   }
 }

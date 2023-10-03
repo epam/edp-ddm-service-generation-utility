@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2023 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,18 @@ import schemacrawler.schema.Catalog;
 public final class Context {
 
   private final Settings settings;
-  private final Catalog catalog;
-  private final AsyncData asyncData;
+  private Catalog catalog;
+  private AsyncData asyncData;
 
   public Context(
       Settings settings, Catalog catalog, AsyncData asyncData) {
     this.settings = settings;
     this.catalog = catalog;
     this.asyncData = asyncData;
+  }
+
+  public Context(Settings settings) {
+    this.settings = settings;
   }
 
   public Settings getSettings() {

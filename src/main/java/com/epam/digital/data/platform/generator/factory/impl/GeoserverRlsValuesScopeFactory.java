@@ -21,6 +21,7 @@ import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.GeoserverRlsEntry;
+import com.epam.digital.data.platform.generator.model.template.RlsFieldRestriction;
 import com.epam.digital.data.platform.generator.scope.GeoserverRlsValuesScope;
 import com.epam.digital.data.platform.generator.utils.DbUtils;
 import org.springframework.stereotype.Component;
@@ -60,7 +61,7 @@ public class GeoserverRlsValuesScopeFactory implements ScopeFactory<GeoserverRls
                 return Stream.empty();
               }
               var entry = new GeoserverRlsEntry();
-              entry.setRls(rlsMetadata);
+              entry.setRls(mapRlsMetadataToScopeFactoryRestriction(rlsMetadata));
               entry.setGeometryColumn(getColumnWithGeometry(table));
               return Stream.of(entry);
             })
@@ -79,6 +80,14 @@ public class GeoserverRlsValuesScopeFactory implements ScopeFactory<GeoserverRls
         .map(NamedObject::getName)
         .findFirst()
         .orElse(null);
+  }
+
+  private RlsFieldRestriction mapRlsMetadataToScopeFactoryRestriction(RlsMetadata rlsMetadata) {
+    var restriction = new RlsFieldRestriction();
+    restriction.setCheckTable(rlsMetadata.getCheckTable());
+    restriction.setCheckColumn(rlsMetadata.getCheckColumn());
+    restriction.setJwtAttribute(rlsMetadata.getJwtAttribute());
+    return restriction;
   }
 
   @Override

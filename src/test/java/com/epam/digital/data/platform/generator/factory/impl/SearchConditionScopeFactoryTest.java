@@ -37,6 +37,7 @@ import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginati
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditions;
 import com.epam.digital.data.platform.generator.model.Context;
+import com.epam.digital.data.platform.generator.model.template.Constraint.Content;
 import com.epam.digital.data.platform.generator.model.template.Field;
 import com.epam.digital.data.platform.generator.model.template.SearchType;
 import com.epam.digital.data.platform.generator.scope.ModelScope;
@@ -136,6 +137,10 @@ class SearchConditionScopeFactoryTest {
     assertThat(fields).hasSize(1);
 
     var field = fields.iterator().next();
+    var contentValues = field.getConstraints().stream()
+        .flatMap(cont -> cont.getContent().stream())
+        .map(Content::getValue).collect(toList());
+
     assertThat(field.getName()).isEqualTo("testSearchCol");
     assertThat(field.getType()).isEqualTo("java.lang.String");
   }
@@ -156,8 +161,13 @@ class SearchConditionScopeFactoryTest {
     assertThat(fields).hasSize(1);
 
     var field = fields.iterator().next();
+    var contentValues = field.getConstraints().stream()
+        .flatMap(cont -> cont.getContent().stream())
+        .map(Content::getValue).collect(toList());
+
     assertThat(field.getName()).isEqualTo("testInSearchCol");
     assertThat(field.getType()).isEqualTo("java.util.List<java.lang.String>");
+    assertThat(contentValues).contains("com.fasterxml.jackson.annotation.JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY");
   }
 
   @Test
@@ -175,8 +185,13 @@ class SearchConditionScopeFactoryTest {
     assertThat(fields).hasSize(1);
 
     var field = fields.iterator().next();
+    var contentValues = field.getConstraints().stream()
+        .flatMap(cont -> cont.getContent().stream())
+        .map(Content::getValue).collect(toList());
+
     assertThat(field.getName()).isEqualTo("testNotInSearchCol");
     assertThat(field.getType()).isEqualTo("java.util.List<java.lang.String>");
+    assertThat(contentValues).contains("com.fasterxml.jackson.annotation.JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY");
   }
 
   @Test

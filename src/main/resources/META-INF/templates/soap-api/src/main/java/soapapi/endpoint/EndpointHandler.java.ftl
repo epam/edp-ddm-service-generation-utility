@@ -1,9 +1,6 @@
 package ${basePackage}.soapapi.endpoint;
 
-<#list schemaNames as schema>
-import ${basePackage}.model.dto.${schema};
-</#list>
-
+import com.epam.digital.data.platform.model.core.file.FileResponseDto;
 import com.epam.digital.data.platform.soapapi.core.converter.HeadersProvider;
 import com.epam.digital.data.platform.soapapi.core.endpoint.IEndpointHandler;
 import com.epam.digital.data.platform.soapapi.core.util.SoapHeaders;
@@ -14,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ${basePackage}.soapapi.restclients.RestApiClient;
+<#list schemaNames as schema>
+import ${basePackage}.model.dto.${schema};
+</#list>
 
 @WebService
 @Component
@@ -29,7 +29,7 @@ public class EndpointHandler implements IEndpointHandler {
     this.headersProvider = headersProvider;
   }
 
-<#list searchScopes as scope>
+  <#list searchScopes as scope>
   public ${scope.responseType}<${scope.schemaName}SearchConditionResponse> search${scope.schemaName}(
       @WebParam(name = "searchConditions") ${scope.schemaName}SearchConditions searchConditions,
       @WebParam(header = true, name = "headers") SoapHeaders headers) {
@@ -37,6 +37,16 @@ public class EndpointHandler implements IEndpointHandler {
     Map<String, Object> headersMap = headersProvider.createHttpHeaders(headers);
     return restApiClient.search${scope.schemaName}(searchConditions, headersMap);
   }
+  </#list>
 
-</#list>
+  <#list fileScopes as scope>
+  public FileResponseDto ${scope.methodName}(
+      @WebParam(name = "id") ${scope.pkType} id,
+      @WebParam(name = "fileId") String fileId,
+      @WebParam(header = true, name = "headers") SoapHeaders headers) {
+    log.info("${scope.methodName} called");
+    Map<String, Object> headersMap = headersProvider.createHttpHeaders(headers);
+    return restApiClient.${scope.methodName}(id, fileId, headersMap);
+  }
+  </#list>
 }

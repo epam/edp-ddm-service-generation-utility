@@ -16,10 +16,12 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
-import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.model.template.NestedSelectableFieldsGroup;
+import com.epam.digital.data.platform.generator.model.template.RlsFieldRestriction;
 import com.epam.digital.data.platform.generator.model.template.SelectableField;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +32,12 @@ public class QueryHandlerScope extends ClassScope {
   private String tableName;
   private String pkType;
   private String tableDataProviderName;
-  private Map<String, List<String>> tableAccessCheckFields;
-  private List<SelectableField> simpleSelectableFields;
-  private Map<String, NestedSelectableFieldsGroup> nestedSingleSelectableGroups;
-  private Map<String, NestedSelectableFieldsGroup> nestedListSelectableGroups;
+  private Map<String, List<String>> tableAccessCheckFields = new HashMap<>();
+  private List<SelectableField> simpleSelectableFields = new ArrayList<>();
+  private Map<String, NestedSelectableFieldsGroup> nestedSingleSelectableGroups = new HashMap<>();
+  private Map<String, NestedSelectableFieldsGroup> nestedListSelectableGroups = new HashMap<>();
 
-  private RlsMetadata rls;
+  private RlsFieldRestriction rls;
 
   public String getSchemaName() {
     return schemaName;
@@ -111,11 +113,11 @@ public class QueryHandlerScope extends ClassScope {
     this.nestedListSelectableGroups = nestedListSelectableGroups;
   }
 
-  public RlsMetadata getRls() {
+  public RlsFieldRestriction getRls() {
     return rls;
   }
 
-  public void setRls(RlsMetadata rls) {
+  public void setRls(RlsFieldRestriction rls) {
     this.rls = rls;
   }
 }

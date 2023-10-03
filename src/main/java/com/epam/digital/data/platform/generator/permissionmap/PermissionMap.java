@@ -70,15 +70,23 @@ public class PermissionMap {
     this.rows = unmodifiableMap(map);
   }
 
-  public Set<String> getReadExpressionsFor(String tableName) {
+  public Set<String> getReadExpressionsForTable(String tableName) {
     return filterExpressions(tableName,
-        READ_PREDICATE.and(COLUMN_NULL_PREDICATE))
+        READ_PREDICATE.and(COLUMN_NULL_PREDICATE)
+            .and(PermissionObjectType.TABLE.getPredicate()))
         .collect(Collectors.toSet());
   }
 
-  public Set<String> getReadExpressionsFor(Set<String> tableNames) {
+  public Set<String> getReadExpressionsForByType(String name, PermissionObjectType type) {
+    return filterExpressions(name,
+        READ_PREDICATE.and(COLUMN_NULL_PREDICATE)
+            .and(type.getPredicate()))
+        .collect(Collectors.toSet());
+  }
+
+  public Set<String> getReadExpressionsForTables(Set<String> tableNames) {
     return tableNames.stream()
-        .flatMap(tableName -> getReadExpressionsFor(tableName).stream())
+        .flatMap(tableName -> getReadExpressionsForTable(tableName).stream())
         .collect(Collectors.toSet());
   }
 
@@ -88,9 +96,10 @@ public class PermissionMap {
         .collect(Collectors.toSet());
   }
 
-  public Set<String> getReadExpressionsFor(String tableName, String columnName) {
+  public Set<String> getReadExpressionsForTable(String tableName, String columnName) {
     return filterExpressions(tableName,
-        READ_PREDICATE.and(COLUMN_NULL_OR_SAME_NAME_PREDICATE.apply(columnName)))
+        READ_PREDICATE.and(COLUMN_NULL_OR_SAME_NAME_PREDICATE.apply(columnName))
+            .and(PermissionObjectType.TABLE.getPredicate()))
         .collect(Collectors.toSet());
   }
 

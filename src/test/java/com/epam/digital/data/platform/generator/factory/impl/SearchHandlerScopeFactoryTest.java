@@ -19,6 +19,8 @@ package com.epam.digital.data.platform.generator.factory.impl;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.metadata.NestedReadEntity;
 import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
+import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
+import com.epam.digital.data.platform.generator.metadata.RlsMetadataFacade;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionOperation;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionOperationTree;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
@@ -26,6 +28,7 @@ import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider
 import com.epam.digital.data.platform.generator.metadata.SearchConditions;
 import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
+import com.epam.digital.data.platform.generator.model.template.RlsFieldRestriction;
 import com.epam.digital.data.platform.generator.model.template.SearchConditionField;
 import com.epam.digital.data.platform.generator.model.template.SearchOperatorType;
 import com.epam.digital.data.platform.generator.model.template.SearchType;
@@ -66,12 +69,15 @@ import static org.mockito.Mockito.when;
 class SearchHandlerScopeFactoryTest {
 
   private static final String VIEW_NAME = "test_view";
+  private static final String VIEW_FULL_NAME = "test_view_v";
   private static final String TABLE_NAME = "some_table";
   private static final String FIELD = "field";
   private static final String FIELD_TOO = "fieldToo";
   private static final String FIELD_TOO_COLUMN_NAME = "field_too";
   private static final String MANY_TO_MANY_COLUMN = "m2m_column";
   private static final String ONE_TO_MANY_COLUMN = "o2m_column";
+
+  private static final String RLS_JWT_ATTRIBUTE = "jwtAttr";
 
   SearchHandlerScopeFactory instance;
 
@@ -193,6 +199,35 @@ class SearchHandlerScopeFactoryTest {
         .containsOnly(
             new SelectableField(PK_COLUMN_NAME, TABLE_NAME, null),
             new SelectableField(FIELD, TABLE_NAME, null));
+  }
+
+  @Test
+  void shouldCreateScopeWithRlsRuleIfMetadataFound() {
+    // given
+    var field = new SearchConditionField(FIELD_TOO, FIELD_TOO_COLUMN_NAME, true);
+
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of(field.getColumnName(), SearchType.CONTAINS));
+    setupSearchConditions(VIEW_NAME, scInfo);
+
+    when(scProvider.getRlsMetadata(VIEW_FULL_NAME))
+        .thenReturn(
+            new RlsMetadata(
+                1L,
+                "rls1",
+                RlsMetadataFacade.METADATA_TYPE_READ,
+                RLS_JWT_ATTRIBUTE,
+                FIELD_TOO_COLUMN_NAME,
+                VIEW_FULL_NAME));
+
+    // when
+    List<SearchHandlerScope> resultList = instance.create(ctx);
+
+    // then
+    var actualRls = resultList.get(0).getRls();
+    var expectedRls =
+        new RlsFieldRestriction(VIEW_FULL_NAME, FIELD_TOO, FIELD_TOO_COLUMN_NAME, RLS_JWT_ATTRIBUTE);
+    assertThat(actualRls).usingRecursiveComparison().isEqualTo(expectedRls);
   }
 
   @Test

@@ -25,6 +25,7 @@ import com.epam.digital.data.platform.generator.metadata.SearchConditionOperatio
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.NestedSelectableFieldsGroup;
+import com.epam.digital.data.platform.generator.model.template.RlsFieldRestriction;
 import com.epam.digital.data.platform.generator.model.template.SearchConditionField;
 import com.epam.digital.data.platform.generator.model.template.SearchOperation;
 import com.epam.digital.data.platform.generator.model.template.SearchOperatorType;
@@ -134,7 +135,7 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
     scope.setNestedSingleSelectableGroups(singleElementNestedGroups);
     scope.setNestedListSelectableGroups(listElementNestedGroups);
     scope.setPagination(sc.getPagination());
-    scope.setRls(searchConditionProvider.getRlsMetadata(table.getName()));
+    scope.setRls(getRlsRestriction(table.getName()));
     return scope;
   }
 
@@ -297,6 +298,20 @@ public class SearchHandlerScopeFactory extends SearchConditionsAbstractScope<Sea
             Function.identity(),
             columnName -> getNestedGroupSelectables(nestedEntitiesMap.get(columnName), context),
             (el1, el2) -> el2));
+  }
+
+  private RlsFieldRestriction getRlsRestriction(String tableName) {
+    return Optional.ofNullable(searchConditionProvider.getRlsMetadata(tableName))
+        .map(
+            rlsMetadata -> {
+              var restriction = new RlsFieldRestriction();
+              restriction.setCheckTable(rlsMetadata.getCheckTable());
+              restriction.setCheckColumn(rlsMetadata.getCheckColumn());
+              restriction.setJwtAttribute(rlsMetadata.getJwtAttribute());
+              restriction.setCheckField(getPropertyName(rlsMetadata.getCheckColumn()));
+              return restriction;
+            })
+        .orElse(null);
   }
 
   @Override

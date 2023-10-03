@@ -20,6 +20,7 @@ import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.AsyncData;
 import com.epam.digital.data.platform.generator.model.Context;
+import com.epam.digital.data.platform.generator.model.template.RlsFieldRestriction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,10 +67,13 @@ class GeoserverRlsValuesScopeFactoryTest {
     var rls2 = new RlsMetadata(2L, "rls2", "read", "attr", "my_col", "test_table2");
     when(searchConditionProvider.getRlsMetadata()).thenReturn(List.of(rls1, rls2));
 
+    var rlsRestriction = new RlsFieldRestriction("test_table1", null, "my_col", "attr");
+
     var result = instance.create(context);
     assertThat(result).hasSize(1);
     assertThat(result.get(0).getGeoRls()).hasSize(1);
-    assertThat(result.get(0).getGeoRls().get(0).getRls()).isEqualTo(rls1);
-    assertThat(result.get(0).getGeoRls().get(0).getGeometryColumn()).isEqualTo(GEOMETRY_COLUMN_NAME);
+    assertThat(result.get(0).getGeoRls().get(0).getRls()).usingRecursiveComparison().isEqualTo(rlsRestriction);
+    assertThat(result.get(0).getGeoRls().get(0).getGeometryColumn())
+        .isEqualTo(GEOMETRY_COLUMN_NAME);
   }
 }

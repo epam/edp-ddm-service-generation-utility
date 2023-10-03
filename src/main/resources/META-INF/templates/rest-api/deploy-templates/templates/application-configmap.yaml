@@ -9,6 +9,10 @@ data:
         web:
           exposure:
             include: 'health, prometheus'
+      metrics:
+        distribution:
+          percentiles-histogram[http.server.requests]: true
+          percentiles[http.server.requests]: 0.95
     data-platform:
       datasource:
         url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}?ApplicationName={{ .Chart.Name }}
@@ -31,6 +35,9 @@ data:
           custom-config: {{ .Values.kafka.consumerConfigs | toYaml | nindent 12 }}
         producer:
           custom-config: {{ .Values.kafka.producerConfigs | toYaml | nindent 12 }}
+        request-reply:
+          group-id: {{ .Values.kafka.requestReply.groupId }}
+          timeout-in-seconds: {{ .Values.global.registry.restApi.kafka.timeoutInSeconds }}
       signature:
         validation:
           enabled: true
@@ -67,13 +74,6 @@ data:
       config:
         client: {{ .Values.s3.config.client | toYaml | nindent 10 }}
         options: {{ .Values.s3.config.options | toYaml | nindent 10 }}
-
-    keycloak:
-      url: {{ .Values.keycloak.url }}
-      realms:
-        - {{ .Values.ciProject }}-officer-portal
-        - {{ .Values.ciProject }}-citizen-portal
-        - {{ .Values.ciProject }}-external-system
 
     audit:
       kafka:

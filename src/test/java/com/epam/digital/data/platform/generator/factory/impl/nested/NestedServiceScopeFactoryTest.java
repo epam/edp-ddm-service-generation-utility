@@ -59,6 +59,7 @@ class NestedServiceScopeFactoryTest {
     expectedScope.setClassName("NestingFlowApplicationNestedUpsertService");
     expectedScope.setSchemaName("NestingFlowApplicationNested");
     expectedScope.setRequestType("upsert-nesting-flow-application-nested");
+    expectedScope.setPkName("id");
 
     assertThat(actualScope)
             .usingRecursiveComparison()

@@ -61,13 +61,15 @@ values (1, 'name1', 'read', 'katottg', 'table1', 'col1'),
 
 --- ddm_role:
 CREATE TYPE type_perm AS ENUM ('S','I','U','D');
+CREATE TYPE type_object AS ENUM ('table','search_condition');
 CREATE TABLE ddm_role_permission
 (
 	permission_id int NOT NULL,
 	object_name text NOT NULL,
 	column_name text,
 	operation type_perm NOT NULL,
-	role_name text NOT NULL
+	role_name text NOT NULL,
+	object_type TYPE_OBJECT NOT NULL DEFAULT 'table'
 );
 
 insert into ddm_role_permission (permission_id, object_name, column_name,
@@ -86,4 +88,34 @@ values (1, 'pd_processing_consent', 'person_full_name',
         ),
         (5, 'another_table', 'another_column',
         'S', 'citizen'
+        );
+
+insert into ddm_role_permission (permission_id, object_name, column_name,
+        operation, role_name, object_type)
+values (6, 'pb_table_read_role', null,
+        'S', 'officer', 'table'
+        ),
+        (7, 'pb_table_read_role', null,
+        'S', 'op-regression', 'search_condition'
+        ),
+        (8, 'pb_type_read', null,
+        'S', 'officer', 'table'
+        ),
+        (9, 'pb_type_read', null,
+        'S', 'op-regression', 'search_condition'
+        ),
+        (10, 'pb_tables_read_roles_1', null,
+        'S', 'officer', 'table'
+        ),
+        (11, 'pb_tables_read_roles_2', null,
+        'S', 'op-regression', 'table'
+        ),
+        (12, 'pb_tables_read_roles_1', null,
+        'S', 'head-officer', 'search_condition'
+        ),
+        (13, 'pb_column_read_roles', 'first_column',
+        'S', 'officer', 'table'
+        ),
+        (14, 'pb_column_read_roles', null,
+        'S', 'op-regression', 'table'
         );
