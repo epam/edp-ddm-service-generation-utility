@@ -1,0 +1,29 @@
+{{- if .Values.routes }}
+{{- range $route := .Values.routes }}
+{{- if (or (not (contains "trembita" $route.name)) $.Values.trembita.ipList) }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+  {{- if (contains "trembita" $route.name) }}
+    {{ template "trembita.whitelist.annotation" $ }}
+  {{- else }}
+    {{ template "admin-routes.whitelist.annotation" $ }}
+  {{- end }}
+  labels:
+    app: {{ $.Chart.Name }}
+  name: {{ $route.name }}
+spec:
+  host: {{ $.Chart.Name }}-{{ $.Values.cdPipelineName }}-{{ $.Values.cdPipelineStageName }}.{{ $.Values.dnsWildcard }}
+  path: {{ $route.path }}
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: {{ $.Chart.Name }}
+    weight: 100
+{{- end }}
+{{- end }}
+{{- end }}

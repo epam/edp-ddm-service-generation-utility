@@ -1,0 +1,23 @@
+{{- if .Values.global.registry.bpWebserviceGateway.hpa.enabled }}
+kind: HorizontalPodAutoscaler
+apiVersion: {{ include "horizontalPodAutoscaler.apiVersion" . }}
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+    relatedNamespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: {{ .Chart.Name }}
+    apiVersion: apps/v1
+  minReplicas: {{ .Values.global.registry.bpWebserviceGateway.hpa.minReplicas }}
+  maxReplicas: {{ .Values.global.registry.bpWebserviceGateway.hpa.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+{{- end }}

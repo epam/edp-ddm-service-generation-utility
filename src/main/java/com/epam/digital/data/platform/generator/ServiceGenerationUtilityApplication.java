@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2023 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package com.epam.digital.data.platform.generator;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.epam.digital.data.platform.generator.config.dbdependentmode.DbDependentModeBeanConfig;
+import com.epam.digital.data.platform.generator.config.dblessmode.DbLessModeBeanConfig;
 import com.epam.digital.data.platform.generator.factory.DefaultScopeFactory;
 import com.epam.digital.data.platform.generator.factory.Scope;
 import com.epam.digital.data.platform.generator.model.Context;
@@ -40,7 +42,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackageClasses = {DbLessModeBeanConfig.class,
+    DbDependentModeBeanConfig.class})
 public class ServiceGenerationUtilityApplication implements ApplicationRunner {
 
   private static final String JAVA_EXTENSION = ".java";
@@ -90,7 +93,7 @@ public class ServiceGenerationUtilityApplication implements ApplicationRunner {
   private void renderTemplate(String templateName, Object model)
       throws IOException, TemplateException {
     Template template = freemarker.getTemplate(templateName);
-    try(Writer writer = outputFileWriter(templateName, model)) {
+    try (Writer writer = outputFileWriter(templateName, model)) {
       template.process(model, writer);
     }
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2023 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,19 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import com.epam.digital.data.platform.generator.model.template.Field;
 import java.util.List;
-import java.util.Set;
 
-public class SoapScope {
+public class BpWebserviceGatewayDtoScope extends ClassScope{
 
-  private final Set<String> schemaNames = new HashSet<>();
-  private final List<SearchControllerScope> searchScopes = new ArrayList<>();
+  private List<Field> fields;
 
-  public Set<String> getSchemaNames() {
-    return schemaNames;
+  public List<Field> getFields() {
+    return fields;
   }
 
-  public List<SearchControllerScope> getSearchScopes() {
-    return searchScopes;
-  }
-
-  public void addSchemaName(String schemaName) {
-    schemaNames.add(schemaName);
-  }
-
-  public void addSearchScopes(SearchControllerScope searchScope) {
-    searchScopes.add(searchScope);
+  public void setFields(
+      List<Field> fields) {
+    this.fields = fields;
   }
 }

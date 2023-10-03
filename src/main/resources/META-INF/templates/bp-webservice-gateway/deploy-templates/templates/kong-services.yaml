@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Values.externalSystem.service.name }}
+  labels:
+  {{- include "external-system-api.metaLabels" $ | nindent 4 }}
+  annotations:
+    konghq.com/path: {{ .Values.kong.route.proxyPath }}
+    konghq.com/protocol: 'http'
+    konghq.com/override: {{ .Values.kong.ingressName }}
+    konghq.com/plugins: {{ .Values.kong.noPublicOidcPlugin }}
+    ingress.kubernetes.io/service-upstream: 'true'
+spec:
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+  sessionAffinity: None
+  type: ClusterIP
+  selector:
+    app: {{ .Chart.Name }}

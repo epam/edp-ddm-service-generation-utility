@@ -24,8 +24,10 @@ import static java.util.stream.Collectors.toMap;
 import com.epam.digital.data.platform.generator.factory.CrudAbstractScope;
 import com.epam.digital.data.platform.generator.metadata.NestedReadEntity;
 import com.epam.digital.data.platform.generator.metadata.NestedReadProvider;
+import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.model.template.NestedSelectableFieldsGroup;
+import com.epam.digital.data.platform.generator.model.template.RlsFieldRestriction;
 import com.epam.digital.data.platform.generator.scope.QueryHandlerScope;
 import com.epam.digital.data.platform.generator.utils.DbUtils;
 import org.springframework.stereotype.Component;
@@ -36,6 +38,7 @@ import schemacrawler.schema.Table;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -85,7 +88,7 @@ public class QueryHandlerScopeFactory extends CrudAbstractScope<QueryHandlerScop
         groupColumnsWithSelectableFields(singleElementNestedColumns, nestedEntitiesMap, context));
     scope.setNestedListSelectableGroups(
         groupColumnsWithSelectableFields(listElementNestedColumns, nestedEntitiesMap, context));
-    scope.setRls(nestedReadProvider.getRlsMetadata(table.getName()));
+    scope.setRls(getRlsRestriction(table.getName()));
     return scope;
   }
 
@@ -136,6 +139,20 @@ public class QueryHandlerScopeFactory extends CrudAbstractScope<QueryHandlerScop
         .filter(DbUtils::isReadableColumn)
         .map(NamedObject::getName)
         .collect(toList());
+  }
+
+  protected RlsFieldRestriction getRlsRestriction(String tableName) {
+    return Optional.ofNullable(nestedReadProvider.getRlsMetadata(tableName))
+        .map(
+            rlsMetadata -> {
+              var restriction = new RlsFieldRestriction();
+              restriction.setCheckTable(rlsMetadata.getCheckTable());
+              restriction.setCheckColumn(rlsMetadata.getCheckColumn());
+              restriction.setJwtAttribute(rlsMetadata.getJwtAttribute());
+              restriction.setCheckField(getPropertyName(rlsMetadata.getCheckColumn()));
+              return restriction;
+            })
+        .orElse(null);
   }
 
   @Override

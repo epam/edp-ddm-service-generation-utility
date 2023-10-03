@@ -47,11 +47,18 @@ class PermissionMapTest {
   static final String ANY_FOR_ANY_TABLE_NAME = "ANY_FOR_ANY_TABLE_NAME";
   static final String COMPOSITE_ROLE_TABLE_NAME = "COMPOSITE_ROLE_TABLE_NAME";
   static final String ONE_ROLE_ACCESS_TABLE_NAME = "ONE_ROLE_ACCESS_TABLE_NAME";
+  static final String TABLE_NAME_SAME_AS_SEARCH_NAME = "TABLE_NAME_SAME_AS_SEARCH_NAME";
+
+  static final String SEARCH_ONE_ROLE_ACCESS_TABLE_NAME = "SEARCH_ONE_ROLE_ACCESS_TABLE_NAME";
+  static final String SEARCH_TWO_ROLES_ACCESS_TABLE_NAME = "SEARCH_TWO_ROLES_ACCESS_TABLE_NAME";
 
   static final String SOME_COLUMN_NAME = "SOME_COLUMN_NAME";
   static final String JUST_ONE_MORE_COLUMN_NAME = "JUST_ONE_MORE_COLUMN_NAME";
   static final String DENIED_READ_COLUMN_NAME = "DENIED_READ_COLUMN_NAME";
   static final String ANY_ROLE_READ_COLUMN_NAME = "ANY_ROLE_READ_COLUMN_NAME";
+
+  static final String TABLE_TYPE = "table";
+  static final String SEARCH_CONDITION_TYPE = "search_condition";
 
   static final String CITIZEN_ROLE_TITLE = "citizen";
   static final String OFFICER_ROLE_TITLE = "officer";
@@ -83,40 +90,48 @@ class PermissionMapTest {
 
   private List<Permission> generatePerms() {
     return List.of(
-        new Permission(1L, SOME_TABLE_NAME, SOME_COLUMN_NAME, READ, CITIZEN_ROLE_TITLE),
-        new Permission(1L, SOME_TABLE_NAME, SOME_COLUMN_NAME, READ, OFFICER_ROLE_TITLE),
-        new Permission(1L, SOME_TABLE_NAME, JUST_ONE_MORE_COLUMN_NAME, READ, CITIZEN_ROLE_TITLE),
+        new Permission(1L, SOME_TABLE_NAME, SOME_COLUMN_NAME, READ, CITIZEN_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, SOME_TABLE_NAME, SOME_COLUMN_NAME, READ, OFFICER_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, SOME_TABLE_NAME, JUST_ONE_MORE_COLUMN_NAME, READ, CITIZEN_ROLE_TITLE, TABLE_TYPE),
 
-        new Permission(1L, SOME_TABLE_NAME, SOME_COLUMN_NAME, UPDATE, OFFICER_ROLE_TITLE),
-        new Permission(1L, SOME_TABLE_NAME, SOME_COLUMN_NAME, UPDATE, MAJOR_OFFICER_ROLE_TITLE),
-        new Permission(1L, SOME_TABLE_NAME, JUST_ONE_MORE_COLUMN_NAME, UPDATE, MAJOR_OFFICER_ROLE_TITLE),
+        new Permission(1L, SOME_TABLE_NAME, SOME_COLUMN_NAME, UPDATE, OFFICER_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, SOME_TABLE_NAME, SOME_COLUMN_NAME, UPDATE, MAJOR_OFFICER_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, SOME_TABLE_NAME, JUST_ONE_MORE_COLUMN_NAME, UPDATE, MAJOR_OFFICER_ROLE_TITLE, TABLE_TYPE),
 
-        new Permission(1L, SOME_TABLE_NAME, null, CREATE, MAJOR_OFFICER_ROLE_TITLE),
+        new Permission(1L, SOME_TABLE_NAME, null, CREATE, MAJOR_OFFICER_ROLE_TITLE, TABLE_TYPE),
 
-        new Permission(1L, SOME_TABLE_NAME, null, DELETE, MAJOR_OFFICER_ROLE_TITLE),
+        new Permission(1L, SOME_TABLE_NAME, null, DELETE, MAJOR_OFFICER_ROLE_TITLE, TABLE_TYPE),
 
-        new Permission(1L, IGNORING_COLUMN_TABLE_NAME, SOME_COLUMN_NAME, CREATE, MAJOR_OFFICER_ROLE_TITLE),
-        new Permission(1L, IGNORING_COLUMN_TABLE_NAME, SOME_COLUMN_NAME, DELETE, MAJOR_OFFICER_ROLE_TITLE),
+        new Permission(1L, IGNORING_COLUMN_TABLE_NAME, SOME_COLUMN_NAME, CREATE, MAJOR_OFFICER_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, IGNORING_COLUMN_TABLE_NAME, SOME_COLUMN_NAME, DELETE, MAJOR_OFFICER_ROLE_TITLE, TABLE_TYPE),
 
-        new Permission(1L, NULL_COLUMN_TABLE_NAME, null, READ, CITIZEN_ROLE_TITLE),
-        new Permission(1L, NULL_COLUMN_TABLE_NAME, null, UPDATE, MAJOR_OFFICER_ROLE_TITLE),
+        new Permission(1L, NULL_COLUMN_TABLE_NAME, null, READ, CITIZEN_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, NULL_COLUMN_TABLE_NAME, null, UPDATE, MAJOR_OFFICER_ROLE_TITLE, TABLE_TYPE),
 
-        new Permission(1L, SOME_TABLE_NAME, ANY_ROLE_READ_COLUMN_NAME, READ, ANY_ROLE),
-        new Permission(1L, SOME_TABLE_NAME, ANY_ROLE_READ_COLUMN_NAME, UPDATE, ANY_ROLE),
+        new Permission(1L, SOME_TABLE_NAME, ANY_ROLE_READ_COLUMN_NAME, READ, ANY_ROLE, TABLE_TYPE),
+        new Permission(1L, SOME_TABLE_NAME, ANY_ROLE_READ_COLUMN_NAME, UPDATE, ANY_ROLE, TABLE_TYPE),
 
-        new Permission(1L, ANY_FOR_ANY_TABLE_NAME, null, READ, ANY_ROLE),
-        new Permission(1L, ANY_FOR_ANY_TABLE_NAME, null, UPDATE, ANY_ROLE),
+        new Permission(1L, ANY_FOR_ANY_TABLE_NAME, null, READ, ANY_ROLE, TABLE_TYPE),
+        new Permission(1L, ANY_FOR_ANY_TABLE_NAME, null, UPDATE, ANY_ROLE, TABLE_TYPE),
 
-        new Permission(1L, NO_ROLE_FOR_COLUMN_TABLE_NAME, "whatever", READ, "whatever"),
+        new Permission(1L, NO_ROLE_FOR_COLUMN_TABLE_NAME, "whatever", READ, "whatever", TABLE_TYPE),
 
-        new Permission(1L, COMPOSITE_ROLE_TABLE_NAME, SOME_COLUMN_NAME, READ, CITIZEN_ROLE_TITLE),
-        new Permission(1L, COMPOSITE_ROLE_TABLE_NAME, SOME_COLUMN_NAME, READ, OFFICER_ROLE_TITLE),
-        new Permission(1L, COMPOSITE_ROLE_TABLE_NAME, SOME_COLUMN_NAME, READ, ANY_ROLE),
+        new Permission(1L, COMPOSITE_ROLE_TABLE_NAME, SOME_COLUMN_NAME, READ, CITIZEN_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, COMPOSITE_ROLE_TABLE_NAME, SOME_COLUMN_NAME, READ, OFFICER_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, COMPOSITE_ROLE_TABLE_NAME, SOME_COLUMN_NAME, READ, ANY_ROLE, TABLE_TYPE),
 
-        new Permission(1L, ONE_ROLE_ACCESS_TABLE_NAME, null, READ, CITIZEN_ROLE_TITLE),
-        new Permission(1L, ONE_ROLE_ACCESS_TABLE_NAME, SOME_COLUMN_NAME, READ, OFFICER_ROLE_TITLE),
-        new Permission(1L, ONE_ROLE_ACCESS_TABLE_NAME, null, UPDATE, CITIZEN_ROLE_TITLE),
-        new Permission(1L, ONE_ROLE_ACCESS_TABLE_NAME, SOME_COLUMN_NAME, UPDATE, OFFICER_ROLE_TITLE)
+        new Permission(1L, ONE_ROLE_ACCESS_TABLE_NAME, null, READ, CITIZEN_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, ONE_ROLE_ACCESS_TABLE_NAME, SOME_COLUMN_NAME, READ, OFFICER_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, ONE_ROLE_ACCESS_TABLE_NAME, null, UPDATE, CITIZEN_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, ONE_ROLE_ACCESS_TABLE_NAME, SOME_COLUMN_NAME, UPDATE, OFFICER_ROLE_TITLE, TABLE_TYPE),
+        new Permission(1L, TABLE_NAME_SAME_AS_SEARCH_NAME, null, READ, MAJOR_OFFICER_ROLE_TITLE, TABLE_TYPE),
+
+        new Permission(1L, SEARCH_TWO_ROLES_ACCESS_TABLE_NAME, null, READ, MAJOR_OFFICER_ROLE_TITLE,
+            SEARCH_CONDITION_TYPE),
+        new Permission(1L, TABLE_NAME_SAME_AS_SEARCH_NAME, null, READ, CITIZEN_ROLE_TITLE,
+            SEARCH_CONDITION_TYPE),
+        new Permission(1L, SEARCH_ONE_ROLE_ACCESS_TABLE_NAME, null, READ, MAJOR_OFFICER_ROLE_TITLE,
+            SEARCH_CONDITION_TYPE)
     );
   }
 
@@ -128,22 +143,36 @@ class PermissionMapTest {
 
       @Test
       void shouldPermitAllWhenNoSuchTableInPermissionMap() {
-        assertThat(instance.getReadExpressionsFor(NO_ACCESS_MAP_TABLE_NAME)).isEmpty();
+        assertThat(instance.getReadExpressionsForTable(NO_ACCESS_MAP_TABLE_NAME)).isEmpty();
       }
 
       @Test
       void shouldPermitForAuthenticatedWhenTableWithoutColumnsForAnyRole() {
-        assertThat(instance.getReadExpressionsFor(ANY_FOR_ANY_TABLE_NAME)).containsExactly(IS_AUTHENTICATED);
+        assertThat(instance.getReadExpressionsForTable(ANY_FOR_ANY_TABLE_NAME)).containsExactly(IS_AUTHENTICATED);
       }
 
       @Test
       void shouldDenyAllWhenTableInPermissionMap() {
-        assertThat(instance.getReadExpressionsFor(SOME_TABLE_NAME)).containsExactly(DENY_ALL);
+        assertThat(instance.getReadExpressionsForTable(SOME_TABLE_NAME)).containsExactly(DENY_ALL);
       }
 
       @Test
       void shouldPermitOnlyForCitizenRole() {
-        assertThat(instance.getReadExpressionsFor(ONE_ROLE_ACCESS_TABLE_NAME)).containsExactly(CITIZEN_ROLE_EXPRESSION);
+        assertThat(instance.getReadExpressionsForTable(ONE_ROLE_ACCESS_TABLE_NAME)).containsExactly(CITIZEN_ROLE_EXPRESSION);
+      }
+
+      @Test
+      void shouldPermitOnlyTableRole() {
+        assertThat(instance.getReadExpressionsForByType(TABLE_NAME_SAME_AS_SEARCH_NAME,
+            PermissionObjectType.TABLE)).containsExactly(
+            MAJOR_OFFICER_ROLE_EXPRESSION);
+      }
+
+      @Test
+      void shouldPermitOnlySearchConditionRole() {
+        assertThat(instance.getReadExpressionsForByType(TABLE_NAME_SAME_AS_SEARCH_NAME,
+            PermissionObjectType.SEARCH_CONDITION)).containsExactly(
+            CITIZEN_ROLE_EXPRESSION);
       }
     }
 
@@ -152,46 +181,46 @@ class PermissionMapTest {
 
       @Test
       void shouldReturnNoExpressionsWhenNoSuchTableInPermissionsMap() {
-        assertThat(instance.getReadExpressionsFor(NO_ACCESS_MAP_TABLE_NAME, SOME_COLUMN_NAME))
+        assertThat(instance.getReadExpressionsForTable(NO_ACCESS_MAP_TABLE_NAME, SOME_COLUMN_NAME))
             .isEmpty();
       }
 
       @Test
       void shouldReturnDenyAllWhenNoSuchColumnInPermissionsMap() {
-        assertThat(instance.getReadExpressionsFor(SOME_TABLE_NAME, DENIED_READ_COLUMN_NAME))
+        assertThat(instance.getReadExpressionsForTable(SOME_TABLE_NAME, DENIED_READ_COLUMN_NAME))
             .containsExactly(DENY_ALL);
       }
 
       @Test
       void shouldFindReadExpressionsByColumnName() {
-        assertThat(instance.getReadExpressionsFor(SOME_TABLE_NAME, SOME_COLUMN_NAME))
+        assertThat(instance.getReadExpressionsForTable(SOME_TABLE_NAME, SOME_COLUMN_NAME))
             .containsExactly(COMPOSITE_CITIZEN_AND_OFFICER_ROLE_EXPRESSION);
       }
 
       @Test
       void shouldFindReadExpressionsByAnyColumnNameWhenAllColumnsAllowed() {
-        assertThat(instance.getReadExpressionsFor(NULL_COLUMN_TABLE_NAME, SOME_COLUMN_NAME))
+        assertThat(instance.getReadExpressionsForTable(NULL_COLUMN_TABLE_NAME, SOME_COLUMN_NAME))
             .containsExactly(CITIZEN_ROLE_EXPRESSION);
-        assertThat(instance.getReadExpressionsFor(NULL_COLUMN_TABLE_NAME, null))
+        assertThat(instance.getReadExpressionsForTable(NULL_COLUMN_TABLE_NAME, null))
             .containsExactly(CITIZEN_ROLE_EXPRESSION);
       }
 
       @Test
       void shouldFindAllReadExpressionsByColumnNameWhenAnyRolePermission() {
-        assertThat(instance.getReadExpressionsFor(SOME_TABLE_NAME, ANY_ROLE_READ_COLUMN_NAME))
+        assertThat(instance.getReadExpressionsForTable(SOME_TABLE_NAME, ANY_ROLE_READ_COLUMN_NAME))
             .containsExactly(IS_AUTHENTICATED);
       }
 
       @Test
       void shouldReturnOnlyIsAuthenticatedExpressionWhenIsAuthenticatedPresent() {
-        assertThat(instance.getReadExpressionsFor(COMPOSITE_ROLE_TABLE_NAME, SOME_COLUMN_NAME))
+        assertThat(instance.getReadExpressionsForTable(COMPOSITE_ROLE_TABLE_NAME, SOME_COLUMN_NAME))
             .containsExactly(IS_AUTHENTICATED);
       }
 
       @Test
       void shouldJoinExpressionsForMultipleTables() {
         assertThat(
-                instance.getReadExpressionsFor(
+                instance.getReadExpressionsForTables(
                     Set.of(NO_ACCESS_MAP_TABLE_NAME, SOME_TABLE_NAME, ONE_ROLE_ACCESS_TABLE_NAME)))
             .containsExactlyInAnyOrder(DENY_ALL, CITIZEN_ROLE_EXPRESSION);
       }

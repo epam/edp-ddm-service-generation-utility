@@ -93,7 +93,7 @@ class SearchControllerScopeFactoryTest {
   }
 
   private void setupReadExpressions(String tableName, String columnName, Set<String> expressions) {
-    given(permissionMap.getReadExpressionsFor(tableName, columnName)).willReturn(expressions);
+    given(permissionMap.getReadExpressionsForTable(tableName, columnName)).willReturn(expressions);
   }
 
   private void setupTableColumnMap(String k1, Set<String> v1) {
@@ -143,7 +143,7 @@ class SearchControllerScopeFactoryTest {
                 new NestedReadEntity(VIEW_NAME, ONE_TO_MANY_COLUMN, TABLE_NAME),
                 MANY_TO_MANY_COLUMN,
                 new NestedReadEntity(VIEW_NAME, MANY_TO_MANY_COLUMN, TABLE_NAME)));
-    when(permissionMap.getReadExpressionsFor(Set.of(TABLE_NAME)))
+    when(permissionMap.getReadExpressionsForTables(Set.of(TABLE_NAME)))
             .thenReturn(Set.of("role1", "role2"));
     setupTableColumnMap(
             TABLE_NAME, Set.of("field_1")
@@ -172,7 +172,7 @@ class SearchControllerScopeFactoryTest {
     setupReadExpressions(TABLE_NAME, "field_2", Set.of("b", "c"));
     setupReadExpressions(TABLE_NAME + "_2", "field_3", Set.of("a", "b"));
     setupReadExpressions(TABLE_NAME + "_2", "field_4", Set.of("b", "c"));
-    when(permissionMap.getReadExpressionsFor(Collections.emptySet()))
+    when(permissionMap.getReadExpressionsForTables(Collections.emptySet()))
             .thenReturn(Collections.emptySet());
 
     // when

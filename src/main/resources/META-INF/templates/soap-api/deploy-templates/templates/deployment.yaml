@@ -23,7 +23,11 @@ spec:
         {{- end }}
         {{- if .Values.global.registry.soapApi.istio.sidecar.enabled }}
         sidecar.istio.io/inject: 'true'
+        {{- if .Values.global.istio.sidecar.requestsLimitsEnabled }}
         {{- include "soapApi.istioResources" . | nindent 8 }}
+        {{- else }}
+        inject.istio.io/templates: 'sidecar,emptyRequestsLimits'
+        {{- end }}
         {{- end }}
       {{- end }}
       labels:
@@ -45,6 +49,9 @@ spec:
             httpGet:
               path: {{ .Values.probes.liveness.path }}
               port: {{ .Values.port }}
+              httpHeaders:
+                - name: X-B3-Sampled
+                  value: "0"
             failureThreshold: 1
             initialDelaySeconds: 180
             periodSeconds: 20
@@ -54,12 +61,15 @@ spec:
             httpGet:
               path: {{ .Values.probes.readiness.path }}
               port: {{ .Values.port }}
+              httpHeaders:
+                - name: X-B3-Sampled
+                  value: "0"
             failureThreshold: 5
             initialDelaySeconds: 60
             periodSeconds: 20
             successThreshold: 1
             timeoutSeconds: 5
-          {{- if or .Values.global.registry.soapApi.container.resources.requests .Values.global.registry.soapApi.container.resources.limits }}
+          {{- if .Values.global.container.requestsLimitsEnabled }}
           resources:
             {{- toYaml .Values.global.registry.soapApi.container.resources | nindent 12 }}
           {{- end }}
@@ -74,7 +84,7 @@ spec:
           env:
             {{- range $name, $value := .Values.global.registry.soapApi.container.envVars }}
             - name: {{ $name }}
-              value: {{ $value | quote}}
+              value: {{ $value | quote }}
             {{- end }}
             - name: KAFKA_USER_KEYSTORE_CERTIFICATE
               valueFrom:

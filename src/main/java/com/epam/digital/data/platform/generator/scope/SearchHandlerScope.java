@@ -19,9 +19,9 @@ package com.epam.digital.data.platform.generator.scope;
 import java.util.List;
 import java.util.Map;
 
-import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
 import com.epam.digital.data.platform.generator.model.template.NestedSelectableFieldsGroup;
+import com.epam.digital.data.platform.generator.model.template.RlsFieldRestriction;
 import com.epam.digital.data.platform.generator.model.template.SearchOperation;
 import com.epam.digital.data.platform.generator.model.template.SelectableField;
 
@@ -37,7 +37,7 @@ public class SearchHandlerScope extends ClassScope {
   private Map<String, NestedSelectableFieldsGroup> nestedSingleSelectableGroups;
   private Map<String, NestedSelectableFieldsGroup> nestedListSelectableGroups;
 
-  private RlsMetadata rls;
+  private RlsFieldRestriction rls;
 
   public String getSchemaName() {
     return schemaName;
@@ -111,11 +111,11 @@ public class SearchHandlerScope extends ClassScope {
     this.nestedListSelectableGroups = nestedListSelectableGroups;
   }
 
-  public RlsMetadata getRls() {
+  public RlsFieldRestriction getRls() {
     return rls;
   }
 
-  public void setRls(RlsMetadata rls) {
+  public void setRls(RlsFieldRestriction rls) {
     this.rls = rls;
   }
 }

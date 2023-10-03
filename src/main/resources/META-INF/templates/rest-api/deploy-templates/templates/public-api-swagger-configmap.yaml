@@ -13,11 +13,13 @@ data:
       swagger-ui:
         urls:
           - name: all
-            url: /api/public/data-factory/v3/api-docs/all
-      paths-to-match:
-      {{- include "public.paths" . | nindent 4 }}
+            url: /v3/api-docs/all
+      group-configs:
+        - group: all
+          paths-to-match:
+          {{- include "public.swagger.paths.deprecated" . | nindent 6 }}
+          {{- include "public.swagger.search.paths" . | nindent 6 }}
     openapi:
       request:
-        groups: []
         headers: []
 {{- end }}

@@ -1,0 +1,23 @@
+kind: KongPlugin
+apiVersion: configuration.konghq.com/v1
+metadata:
+  name: {{ .Values.kong.noPublicOidcPlugin }}
+  labels:
+  {{- include "external-system-api.metaLabels" . | nindent 4 }}
+plugin: oidc
+config:
+  allow_token_auth: true
+  client_secret: {{ (lookup "v1" "Secret" .Release.Namespace .Values.keycloak.trembitaInvokerClient.secretName).data.clientSecret | b64dec }}
+  access_token_expires_leeway: 35
+  client_id: {{ .Values.keycloak.trembitaInvokerClient.clientName }}
+  realm: {{ template "keycloak.externalSystemTargetRealm" . }}
+  discovery: >-
+    {{ template "issuer.external" $ }}/.well-known/openid-configuration
+  introspection_endpoint: >-
+    {{ template "kongPluginIssuer.external" $ }}/protocol/openid-connect/token/introspect
+  token_endpoint_auth_method: client_secret_post
+  unauth_action: deny
+  issuers_allowed: ['{{ template "kongPluginIssuer.external" $ }}']
+protocols:
+  - http
+  - https

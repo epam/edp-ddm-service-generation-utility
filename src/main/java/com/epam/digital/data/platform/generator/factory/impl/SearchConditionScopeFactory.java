@@ -20,7 +20,10 @@ import static java.util.Collections.emptyList;
 import static java.util.List.of;
 import static java.util.stream.Collectors.toList;
 
+import com.epam.digital.data.platform.generator.constraints.ConstraintProvider;
 import com.epam.digital.data.platform.generator.constraints.impl.CompositeConstraintProvider;
+import com.epam.digital.data.platform.generator.constraints.impl.RequiredConstraintProvider;
+import com.epam.digital.data.platform.generator.constraints.impl.SingleValueAsArrayConstraintProvider;
 import com.epam.digital.data.platform.generator.factory.AbstractEntityScopeFactory;
 import com.epam.digital.data.platform.generator.metadata.EnumProvider;
 import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginationType;
@@ -79,57 +82,54 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
 
   private List<Field> getSearchConditionFields(Table table) {
     var searchConditions = searchConditionProvider.findFor(getCutTableName(table));
-
+    var requiredFields = searchConditions.getRequiredColumns();
     var columnToSearchTypeMap = searchConditions.getColumnToSearchType();
     List<Field> fields = new ArrayList<>();
     fields.addAll(
         getColumnsOfSearchType(columnToSearchTypeMap, SearchType.EQUAL)
-            .map(
-                sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
+            .map(sc -> new ColumnConditionMapping(table, sc, getPropertyName(sc), requiredFields.contains(sc)))
+            .map(it -> mapColumnConditionToField(it, getCommonConstraintProviders(it.isRequired), this::typeToString))
             .collect(toList()));
     fields.addAll(
         getColumnsOfSearchType(columnToSearchTypeMap, SearchType.NOT_EQUAL)
-            .map(
-                sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
+            .map(sc -> new ColumnConditionMapping(table, sc, getPropertyName(sc), requiredFields.contains(sc)))
+            .map(it -> mapColumnConditionToField(it, getCommonConstraintProviders(it.isRequired), this::typeToString))
             .collect(toList()));
     fields.addAll(
         getColumnsOfSearchType(columnToSearchTypeMap, SearchType.CONTAINS)
-            .map(
-                sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
+            .map(sc -> new ColumnConditionMapping(table, sc, getPropertyName(sc), requiredFields.contains(sc)))
+            .map(it -> mapColumnConditionToField(it, getCommonConstraintProviders(it.isRequired), this::typeToString))
             .collect(toList()));
     fields.addAll(
         getColumnsOfSearchType(columnToSearchTypeMap, SearchType.STARTS_WITH)
-            .map(
-                sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
+            .map(sc -> new ColumnConditionMapping(table, sc, getPropertyName(sc), requiredFields.contains(sc)))
+            .map(it -> mapColumnConditionToField(it, getCommonConstraintProviders(it.isRequired), this::typeToString))
             .collect(toList()));
     fields.addAll(
         getColumnsOfSearchType(columnToSearchTypeMap, SearchType.STARTS_WITH_ARRAY)
-            .map(
-                sc -> mapColumnConditionToField(table, sc, getPropertyName(sc), this::typeToString))
+            .map(sc -> new ColumnConditionMapping(table, sc, getPropertyName(sc), requiredFields.contains(sc)))
+            .map(it -> mapColumnConditionToField(it, getCommonConstraintProviders(it.isRequired), this::typeToString))
             .collect(toList()));
     fields.addAll(
         getColumnsOfSearchType(columnToSearchTypeMap, SearchType.IN)
-            .map(
-                sc ->
-                    mapColumnConditionToField(
-                        table, sc, getPropertyName(sc), this::getFieldTypeForIn))
+            .map(sc -> new ColumnConditionMapping(table, sc, getPropertyName(sc), requiredFields.contains(sc)))
+            .map(it -> mapColumnConditionToField(it, getArrayFieldConstraintProviders(it.isRequired), this::getFieldTypeForIn))
             .collect(toList()));
     fields.addAll(
         getColumnsOfSearchType(columnToSearchTypeMap, SearchType.NOT_IN)
-            .map(
-                sc ->
-                    mapColumnConditionToField(
-                        table, sc, getPropertyName(sc), this::getFieldTypeForIn))
+            .map(sc -> new ColumnConditionMapping(table, sc, getPropertyName(sc), requiredFields.contains(sc)))
+            .map(it -> mapColumnConditionToField(it, getArrayFieldConstraintProviders(it.isRequired), this::getFieldTypeForIn))
             .collect(toList()));
     fields.addAll(
         getColumnsOfSearchType(columnToSearchTypeMap, SearchType.BETWEEN)
             .flatMap(
                 sc ->
                     Stream.of(
-                        mapColumnConditionToField(
-                            table, sc, getPropertyName(sc) + "From", this::typeToString),
-                        mapColumnConditionToField(
-                            table, sc, getPropertyName(sc) + "To", this::typeToString)))
+                            new ColumnConditionMapping(table, sc, getPropertyName(sc) + "From", requiredFields.contains(sc)),
+                            new ColumnConditionMapping(table, sc, getPropertyName(sc) + "To", requiredFields.contains(sc)))
+                        .map(
+                            it -> mapColumnConditionToField(it, getCommonConstraintProviders(it.isRequired),
+                                this::typeToString)))
             .collect(toList()));
     if (SearchConditionPaginationType.isTypeOffset(searchConditions.getPagination())) {
       fields.addAll(
@@ -153,26 +153,18 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
   }
 
   private Field mapColumnConditionToField(
-      Table table,
-      String columnName,
-      String fieldName,
+      ColumnConditionMapping mapping,
+      List<ConstraintProvider> providers,
       BiFunction<String, Column, String> conditionToStringTypeMapper) {
-    var column = findColumn(columnName, table);
+    var column = findColumn(mapping.columnName, mapping.table);
 
     var clazzName = DbTypeConverter.convertToJavaTypeName(column);
 
-    var constraints =
-        constraintProviders
-            .getFormattingConstraintProvider()
-            .getConstraintForProperty(column, clazzName);
-
-    constraints.addAll(
-        constraintProviders
-            .getMarshalingConstraintProvider()
-            .getConstraintForProperty(column, clazzName));
+    var constraints = providers.stream()
+        .flatMap(provide -> provide.getConstraintForProperty(column, clazzName).stream()).collect(toList());
 
     var field = new Field();
-    field.setName(fieldName);
+    field.setName(mapping.fieldName);
     field.setType(conditionToStringTypeMapper.apply(clazzName, column));
     field.setConstraints(constraints);
     return field;
@@ -190,8 +182,39 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
     return field;
   }
 
+  private List<ConstraintProvider> getCommonConstraintProviders(boolean isRequired) {
+    List<ConstraintProvider> providers = new ArrayList<>();
+    providers.add(constraintProviders.getFormattingConstraintProvider());
+    providers.add(constraintProviders.getMarshalingConstraintProvider());
+    if (isRequired) {
+      providers.add((new RequiredConstraintProvider()));
+    }
+    return providers;
+  }
+
+  private List<ConstraintProvider> getArrayFieldConstraintProviders(boolean isRequired) {
+    List<ConstraintProvider> providers = getCommonConstraintProviders(isRequired);
+    providers.add(new SingleValueAsArrayConstraintProvider());
+    return providers;
+  }
+
   @Override
   public String getPath() {
     return "model/src/main/java/model/dto/dto.java.ftl";
+  }
+
+  private class ColumnConditionMapping {
+
+    final Table table;
+    final String columnName;
+    final String fieldName;
+    final boolean isRequired;
+
+    ColumnConditionMapping(Table table, String columnName, String fieldName, boolean isRequired) {
+      this.table = table;
+      this.columnName = columnName;
+      this.fieldName = fieldName;
+      this.isRequired = isRequired;
+    }
   }
 }

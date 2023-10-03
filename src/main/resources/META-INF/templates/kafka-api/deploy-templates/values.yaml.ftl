@@ -1,7 +1,21 @@
 global:
+  container:
+    requestsLimitsEnabled: true
+  istio:
+    sidecar:
+      requestsLimitsEnabled: true
+      resources:
+        requests: {}
+        limits: {}
   registry:
     kafkaApi:
-      replicas: 1
+      container:
+        envVars: {}
+        resources:
+          requests: {}
+          limits: {}
+      datasource:
+        maxPoolSize: 10
       hpa:
         enabled: false
         minReplicas: 1
@@ -12,13 +26,7 @@ global:
           resources:
             requests: {}
             limits: {}
-      container:
-        resources:
-          requests: {}
-          limits: {}
-        envVars: {}
-      datasource:
-        maxPoolSize: 10
+      replicas: 1
 
 name: ${register}-kafka-api
 

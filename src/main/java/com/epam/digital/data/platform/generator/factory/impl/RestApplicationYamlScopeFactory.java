@@ -16,12 +16,6 @@
 
 package com.epam.digital.data.platform.generator.factory.impl;
 
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-
 import com.epam.digital.data.platform.generator.factory.AbstractApplicationYamlScope;
 import com.epam.digital.data.platform.generator.metadata.AsyncDataLoadInfoProvider;
 import com.epam.digital.data.platform.generator.metadata.BulkLoadInfoProvider;
@@ -32,14 +26,22 @@ import com.epam.digital.data.platform.generator.metadata.PartialUpdate;
 import com.epam.digital.data.platform.generator.metadata.PartialUpdateProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.RestApplicationYamlScope;
+import com.epam.digital.data.platform.generator.utils.DbUtils;
+import org.springframework.stereotype.Component;
+import schemacrawler.schema.Table;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
-import schemacrawler.schema.Table;
+
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Component
 public class RestApplicationYamlScopeFactory
@@ -102,6 +104,12 @@ public class RestApplicationYamlScopeFactory
     var asyncDataLoadPaths = getAsyncDataLoadPaths();
     entityPaths.forEach((k, v) -> ofNullable(asyncDataLoadPaths.get(k)).ifPresent(v::addAll));
 
+    var fileEndpointPaths = getFileEndpointPaths(context);
+    entityPaths.forEach((k, v) -> {
+      var opt = ofNullable(fileEndpointPaths.get(k));
+      opt.ifPresent(v::addAll);
+    });
+
     return entityPaths;
   }
 
@@ -111,6 +119,22 @@ public class RestApplicationYamlScopeFactory
         .map(Table::getName)
         .map(this::toHyphenTableName)
         .collect(toList());
+  }
+
+  private Map<String, List<String>> getFileEndpointPaths(Context context) {
+    return context.getCatalog().getTables().stream()
+        .filter(this::isRecentDataTable)
+        .collect(
+            toMap(
+                this::toHyphenTableName,
+                table -> {
+                  var fileColumnExists =
+                      table.getColumns().stream().anyMatch(DbUtils::isColumnFileOrFileArray);
+                  if (fileColumnExists) {
+                    return Collections.singletonList("files" + getEndpoint(table.getName()));
+                  }
+                  return Collections.emptyList();
+                }));
   }
 
   private Map<String, List<String>> getPartialUpdatePaths() {

@@ -16,9 +16,9 @@
 
 package com.epam.digital.data.platform.generator.factory;
 
-import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
 import com.epam.digital.data.platform.generator.metadata.RlsMetadataFacade;
 import com.epam.digital.data.platform.generator.model.Context;
+import com.epam.digital.data.platform.generator.model.template.RlsFieldRestriction;
 import com.epam.digital.data.platform.generator.scope.ServiceScope;
 import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +49,19 @@ public abstract class AbstractServiceScope<T extends ServiceScope> extends CrudA
     return scope;
   }
 
-  protected RlsMetadata getRlsMetadata(String tableName) {
-    return rlsMetadataFacade.findByTypeAndCheckTable(RlsMetadataFacade.METADATA_TYPE_WRITE, tableName)
-            .findFirst().orElse(null);
+  protected RlsFieldRestriction getRlsRestriction(String tableName) {
+    return rlsMetadataFacade
+        .findByTypeAndCheckTable(RlsMetadataFacade.METADATA_TYPE_WRITE, tableName)
+        .findFirst()
+        .map(
+            rlsMetadata -> {
+              var restriction = new RlsFieldRestriction();
+              restriction.setCheckTable(rlsMetadata.getCheckTable());
+              restriction.setCheckColumn(rlsMetadata.getCheckColumn());
+              restriction.setJwtAttribute(rlsMetadata.getJwtAttribute());
+              restriction.setCheckField(getPropertyName(rlsMetadata.getCheckColumn()));
+              return restriction;
+            })
+        .orElse(null);
   }
 }

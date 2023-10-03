@@ -10,18 +10,25 @@ metadata:
     konghq.com/methods: 'GET,POST'
   labels:
   {{- include "external-system-api.metaLabels" $ | nindent 4 }}
-  name: {{ printf "ext-system-api-%d-%s" $index (trimPrefix "/" $path) | trunc 63 | trimSuffix "-" }}
+  name: {{ printf "ext-system-api-%d%s" $index $path | replace "/" "-" | replace "*" "" | trunc 63 | trimSuffix "-" }}
 spec:
   ingressClassName: kong
   rules:
     - host: {{ template "external-system-api.hostname" $ }}
       http:
         paths:
-          - path: {{ print $.Values.kong.route.rootPath $path }}
+          - path: {{ print $.Values.kong.route.rootPath $path | replace "/*" "" }}
             pathType: ImplementationSpecific
             backend:
               service:
-                name: {{ printf "ext-system-api-%d-%s" $index (trimPrefix "/" $path) | trunc 63 | trimSuffix "-" }}
+                name: {{ printf "ext-system-api-%d%s" $index $path | replace "/" "-" | replace "*" "" | trunc 63 | trimSuffix "-" }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ print $.Values.kong.route.rootPath (print "/search" $path) | replace "/*" "" }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ printf "ext-system-api-%d%s" $index $path | replace "/" "-" | replace "*" "" | trunc 63 | trimSuffix "-" }}
                 port:
                   number: {{ $.Values.service.port }}
 {{- end }}

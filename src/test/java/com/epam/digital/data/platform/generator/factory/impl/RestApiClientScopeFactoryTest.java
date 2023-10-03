@@ -32,9 +32,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Set;
 
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.FILE_COLUMN_NAME;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.PK_COLUMN_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.SEARCH_SCHEMA_NAME;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.TABLE_NAME;
 import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.VIEW_NAME;
-import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getContext;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.emptyAsyncData;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.getSettings;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.newCatalog;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withColumn;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withSearchConditionView;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withTable;
+import static com.epam.digital.data.platform.generator.utils.ContextTestUtils.withUuidPk;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -43,38 +52,86 @@ class RestApiClientScopeFactoryTest {
 
   @Mock private SearchConditionProvider provider;
 
-  private final Context context = getContext();
+  private Context context;
   private RestApiClientScopeFactory instance;
 
   @BeforeEach
   void init() {
+    context = new Context(
+            getSettings(),
+            newCatalog(
+                    withTable(TABLE_NAME, withUuidPk(PK_COLUMN_NAME),
+                            withColumn(FILE_COLUMN_NAME, Object.class, "type_file")),
+                    withSearchConditionView(
+                            VIEW_NAME,
+                            withColumn(FILE_COLUMN_NAME, Object.class, "type_file"))),
+            emptyAsyncData());
     instance = new RestApiClientScopeFactory(provider);
   }
 
   @Test
   void shouldCreateCorrectScopes() {
-    when(provider.getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA))
+    when(provider.getExposedSearchConditionsByType(ExposeSearchConditionOption.TREMBITA))
         .thenReturn(Set.of(VIEW_NAME));
     when(provider.findFor(VIEW_NAME)).thenReturn(new SearchConditions());
     var expectedSchemaNames =
         Set.of("TestSchemaSearchSearchConditionResponse", "TestSchemaSearchSearchConditions");
 
-    var restApiClientScopes = instance.create(context);
+    var actualRestApiClientScopes = instance.create(context);
 
-    SearchControllerScope resultControllerScope =
-        restApiClientScopes.get(0).getSearchScopes().get(0);
+    var actualResultControllerScope =
+        actualRestApiClientScopes.get(0).getSearchScopes().get(0);
+    var actualFileEndpointScope =
+            actualRestApiClientScopes.get(0).getFileScopes().get(0);
 
-    assertThat(restApiClientScopes).hasSize(1);
-    assertThat(restApiClientScopes.get(0).getSchemaNames()).isEqualTo(expectedSchemaNames);
-    assertThat(resultControllerScope.getSchemaName()).isEqualTo(SEARCH_SCHEMA_NAME);
-    assertThat(resultControllerScope.getEndpoint()).isEqualTo("/test-schema-search");
-    assertThat(resultControllerScope.getResponseType()).isEqualTo(List.class.getCanonicalName());
+    assertThat(actualRestApiClientScopes).hasSize(1);
+    assertThat(actualRestApiClientScopes.get(0).getSearchScopes()).hasSize(1);
+    assertThat(actualRestApiClientScopes.get(0).getFileScopes()).hasSize(1);
+    assertThat(actualRestApiClientScopes.get(0).getSchemaNames()).isEqualTo(expectedSchemaNames);
+    assertThat(actualResultControllerScope.getSchemaName()).isEqualTo(SEARCH_SCHEMA_NAME);
+    assertThat(actualResultControllerScope.getEndpoint()).isEqualTo("/test-schema-search");
+    assertThat(actualResultControllerScope.getResponseType()).isEqualTo(List.class.getCanonicalName());
+    assertThat(actualFileEndpointScope.getTableEndpoint()).isEqualTo("test-schema");
+    assertThat(actualFileEndpointScope.getColumnEndpoint()).isEqualTo("column-file");
+    assertThat(actualFileEndpointScope.getMethodName()).isEqualTo("getFilesTestSchemaColumnFile");
+    assertThat(actualFileEndpointScope.getPkType()).isEqualTo("java.util.UUID");
   }
 
   @Test
   void shouldCreateCorrectScopeResponseType() {
-    when(provider.getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA))
+    when(provider.getExposedSearchConditionsByType(ExposeSearchConditionOption.TREMBITA))
         .thenReturn(Set.of(VIEW_NAME));
+    var scInfo = new SearchConditions();
+    scInfo.setPagination(SearchConditionPaginationType.PAGE);
+    when(provider.findFor(VIEW_NAME)).thenReturn(scInfo);
+    var expectedSchemaNames =
+        Set.of("TestSchemaSearchSearchConditionResponse", "TestSchemaSearchSearchConditions");
+
+    var actualRestApiClientScopes = instance.create(context);
+
+    var actualResultControllerScope =
+        actualRestApiClientScopes.get(0).getSearchScopes().get(0);
+    var actualFileEndpointScope =
+            actualRestApiClientScopes.get(0).getFileScopes().get(0);
+
+    assertThat(actualRestApiClientScopes).hasSize(1);
+    assertThat(actualRestApiClientScopes.get(0).getSearchScopes()).hasSize(1);
+    assertThat(actualRestApiClientScopes.get(0).getFileScopes()).hasSize(1);
+    assertThat(actualRestApiClientScopes.get(0).getSchemaNames()).isEqualTo(expectedSchemaNames);
+    assertThat(actualResultControllerScope.getSchemaName()).isEqualTo(SEARCH_SCHEMA_NAME);
+    assertThat(actualResultControllerScope.getEndpoint()).isEqualTo("/test-schema-search");
+    assertThat(actualResultControllerScope.getResponseType())
+        .isEqualTo(ScopeTypeUtils.SEARCH_CONDITION_PAGE_TYPE);
+    assertThat(actualFileEndpointScope.getTableEndpoint()).isEqualTo("test-schema");
+    assertThat(actualFileEndpointScope.getColumnEndpoint()).isEqualTo("column-file");
+    assertThat(actualFileEndpointScope.getMethodName()).isEqualTo("getFilesTestSchemaColumnFile");
+    assertThat(actualFileEndpointScope.getPkType()).isEqualTo("java.util.UUID");
+  }
+
+  @Test
+  void shouldCreateCorrectScopeWithFileEndpoints() {
+    when(provider.getExposedSearchConditionsByType(ExposeSearchConditionOption.TREMBITA))
+            .thenReturn(Set.of(VIEW_NAME));
     var scInfo = new SearchConditions();
     scInfo.setPagination(SearchConditionPaginationType.PAGE);
     when(provider.findFor(VIEW_NAME)).thenReturn(scInfo);
@@ -96,7 +153,7 @@ class RestApiClientScopeFactoryTest {
 
   @Test
   void shouldNotReturnEmptyList() {
-    when(provider.getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA))
+    when(provider.getExposedSearchConditionsByType(ExposeSearchConditionOption.TREMBITA))
         .thenReturn(Set.of("incorrect_search"));
 
     var restApiClientScopes = instance.create(context);

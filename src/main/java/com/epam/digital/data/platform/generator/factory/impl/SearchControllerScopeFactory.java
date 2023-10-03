@@ -25,6 +25,7 @@ import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginati
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.permissionmap.PermissionMap;
+import com.epam.digital.data.platform.generator.permissionmap.PermissionObjectType;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -76,14 +77,21 @@ public class SearchControllerScopeFactory extends SearchConditionsAbstractScope<
   }
 
   private Set<String> findReadRoles(Table table) {
-    var nestedTables =
-        nestedReadProvider.findFor(getCutTableName(table.getName())).values().stream()
-            .map(NestedReadEntity::getRelatedTable)
-            .collect(Collectors.toSet());
-    var nestedTablesPermissions = permissionMap.getReadExpressionsFor(nestedTables);
+    String tableName = getCutTableName(table.getName());
+
+    var nestedTables = findNestedTables(tableName);
+    var nestedTablesPermissions = permissionMap.getReadExpressionsForTables(nestedTables);
     var viewPermissions = findRolesForView(table);
-    return Stream.of(viewPermissions, nestedTablesPermissions)
+    var searchConditionPermission = permissionMap.getReadExpressionsForByType(tableName, PermissionObjectType.SEARCH_CONDITION);
+
+    return Stream.of(viewPermissions, nestedTablesPermissions, searchConditionPermission)
         .flatMap(Collection::stream)
+        .collect(Collectors.toSet());
+  }
+
+  private Set<String> findNestedTables(String tableName) {
+    return nestedReadProvider.findFor(tableName).values().stream()
+        .map(NestedReadEntity::getRelatedTable)
         .collect(Collectors.toSet());
   }
 
@@ -99,7 +107,7 @@ public class SearchControllerScopeFactory extends SearchConditionsAbstractScope<
 
   private Set<String> findRolesForTable(String tableName, Set<String> columns) {
     Function<String, Set<String>> getReadExpressionsForColumn =
-        column -> permissionMap.getReadExpressionsFor(tableName, column);
+        column -> permissionMap.getReadExpressionsForTable(tableName, column);
 
     return columns.stream()
         .map(getReadExpressionsForColumn)

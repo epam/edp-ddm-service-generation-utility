@@ -19,6 +19,7 @@ package com.epam.digital.data.platform.generator.permissionmap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.epam.digital.data.platform.generator.config.DataSourceEnable;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,5 +36,49 @@ class PermissionMapIT {
     var roles = instance.getCreateExpressionsFor("pd_processing_consent");
 
     assertThat(roles).containsExactlyInAnyOrder("denyAll");
+  }
+
+  @Test
+  void shouldFindReadRolesOnlyForTable() {
+    var roles = instance.getReadExpressionsForTable("pb_table_read_role");
+
+    assertThat(roles).containsExactlyInAnyOrder(
+        String.format(PermissionMap.HAS_ANY_ROLE, "officer"));
+  }
+
+  @Test
+  void shouldFindReadRolesByTableType() {
+    var roles = instance.getReadExpressionsForByType("pb_type_read", PermissionObjectType.TABLE);
+
+    assertThat(roles).containsExactlyInAnyOrder(
+        String.format(PermissionMap.HAS_ANY_ROLE, "officer"));
+  }
+
+  @Test
+  void shouldFindReadRolesBySearchConditionType() {
+    var roles = instance.getReadExpressionsForByType("pb_type_read",
+        PermissionObjectType.SEARCH_CONDITION);
+
+    assertThat(roles).containsExactlyInAnyOrder(
+        String.format(PermissionMap.HAS_ANY_ROLE, "op-regression"));
+  }
+
+  @Test
+  void shouldFindTablesReadRoles() {
+    var roles = instance.getReadExpressionsForTables(
+        Set.of("pb_tables_read_roles_1",
+            "pb_tables_read_roles_2"));
+
+    assertThat(roles).containsExactlyInAnyOrder(
+        String.format(PermissionMap.HAS_ANY_ROLE, "officer"),
+        String.format(PermissionMap.HAS_ANY_ROLE, "op-regression"));
+  }
+
+  @Test
+  void shouldReturnColumnAndTableReadRoles() {
+    var roles = instance.getReadExpressionsForTable("pb_column_read_roles", "first_column");
+
+    assertThat(roles).containsExactlyInAnyOrder(
+        String.format(PermissionMap.HAS_ANY_ROLE, "officer','op-regression"));
   }
 }

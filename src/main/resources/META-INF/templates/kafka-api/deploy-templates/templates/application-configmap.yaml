@@ -9,6 +9,10 @@ data:
         web:
           exposure:
             include: 'health, prometheus'
+      metrics:
+        distribution:
+          percentiles-histogram[http.server.requests]: true
+          percentiles[http.server.requests]: 0.95
     data-platform:
       datasource:
         url: jdbc:postgresql://{{.Values.db.url}}:{{.Values.db.port}}/{{.Values.db.name}}?ApplicationName={{ .Chart.Name }}

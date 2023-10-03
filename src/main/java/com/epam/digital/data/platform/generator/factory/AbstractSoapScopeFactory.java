@@ -21,13 +21,18 @@ import com.epam.digital.data.platform.generator.metadata.SearchConditionPaginati
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.SearchControllerScope;
-import com.epam.digital.data.platform.generator.scope.SoapScope;
+import com.epam.digital.data.platform.generator.scope.SoapSearchScope;
+import com.epam.digital.data.platform.generator.utils.DbUtils;
 import com.epam.digital.data.platform.generator.utils.ScopeTypeUtils;
 import schemacrawler.schema.Table;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public abstract class AbstractSoapScopeFactory extends AbstractScope<SoapScope> {
+public abstract class AbstractSoapScopeFactory extends AbstractScope<SoapSearchScope> {
 
   private final SearchConditionProvider searchConditionProvider;
 
@@ -36,38 +41,89 @@ public abstract class AbstractSoapScopeFactory extends AbstractScope<SoapScope> 
   }
 
   @Override
-  public List<SoapScope> create(Context context) {
-    var soapScope = new SoapScope();
-
-    context.getCatalog().getTables().stream()
+  public List<SoapSearchScope> create(Context context) {
+    var exposedSc = context.getCatalog().getTables().stream()
         .filter(this::isApplicable)
-        .forEach(t -> map(t, soapScope));
+            .collect(Collectors.toList());
+
+    var schemaNames = exposedSc.
+            stream().flatMap(this::getRequiredSearchSchemaNames)
+            .collect(Collectors.toSet());
+
+    var searchScopes = exposedSc.stream()
+            .map(this::getRequiredSearchScopes)
+            .collect(Collectors.toList());
+
+    var fileScopes = getFileScopes(exposedSc, context);
+
+    var soapScope = new SoapSearchScope();
+    soapScope.setSchemaNames(schemaNames);
+    soapScope.setSearchScopes(searchScopes);
+    soapScope.setFileScopes(fileScopes);
 
     return List.of(soapScope);
   }
 
-  private SoapScope map(Table table, SoapScope soapScope) {
+  private Stream<String> getRequiredSearchSchemaNames(Table table) {
+    return Stream.of(
+        getSchemaName(table) + "SearchConditionResponse",
+        getSchemaName(table) + "SearchConditions");
+  }
+
+  private SearchControllerScope getRequiredSearchScopes(Table table) {
     var searchConditionInfo = searchConditionProvider.findFor(getCutTableName(table.getName()));
 
-    soapScope.addSchemaName(getSchemaName(table) + "SearchConditionResponse");
-    soapScope.addSchemaName(getSchemaName(table) + "SearchConditions");
-
-    var controllerScope = new SearchControllerScope();
-    controllerScope.setSchemaName(getSchemaName(table));
-    controllerScope.setEndpoint(getEndpoint(table.getName()));
+    var searchControllerScope = new SearchControllerScope();
+    searchControllerScope.setSchemaName(getSchemaName(table));
+    searchControllerScope.setEndpoint(getEndpoint(table.getName()));
     if (SearchConditionPaginationType.isTypePage(searchConditionInfo.getPagination())) {
-      controllerScope.setResponseType(ScopeTypeUtils.SEARCH_CONDITION_PAGE_TYPE);
+      searchControllerScope.setResponseType(ScopeTypeUtils.SEARCH_CONDITION_PAGE_TYPE);
     } else {
-      controllerScope.setResponseType(List.class.getCanonicalName());
+      searchControllerScope.setResponseType(List.class.getCanonicalName());
     }
 
-    soapScope.addSearchScopes(controllerScope);
-    return soapScope;
+    return searchControllerScope;
+  }
+
+  private List<SoapSearchScope.GetFileScopeInfo> getFileScopes(List<Table> exposedSc, Context context) {
+    var anyExposedScContainFile =
+            exposedSc.stream()
+                    .map(Table::getColumns)
+                    .flatMap(Collection::stream)
+                    .anyMatch(DbUtils::isColumnFileOrFileArray);
+
+    if (anyExposedScContainFile) {
+      return context.getCatalog().getTables().stream()
+                      .filter(this::isRecentDataTable)
+                      .flatMap(
+                              table -> {
+                                var fileColumns =
+                                        table.getColumns().stream()
+                                                .filter(DbUtils::isColumnFileOrFileArray)
+                                                .collect(Collectors.toList());
+
+                                return fileColumns.stream()
+                                        .map(
+                                                column -> {
+                                                  var scopeInfo = new SoapSearchScope.GetFileScopeInfo();
+                                                  scopeInfo.setTableEndpoint(toHyphenTableName(table.getName()));
+                                                  scopeInfo.setColumnEndpoint(toHyphenTableName(column.getName()));
+                                                  scopeInfo.setPkType(getPkTypeName(table));
+                                                  scopeInfo.setMethodName(
+                                                          "getFiles"
+                                                                  + getSchemaName(table)
+                                                                  + getSchemaName(column.getName()));
+                                                  return scopeInfo;
+                                                });
+                              })
+                      .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
   }
 
   private boolean isApplicable(Table table) {
     return searchConditionProvider
-            .getExposedSearchConditions(ExposeSearchConditionOption.TREMBITA)
+            .getExposedSearchConditionsByType(ExposeSearchConditionOption.TREMBITA)
             .contains(getCutTableName(table))
         && isSearchConditionsView(table);
   }

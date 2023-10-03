@@ -11,13 +11,18 @@ spec:
   rules:
     - to:
       - operation:
-          methods: [ "GET", "POST" ]
+          methods: [ "GET"]
           paths:
             - /actuator*
             - /openapi
             - /swagger-ui/*
             - /v3*
-          {{- include "external.platform.paths" . | nindent 8 }}
-          {{- include "external.external.paths" . | nindent 8 }}
+          {{- include "external.platform.paths.deprecated" . | nindent 8 }}
+          {{- include "external.external.paths.deprecated" . | nindent 8 }}
+      - operation:
+          methods: [ "GET", "POST" ]
+          paths:
+          {{- include "external.platform.search.paths" . | nindent 8 }}
+          {{- include "external.external.search.paths" . | nindent 8 }}
   action: ALLOW
 {{end}}

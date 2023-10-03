@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}
+data:
+  application.yml: |-
+    bpms.url: {{ .Values.bpmsUrl }}
+    dso.url: {{ .Values.dsoURL }}
+    keycloak.url: {{ template "keycloak.url" . }}
+    keycloak.realm: {{ template "keycloak.externalSystemTargetRealm" . }}
+    keycloak.client-id: {{ .Values.keycloak.trembitaInvokerClient.clientName }}
+    spring.zipkin.baseUrl: {{ .Values.zipkinBaseUrl }}
+    {{- if eq .Values.deployProfile "dev" }}
+    management.endpoints.web.exposure.include: '*'
+    {{- else }}
+    management.endpoints.web.exposure.include: 'health, prometheus'
+    {{- end }}
+    management:
+      metrics:
+        distribution:
+          percentiles-histogram[http.server.requests]: true
+          percentiles[http.server.requests]: 0.95
+    
+    redis.endpoint : rfs-redis-sentinel.{{ .Release.Namespace }}.svc:26379
+    storage: {{ toYaml .Values.storage | nindent 6 }}

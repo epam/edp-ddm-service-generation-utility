@@ -33,7 +33,7 @@ public class CreateServiceScopeFactory extends AbstractServiceScope<CreateServic
   @Override
   protected CreateServiceScope map(Table table, Context context) {
     var scope = super.map(table, context);
-    scope.setRls(getRlsMetadata(table.getName()));
+    scope.setRls(getRlsRestriction(table.getName()));
     return scope;
   }
 

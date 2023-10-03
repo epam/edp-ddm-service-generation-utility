@@ -16,7 +16,7 @@
 
 package com.epam.digital.data.platform.generator.scope;
 
-import com.epam.digital.data.platform.generator.metadata.RlsMetadata;
+import com.epam.digital.data.platform.generator.model.template.RlsFieldRestriction;
 
 public abstract class ServiceScope extends ClassScope {
 
@@ -25,7 +25,7 @@ public abstract class ServiceScope extends ClassScope {
   private String pkName;
   private String pkType;
 
-  private RlsMetadata rls;
+  private RlsFieldRestriction rls;
 
   public String getSchemaName() {
     return schemaName;
@@ -59,11 +59,11 @@ public abstract class ServiceScope extends ClassScope {
     this.pkType = pkType;
   }
 
-  public RlsMetadata getRls() {
+  public RlsFieldRestriction getRls() {
     return rls;
   }
 
-  public void setRls(RlsMetadata rls) {
+  public void setRls(RlsFieldRestriction rls) {
     this.rls = rls;
   }
 }

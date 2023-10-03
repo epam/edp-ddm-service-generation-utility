@@ -82,8 +82,8 @@ class ReadControllerScopeFactoryTest {
 
   @Test
   void shouldCreateControllerScope() {
-    when(permissionMap.getReadExpressionsFor(TABLE_NAME)).thenReturn(ROLE_SET);
-    when(permissionMap.getReadExpressionsFor(RELATED_TABLE_NAME))
+    when(permissionMap.getReadExpressionsForTable(TABLE_NAME)).thenReturn(ROLE_SET);
+    when(permissionMap.getReadExpressionsForTable(RELATED_TABLE_NAME))
         .thenReturn(Collections.emptySet());
 
     List<ReadControllerScope> resultList = instance.create(context);
@@ -112,8 +112,8 @@ class ReadControllerScopeFactoryTest {
 
   @Test
   void shouldCreateControllerScopeWithNestedReads() {
-    when(permissionMap.getReadExpressionsFor(Set.of(TABLE_NAME, RELATED_TABLE_NAME))).thenReturn(ROLE_SET);
-    when(permissionMap.getReadExpressionsFor(RELATED_TABLE_NAME))
+    when(permissionMap.getReadExpressionsForTables(Set.of(TABLE_NAME, RELATED_TABLE_NAME))).thenReturn(ROLE_SET);
+    when(permissionMap.getReadExpressionsForTable(RELATED_TABLE_NAME))
             .thenReturn(Collections.emptySet());
     when(nestedReadProvider.findFor(TABLE_NAME)).thenReturn(
             Map.of(COLUMN_NAME, new NestedReadEntity(TABLE_NAME, COLUMN_NAME, RELATED_TABLE_NAME)));

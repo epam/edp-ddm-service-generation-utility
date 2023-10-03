@@ -10,6 +10,7 @@ The list of Services to be generated must be given as a program argument(s). Sup
 * soap api - service to accept Trembita requests for data via SOAP protocol
 * rest api - service to accept HTTP requests to operate data based on registry regulation (CRUD operations with entities, search operations for complex requests)
 * kafka api - service to process requests from rest-api according to request-reply integration pattern
+* bp-webservice-gateway -  service to accept HTTP/SOAP requests for starting business processes.
 
 ### Related components:
 * PostgreSQL database - for data persistence
@@ -39,7 +40,28 @@ settings:
       write: 123456789
 ```
 
-Local development is possible in 2 different modes: cluster port-forwarded (preferrable) and clusterless
+Local development is possible in 3 different modes: cluster port-forwarded (preferrable), clusterless, db-less
+
+#### Db-less mode
+
+**Note**: At the moment, generation is available in this mode only for `bp-webservice-gateway` service.
+
+1. Add `--module=bp-webservice-gateway` to program run arguments
+2. Add `-Dspring.profiles.active=db-less-mode -Dsettings=settings.yaml -Ddefinitions=external-system.yml` to program VM options
+3. Run application with your favourite IDE or via `java -jar ...` with jar file, created above
+4. `external-system.yml` - file that contains process definition identifiers and looks like:
+```yaml
+trembita:
+  process_definitions:
+    - process_definition_id: 'first-definition'
+      start_vars:
+        - edrpou
+      return_vars: []
+    - process_definition_id: 'second-definition'
+      start_vars:
+        - drfo
+      return_vars: []
+```
 
 #### Cluster port-forwarded mode
 
@@ -303,6 +325,40 @@ audit:
 ```
 
 2. Steps 2-6 from `rest-api` instruction
+
+#### bp-webservice-api
+
+1. Prerequisites:
+
+* business-process-management service is configured and running;
+* Ceph-storage is configured and running;
+* Keycloak is configured and running;
+* digital-signature-ops service is configured and running.
+
+2. Configuration
+
+Available properties are following:
+
+* `bpms.url` - business process management service base url;
+* `dso.url` - digital signature ops service base url;
+* `ceph.http-endpoint` - ceph base url;
+* `ceph.access-key` - ceph access key;
+* `ceph.secret-key` - ceph secret key;
+* `ceph.bucket` - ceph bucket name;
+* `keycloak.url` - keycloak base url;
+* `keycloak.realm` - keycloak realm name;
+* `keycloak.client-id` - keycloak client identifier;
+* `keycloak.client-secret` - keycloak client secret.
+
+3. Run application:
+
+* `java -jar <file-name>.jar`
+* WSDL will be available on: `http://localhost:8080/ws/bpWebservice.wsdl`
+
+4. Run spring boot application using 'local' profile:
+
+* `mvn spring-boot:run -Drun.profiles=local` OR using appropriate functions of your IDE;
+* `application-local.yml` is configuration file for local development.
 
 ### Code style
 

@@ -3,6 +3,7 @@
 </#macro>
 package ${basePackage}.restapi.controller;
 
+import javax.validation.Valid;
 import com.epam.digital.data.platform.model.core.kafka.Request;
 import com.epam.digital.data.platform.model.core.kafka.RequestContext;
 import com.epam.digital.data.platform.model.core.kafka.SecurityContext;
@@ -24,7 +25,6 @@ import ${basePackage}.model.dto.${schemaName}SearchConditions;
 import ${basePackage}.restapi.service.${serviceName};
 
 @RestController
-@RequestMapping("${endpoint}")
 public class ${className} {
 
   private final Logger log = LoggerFactory.getLogger(${className}.class);
@@ -38,9 +38,9 @@ public class ${className} {
 
   @AuditableController
 <@PreAuthorize roles=readRoles />
-  @GetMapping
+  @GetMapping("${endpoint}")
   public ResponseEntity<${responseType}<${schemaName}SearchConditionResponse>> search(
-      ${schemaName}SearchConditions searchConditions,
+      @Valid ${schemaName}SearchConditions searchConditions,
       @HttpRequestContext RequestContext context,
       @HttpSecurityContext SecurityContext securityContext) {
     log.info("GET ${endpoint} called");
@@ -51,12 +51,25 @@ public class ${className} {
 
   @AuditableController
 <@PreAuthorize roles=readRoles />
-  @PostMapping
-  public ResponseEntity<${responseType}<${schemaName}SearchConditionResponse>> searchPost(
-      @RequestBody ${schemaName}SearchConditions searchConditions,
+  @GetMapping("/search${endpoint}")
+  public ResponseEntity<${responseType}<${schemaName}SearchConditionResponse>> searchGet(
+      @Valid ${schemaName}SearchConditions searchConditions,
       @HttpRequestContext RequestContext context,
       @HttpSecurityContext SecurityContext securityContext) {
-    log.info("POST ${endpoint} called");
+    log.info("GET /search${endpoint} called");
+    var request = new Request<>(searchConditions, context, securityContext);
+    var response = searchService.request(request);
+    return ResponseResolverUtil.getHttpResponseFromKafka(response);
+  }
+
+  @AuditableController
+<@PreAuthorize roles=readRoles />
+  @PostMapping("/search${endpoint}")
+  public ResponseEntity<${responseType}<${schemaName}SearchConditionResponse>> searchPost(
+      @Valid @RequestBody ${schemaName}SearchConditions searchConditions,
+      @HttpRequestContext RequestContext context,
+      @HttpSecurityContext SecurityContext securityContext) {
+    log.info("POST /search${endpoint} called");
     var request = new Request<>(searchConditions, context, securityContext);
     var response = searchService.request(request);
     return ResponseResolverUtil.getHttpResponseFromKafka(response);

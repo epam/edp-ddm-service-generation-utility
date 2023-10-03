@@ -21,13 +21,16 @@ import com.epam.digital.data.platform.generator.metadata.ExposeSearchConditionOp
 import com.epam.digital.data.platform.generator.metadata.SearchConditionProvider;
 import com.epam.digital.data.platform.generator.model.Context;
 import com.epam.digital.data.platform.generator.scope.RestApiValuesScope;
+import com.epam.digital.data.platform.generator.utils.DbUtils;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
+import schemacrawler.schema.Table;
 
 @Component
 public class RestApiValuesScopeFactory extends AbstractScope<RestApiValuesScope> {
@@ -53,12 +56,16 @@ public class RestApiValuesScopeFactory extends AbstractScope<RestApiValuesScope>
             .map(JsonNode::textValue)
             .orElse(null);
     scope.setS3Signer(signer);
-    scope.setExposedToPlatformPaths(
-        getExposedSearchConditionPaths(ExposeSearchConditionOption.PLATFORM));
-    scope.setExposedToExternalPaths(
-        getExposedSearchConditionPaths(ExposeSearchConditionOption.EXTERNAL_SYSTEM));
-    scope.setExposedToPublicPaths(
-        getExposedSearchConditionPaths(ExposeSearchConditionOption.PUBLIC_ACCESS));
+    var exposedSc = context.getCatalog().getTables()
+                    .stream()
+                            .filter(this::isApplicable)
+                                    .collect(Collectors.toList());
+    scope.setExposedToPlatformInfo(
+        getExposedSearchConditionsInfo(ExposeSearchConditionOption.PLATFORM, exposedSc));
+    scope.setExposedToExternalInfo(
+        getExposedSearchConditionsInfo(ExposeSearchConditionOption.EXTERNAL_SYSTEM, exposedSc));
+    scope.setExposedToPublicInfo(
+        getExposedSearchConditionsInfo(ExposeSearchConditionOption.PUBLIC_ACCESS, exposedSc));
 
     String stageName =
         Optional.ofNullable(values.get("stageName")).map(JsonNode::textValue).orElse(null);
@@ -66,10 +73,26 @@ public class RestApiValuesScopeFactory extends AbstractScope<RestApiValuesScope>
     return List.of(scope);
   }
 
-  private Set<String> getExposedSearchConditionPaths(ExposeSearchConditionOption option) {
-    return searchConditionProvider.getExposedSearchConditions(option).stream()
+  private RestApiValuesScope.ExposedSearchConditionsInfo getExposedSearchConditionsInfo(ExposeSearchConditionOption option, List<Table> exposedScViews) {
+    var exposedSc = searchConditionProvider.getExposedSearchConditionsByType(option);
+
+    var info = new RestApiValuesScope.ExposedSearchConditionsInfo();
+    var endpoints = exposedSc.stream()
             .map(this::getEndpoint)
             .collect(Collectors.toSet());
+    info.setPaths(endpoints);
+    var exposedScContainsFile = exposedScViews.stream()
+            .filter(exposedScView -> exposedSc.contains(getCutTableName(exposedScView)))
+            .map(Table::getColumns)
+            .flatMap(Collection::stream)
+            .anyMatch(DbUtils::isColumnFileOrFileArray);
+    info.setAnyResponseContainsFile(exposedScContainsFile);
+    return info;
+  }
+
+  private boolean isApplicable(Table table) {
+    return searchConditionProvider.getAllExposedSearchConditions().contains(getCutTableName(table))
+        && isSearchConditionsView(table);
   }
 
   @Override

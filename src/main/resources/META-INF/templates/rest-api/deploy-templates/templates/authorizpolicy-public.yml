@@ -11,12 +11,16 @@ spec:
   rules:
     - to:
       - operation:
-          methods: [ "GET", "POST" ]
+          methods: [ "GET" ]
           paths:
             - /actuator*
             - /openapi
             - /swagger-ui/*
             - /v3*
-          {{- include "public.paths" . | nindent 8 }}
+          {{- include "public.paths.deprecated" . | nindent 8 }}
+      - operation:
+          methods: [ "GET", "POST" ]
+          paths:
+          {{- include "public.search.paths" . | nindent 8 }}
   action: ALLOW
 {{end}}

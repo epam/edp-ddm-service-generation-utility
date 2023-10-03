@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2023 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package com.epam.digital.data.platform.generator.config;
+package com.epam.digital.data.platform.generator.config.general;
 
-import com.epam.digital.data.platform.generator.config.properties.ServiceGenerationProperties;
-import com.epam.digital.data.platform.generator.metadata.AsyncDataProvider;
-import com.epam.digital.data.platform.generator.model.Context;
+import com.epam.digital.data.platform.generator.config.general.properties.ServiceGenerationProperties;
 import com.epam.digital.data.platform.generator.model.Settings;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -36,19 +32,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import schemacrawler.schema.Catalog;
 
 @Configuration
 public class MainConfig {
 
-  @Autowired
-  private AsyncDataProvider asyncDataProvider;
 
   @Bean
   public Settings settings(@Value("file:#{systemProperties.settings}") Resource file,
@@ -60,12 +52,6 @@ public class MainConfig {
     }
   }
   
-  @Bean
-  public JsonNode values(@Value("file:${PLATFORM_VALUES_PATH}") File file, ObjectMapper mapper)
-      throws IOException {
-    return mapper.readTree(file);
-  }
-
   @Bean
   public ObjectMapper yamlMapper() {
     var mapper = new ObjectMapper(new YAMLFactory());
@@ -91,8 +77,4 @@ public class MainConfig {
     return root;
   }
 
-  @Bean
-  public Context context(Settings settings, Catalog catalog) {
-    return new Context(settings, catalog, asyncDataProvider.findAll());
-  }
 }

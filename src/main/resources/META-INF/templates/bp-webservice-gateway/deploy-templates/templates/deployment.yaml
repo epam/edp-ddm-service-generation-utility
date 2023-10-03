@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  {{- if not .Values.global.registry.bpWebserviceGateway.hpa.enabled }}
+  replicas: {{ .Values.global.registry.bpWebserviceGateway.replicas }}
+  {{- end }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      {{- if or .Values.podAnnotations .Values.global.registry.bpWebserviceGateway.istio.sidecar.enabled }}
+      annotations:
+        {{- if .Values.global.registry.bpWebserviceGateway.istio.sidecar.enabled }}
+        sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: '6379'
+        {{- if .Values.global.istio.sidecar.requestsLimitsEnabled }}
+        {{- include "bpWebserviceGateway.istioResources" . | nindent 8 }}
+        {{- else }}
+        inject.istio.io/templates: 'sidecar,emptyRequestsLimits'
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      labels:
+        app: {{ .Chart.Name }}
+        collect.logs: "json"
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.nexusPullSecret }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.name }}:{{ .Values.image.version }}"
+        imagePullPolicy: Always
+        ports:
+          - containerPort: {{ .Values.port }}
+            name: ui
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.port }}
+          failureThreshold: 10
+          initialDelaySeconds: 75
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.readinessPath }}
+            port: {{ .Values.port }}
+            httpHeaders:
+              - name: X-B3-Sampled
+                value: "0"
+          failureThreshold: 1
+          initialDelaySeconds: 75
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 5
+        {{- if .Values.global.container.requestsLimitsEnabled }}
+        resources:
+          {{- toYaml .Values.global.registry.bpWebserviceGateway.container.resources | nindent 10 }}
+        {{- end }}
+        env:
+          {{- range $name, $value := .Values.global.registry.bpWebserviceGateway.container.envVars }}
+          - name: {{ $name }}
+            value: {{ $value | quote }}
+          {{- end }}
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.redis.secretName }}
+                key: password
+        volumeMounts:
+          - name: {{ .Chart.Name }}
+            mountPath: {{ .Values.appConfigMountPath }}
+          - name: {{ .Chart.Name }}-trembita-business-processes
+            mountPath: {{ .Values.trembitaBusinessProcessesConfigMountPath }}
+          - name: {{ .Values.keycloak.trembitaInvokerClient.secretName }}
+            mountPath: {{ .Values.trembitaInvokerKeycloakClientSecretsMountPath }}
+          - name: {{ .Chart.Name }}-redis-credentials
+            mountPath: {{ .Values.redisSecretsMountPath }}
+      serviceAccountName: {{ .Chart.Name }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.podSecurityContext }}
+      securityContext: {{ toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: {{ .Chart.Name }}
+          configMap:
+            name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-trembita-business-processes
+          configMap:
+            name: {{ .Chart.Name }}-trembita-business-processes
+        - name: {{ .Values.keycloak.trembitaInvokerClient.secretName }}
+          secret:
+            secretName: {{ .Values.keycloak.trembitaInvokerClient.secretName }}
+            items:
+            - key: clientSecret
+              path: keycloak.client-secret
+        - name: {{ .Chart.Name }}-redis-credentials
+          secret:
+            secretName: {{ .Values.redis.secretName }}
+            items:
+              - key: password
+                path: redis.password

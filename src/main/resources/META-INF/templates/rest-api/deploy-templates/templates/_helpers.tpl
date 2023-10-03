@@ -42,6 +42,14 @@
 {{- printf "%s-%s" (include "keycloak.customUrlPrefix" .) .Values.keycloak.realms.external -}}
 {{- end -}}
 
+{{- define "kongPluginIssuer.external" -}}
+{{- if .Values.keycloak.customHost }}
+{{- include "custom-issuer.external" . }}
+{{- else }}
+{{- include "issuer.external" . }}
+{{- end }}
+{{- end -}}
+
 {{- define "jwksUri.officer" -}}
 {{- printf "%s-%s%s" (include "keycloak.urlPrefix" .) .Values.keycloak.realms.officer .Values.keycloak.certificatesEndpoint -}}
 {{- end -}}
@@ -65,21 +73,51 @@
 {{- end -}}
 {{- end }}
 
-{{- define "external.platform.paths" -}}
+{{- define "external.platform.paths.deprecated" -}}
   {{- range $path := (((.Values.exposeSearchConditions).platform).paths) }}
     - {{ $path }}
   {{- end }}
 {{- end -}}
 
-{{- define "external.external.paths" -}}
+{{- define "external.platform.search.paths" -}}
+  {{- range $path := (((.Values.exposeSearchConditions).platform).paths) }}
+    - /search{{ $path }}
+  {{- end }}
+{{- end -}}
+
+{{- define "external.external.paths.deprecated" -}}
   {{- range $path := (((.Values.exposeSearchConditions).external).paths) }}
     - {{ $path }}
   {{- end }}
 {{- end -}}
 
-{{- define "public.paths" -}}
+{{- define "external.external.search.paths" -}}
+  {{- range $path := (((.Values.exposeSearchConditions).external).paths) }}
+    - /search{{ $path }}
+  {{- end }}
+{{- end -}}
+
+{{- define "public.paths.deprecated" -}}
   {{- range $path := (((.Values.exposeSearchConditions).public).paths) }}
     - {{ $path }}
+  {{- end }}
+{{- end -}}
+
+{{- define "public.search.paths" -}}
+  {{- range $path := (((.Values.exposeSearchConditions).public).paths) }}
+    - /search{{ $path }}
+  {{- end }}
+{{- end -}}
+
+{{- define "public.swagger.paths.deprecated" -}}
+  {{- range $path := (((.Values.exposeSearchConditions).public).paths) }}
+    - {{ $path | replace "*" "**" }}
+  {{- end }}
+{{- end -}}
+
+{{- define "public.swagger.search.paths" -}}
+  {{- range $path := (((.Values.exposeSearchConditions).public).paths) }}
+    - /search{{ $path | replace "*" "**" }}
   {{- end }}
 {{- end -}}
 
@@ -112,15 +150,23 @@ app.kubernetes.io/component: app
 {{- define "restApi.istioResources" -}}
 {{- if .Values.global.registry.restApi.istio.sidecar.resources.limits.cpu }}
 sidecar.istio.io/proxyCPULimit: {{ .Values.global.registry.restApi.istio.sidecar.resources.limits.cpu | quote }}
+{{- else if and (not .Values.global.registry.restApi.istio.sidecar.resources.limits.cpu) .Values.global.istio.sidecar.resources.limits.cpu }}
+sidecar.istio.io/proxyCPULimit: {{ .Values.global.istio.sidecar.resources.limits.cpu | quote }}
 {{- end }}
 {{- if .Values.global.registry.restApi.istio.sidecar.resources.limits.memory }}
 sidecar.istio.io/proxyMemoryLimit: {{ .Values.global.registry.restApi.istio.sidecar.resources.limits.memory | quote }}
+{{- else if and (not .Values.global.registry.restApi.istio.sidecar.resources.limits.memory) .Values.global.istio.sidecar.resources.limits.memory }}
+sidecar.istio.io/proxyMemoryLimit: {{ .Values.global.istio.sidecar.resources.limits.memory | quote }}
 {{- end }}
 {{- if .Values.global.registry.restApi.istio.sidecar.resources.requests.cpu }}
 sidecar.istio.io/proxyCPU: {{ .Values.global.registry.restApi.istio.sidecar.resources.requests.cpu | quote }}
+{{- else if and (not .Values.global.registry.restApi.istio.sidecar.resources.requests.cpu) .Values.global.istio.sidecar.resources.requests.cpu }}
+sidecar.istio.io/proxyCPU: {{ .Values.global.istio.sidecar.resources.requests.cpu | quote }}
 {{- end }}
 {{- if .Values.global.registry.restApi.istio.sidecar.resources.requests.memory }}
 sidecar.istio.io/proxyMemory: {{ .Values.global.registry.restApi.istio.sidecar.resources.requests.memory | quote }}
+{{- else if and (not .Values.global.registry.restApi.istio.sidecar.resources.requests.memory) .Values.global.istio.sidecar.resources.requests.memory }}
+sidecar.istio.io/proxyMemory: {{ .Values.global.istio.sidecar.resources.requests.memory | quote }}
 {{- end }}
 {{- end -}}
 

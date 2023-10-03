@@ -39,7 +39,7 @@ public class ${className} extends GenericService<${schemaName}, Void> {
   <#if rls??>
   @Override
   public Response<Void> request(Request<${schemaName}> input) {
-    var checkParam = String.valueOf(input.getPayload().get${rls.checkColumn?cap_first}());
+    var checkParam = String.valueOf(input.getPayload().get${rls.checkField?cap_first}());
     if (JwtClaimsUtils.getAttributeValueAsStringList(jwtInfoProvider.getUserClaims(input), "${rls.jwtAttribute}")
       .stream().filter(Predicate.not(String::isEmpty)).noneMatch(checkParam::startsWith)) {
       var claims = jwtInfoProvider.getUserClaims(input);
