@@ -1,4 +1,14 @@
 global:
+  externalS3:
+    endpoint: ""
+    caSecretRef: ""
+    buckets:
+      datafactory:
+        name: ""
+        secretRef: ""
+      file:
+        name: ""
+        secretRef: ""
   container:
     requestsLimitsEnabled: true
   istio:

@@ -36,6 +36,12 @@ spec:
         inject.istio.io/templates: 'sidecar,emptyRequestsLimits'
         {{- end }}
         {{- end }}
+        {{- if eq (include "externalS3.caSecretRef.exists" .) "true" }}
+        sidecar.istio.io/userVolume: >
+          {"s3-ca":{"secret":{"secretName":"{{ .Values.global.externalS3.caSecretRef }}"}}}
+        sidecar.istio.io/userVolumeMount: >
+          {"s3-ca":{"mountPath":"/etc/istio/s3-ca","readOnly":true}}
+        {{- end }}
       {{- end }}
     spec:
       serviceAccountName: {{.Values.name }}
@@ -126,12 +132,12 @@ spec:
             - name: DATAFACTORY_CEPH_BUCKET_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Values.datafactoryceph.bucketName }}
+                  name: {{ include "datafactoryBucket.configMapName" . }}
                   key: BUCKET_NAME
             - name: DATAFACTORY_CEPH_BUCKET_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Values.datafactoryceph.bucketName }}
+                  name: {{ include "datafactoryBucket.configMapName" . }}
                   key: BUCKET_HOST
             - name: DATAFACTORY_RESPONSE_CEPH_BUCKET_NAME
               valueFrom:
@@ -156,12 +162,12 @@ spec:
             - name: DATAFACTORY_FILE_CEPH_BUCKET_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Values.datafactoryFileCeph.bucketName }}
+                  name: {{ include "fileBucket.configMapName" . }}
                   key: BUCKET_NAME
             - name: DATAFACTORY_FILE_CEPH_BUCKET_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Values.datafactoryFileCeph.bucketName }}
+                  name: {{ include "fileBucket.configMapName" . }}
                   key: BUCKET_HOST
             - name: KAFKA_USER_KEYSTORE_CERTIFICATE
               valueFrom:
@@ -215,7 +221,7 @@ spec:
                 path: data-platform.datasource.username
         - name: {{ .Values.name }}-datafactory-ceph-bucket-credentials
           secret:
-            secretName: {{ .Values.datafactoryceph.bucketName }}
+            secretName: {{ include "datafactoryBucket.secretName" . }}
             items:
               - key: AWS_ACCESS_KEY_ID
                 path: ceph.access-key
@@ -239,7 +245,7 @@ spec:
                 path: lowcode-file-ceph.secret-key
         - name: {{ .Values.name }}-datafactory-file-ceph-bucket-credentials
           secret:
-            secretName: {{ .Values.datafactoryFileCeph.bucketName }}
+            secretName: {{ include "fileBucket.secretName" . }}
             items:
               - key: AWS_ACCESS_KEY_ID
                 path: datafactory-file-ceph.access-key

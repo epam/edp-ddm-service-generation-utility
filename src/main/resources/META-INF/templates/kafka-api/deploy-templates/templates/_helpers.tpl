@@ -35,3 +35,60 @@ sidecar.istio.io/proxyMemory: {{ .Values.global.istio.sidecar.resources.requests
 {{- printf "%s" "autoscaling/v2" }}
 {{- end }}
 {{- end }}
+
+
+{{- define "externalS3.datafactoryBucket.enabled" -}}
+{{- if and (hasKey .Values.global "externalS3") (hasKey .Values.global.externalS3 "buckets") (hasKey .Values.global.externalS3.buckets "datafactory") (hasKey .Values.global.externalS3.buckets.datafactory "name") .Values.global.externalS3.buckets.datafactory.name -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{- define "externalS3.fileBucket.enabled" -}}
+{{- if and (hasKey .Values.global "externalS3") (hasKey .Values.global.externalS3 "buckets") (hasKey .Values.global.externalS3.buckets "file") (hasKey .Values.global.externalS3.buckets.file "name") .Values.global.externalS3.buckets.file.name -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{- define "datafactoryBucket.configMapName" -}}
+{{- if eq (include "externalS3.datafactoryBucket.enabled" .) "true" -}}
+datafactory-external-s3-bucket
+{{- else -}}
+{{ .Values.datafactoryceph.bucketName }}
+{{- end -}}
+{{- end -}}
+
+{{- define "fileBucket.configMapName" -}}
+{{- if eq (include "externalS3.fileBucket.enabled" .) "true" -}}
+file-external-s3-bucket
+{{- else -}}
+{{ .Values.datafactoryFileCeph.bucketName }}
+{{- end -}}
+{{- end -}}
+
+{{- define "datafactoryBucket.secretName" -}}
+{{- if and (hasKey .Values.global "externalS3") (hasKey .Values.global.externalS3 "buckets") (hasKey .Values.global.externalS3.buckets "datafactory") (hasKey .Values.global.externalS3.buckets.datafactory "secretRef") .Values.global.externalS3.buckets.datafactory.secretRef -}}
+{{ .Values.global.externalS3.buckets.datafactory.secretRef }}
+{{- else -}}
+{{ .Values.datafactoryceph.bucketName }}
+{{- end -}}
+{{- end -}}
+
+{{- define "fileBucket.secretName" -}}
+{{- if and (hasKey .Values.global "externalS3") (hasKey .Values.global.externalS3 "buckets") (hasKey .Values.global.externalS3.buckets "file") (hasKey .Values.global.externalS3.buckets.file "secretRef") .Values.global.externalS3.buckets.file.secretRef -}}
+{{ .Values.global.externalS3.buckets.file.secretRef }}
+{{- else -}}
+{{ .Values.datafactoryFileCeph.bucketName }}
+{{- end -}}
+{{- end -}}
+
+{{- define "externalS3.caSecretRef.exists" -}}
+{{- if and (hasKey .Values.global "externalS3") (hasKey .Values.global.externalS3 "caSecretRef") .Values.global.externalS3.caSecretRef -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}

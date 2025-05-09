@@ -322,6 +322,46 @@ class SearchConditionScopeFactoryTest {
             .contains(pageSize, pageNo);
   }
 
+  @Test
+  void shouldMapEnumFieldToStringForStartsWithSearch() {
+    Field expected = new Field(String.class.getCanonicalName(), "status", emptyList());
+    override(
+        context.getCatalog(),
+        withSearchConditionView("test_table",
+            withColumn("status", String.class, "en_status")));
+    given(enumProvider.findFor("en_status")).willReturn(Set.of("en_status"));
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of("status", SearchType.STARTS_WITH));
+    given(searchConditionProvider.findFor(any())).willReturn(scInfo);
+
+    List<ModelScope> scopes = instance.create(context);
+
+    ModelScope scope = scopes.get(0);
+    assertThat(scope.getFields())
+        .usingFieldByFieldElementComparator()
+        .containsExactly(expected);
+  }
+
+  @Test
+  void shouldMapEnumFieldToStringForContainsSearch() {
+    Field expected = new Field(String.class.getCanonicalName(), "status", emptyList());
+    override(
+        context.getCatalog(),
+        withSearchConditionView("test_table",
+            withColumn("status", String.class, "en_status")));
+    given(enumProvider.findFor("en_status")).willReturn(Set.of("en_status"));
+    var scInfo = new SearchConditions();
+    scInfo.setColumnToSearchType(Map.of("status", SearchType.CONTAINS));
+    given(searchConditionProvider.findFor(any())).willReturn(scInfo);
+
+    List<ModelScope> scopes = instance.create(context);
+
+    ModelScope scope = scopes.get(0);
+    assertThat(scope.getFields())
+        .usingFieldByFieldElementComparator()
+        .containsExactly(expected);
+  }
+
   private List<String> toNamesList(List<ModelScope> modelScopes) {
     return modelScopes.stream()
         .map(ModelScope::getClassName)

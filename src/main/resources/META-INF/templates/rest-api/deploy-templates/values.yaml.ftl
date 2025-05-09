@@ -1,4 +1,14 @@
 global:
+  externalS3:
+    endpoint: ""
+    caSecretRef: ""
+    buckets:
+      datafactory:
+        name: ""
+        secretRef: ""
+      file:
+        name: ""
+        secretRef: ""
   container:
     requestsLimitsEnabled: true
   istio:
@@ -185,7 +195,7 @@ kong:
 stageName: ${stageName}
 
 redis:
-  secretName: redis-auth
+  secretName: redis-registry-rest-api-user-secret
 
 edpComponent:
   description: "Веб-інтерфейс для перегляду API-документації Підсистеми управління даними реєстру з ціллю подальшого використання при побудові взаємодії через типові розширення-конектори у бізнес-процесах."

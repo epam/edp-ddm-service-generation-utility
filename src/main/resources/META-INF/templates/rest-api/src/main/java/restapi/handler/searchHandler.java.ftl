@@ -12,9 +12,19 @@
     }
     </#list>
     <#list operationDef.startsWithFields as field>
-    if (searchConditions.get${field.name?cap_first}() != null) {
-      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").startsWith<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
-    }
+        if (searchConditions.get${field.name?cap_first}() != null) {
+          <#if enumSearchConditionFields?seq_contains(field.columnName)>
+            ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(
+              DSL.field("${field.columnName}", SQLDataType.VARCHAR).cast(String.class)
+                .startsWith<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}())
+            );
+          <#else>
+            ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(
+              DSL.field("${field.columnName}")
+                .startsWith<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}())
+            );
+          </#if>
+        }
     </#list>
     <#list operationDef.startsWithArrayFields as field>
     if (searchConditions.get${field.name?cap_first}() != null) {
@@ -30,24 +40,32 @@
     }
     </#list>
     <#list operationDef.containsFields as field>
-    if (searchConditions.get${field.name?cap_first}() != null) {
-      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").contains<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
-    }
+      if (searchConditions.get${field.name?cap_first}() != null) {
+        <#if enumSearchConditionFields?seq_contains(field.columnName)>
+          ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}", SQLDataType.VARCHAR).cast(String.class).contains<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
+        <#else>
+          ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").contains<#if field.ignoreCase>IgnoreCase</#if>(searchConditions.get${field.name?cap_first}()));
+        </#if>
+      }
     </#list>
     <#list operationDef.inFields as field>
     if (searchConditions.get${field.name?cap_first}() != null) {
-      <#if field.ignoreCase>
-      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.lower(DSL.field("${field.columnName}", String.class))
-        .in(searchConditions.get${field.name?cap_first}().stream()
-        .map(DSL::lower)
-        .collect(Collectors.toList())));
-      <#else>
-      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").in(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
-      </#if>
+      if(!searchConditions.get${field.name?cap_first}().isEmpty()) {
+        <#if field.ignoreCase>
+        ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.lower(DSL.field("${field.columnName}", String.class))
+          .in(searchConditions.get${field.name?cap_first}().stream()
+          .map(DSL::lower)
+          .collect(Collectors.toList())));
+        <#else>
+        ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}").in(searchConditions.get${field.name?cap_first}())<#if enumSearchConditionFields?seq_contains(field.columnName)>.toString()</#if>);
+        </#if>
+      } else {
+        ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.falseCondition());
+      }
     }
     </#list>
     <#list operationDef.notInFields as field>
-    if (searchConditions.get${field.name?cap_first}() != null) {
+    if (searchConditions.get${field.name?cap_first}() != null && !searchConditions.get${field.name?cap_first}().isEmpty()) {
       <#if field.ignoreCase>
       ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.lower(DSL.field("${field.columnName}", String.class))
         .notIn(searchConditions.get${field.name?cap_first}().stream()
@@ -61,17 +79,25 @@
     <#list operationDef.betweenFields as field>
     if (searchConditions.get${field.name?cap_first}From() != null
           && searchConditions.get${field.name?cap_first}To() != null) {
-      <#if field.ignoreCase>
-      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.lower(DSL.field("${field.columnName}", String.class))
-        .between(
-            DSL.lower(searchConditions.get${field.name?cap_first}From()),
-            DSL.lower(searchConditions.get${field.name?cap_first}To())));
-      <#else>
-      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}")
-        .between(
-            searchConditions.get${field.name?cap_first}From(),
-            searchConditions.get${field.name?cap_first}To()));
-      </#if>
+    <#if enumSearchConditionFields?seq_contains(field.columnName)>
+      ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(
+        DSL.field("${field.columnName}").cast(String.class)
+          .between(
+            searchConditions.get${field.name?cap_first}From().name(),
+            searchConditions.get${field.name?cap_first}To().name()));
+     <#else>
+        <#if field.ignoreCase>
+        ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.lower(DSL.field("${field.columnName}", String.class))
+          .between(
+              DSL.lower(searchConditions.get${field.name?cap_first}From()),
+              DSL.lower(searchConditions.get${field.name?cap_first}To())));
+        <#else>
+        ${operationDef.operationName} = ${operationDef.operationName}.${operationDef.operator?lower_case}(DSL.field("${field.columnName}")
+          .between(
+              searchConditions.get${field.name?cap_first}From(),
+              searchConditions.get${field.name?cap_first}To()));
+        </#if>
+    </#if>
     }
     </#list>
     <@dslConditionCalc searchOperations=operationDef.nestedSearchOperations />
@@ -85,6 +111,7 @@ package ${basePackage}.restapi.handler;
 import com.epam.digital.data.platform.restapi.core.searchhandler.AbstractSearchHandler;
 import org.jooq.Condition;
 import org.jooq.SelectFieldOrAsterisk;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
@@ -137,7 +164,7 @@ public class ${className}
   }
 
   @Override
-  protected String tableName() {
+  public String tableName() {
     return "${tableName}";
   }
 

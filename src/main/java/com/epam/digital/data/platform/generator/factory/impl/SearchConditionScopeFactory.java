@@ -49,6 +49,7 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
 
   private final SearchConditionProvider searchConditionProvider;
   private final CompositeConstraintProvider constraintProviders;
+  private final EnumProvider enumProvider;
 
   public SearchConditionScopeFactory(
       SearchConditionProvider searchConditionProvider,
@@ -57,6 +58,7 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
     super(enumProvider);
     this.searchConditionProvider = searchConditionProvider;
     this.constraintProviders = constraintProviders;
+    this.enumProvider = enumProvider;
   }
 
   @Override
@@ -98,12 +100,12 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
     fields.addAll(
         getColumnsOfSearchType(columnToSearchTypeMap, SearchType.CONTAINS)
             .map(sc -> new ColumnConditionMapping(table, sc, getPropertyName(sc), requiredFields.contains(sc)))
-            .map(it -> mapColumnConditionToField(it, getCommonConstraintProviders(it.isRequired), this::typeToString))
+            .map(it -> mapColumnConditionToField(it, getCommonConstraintProviders(it.isRequired), this::getFieldTypeForPartialSearch))
             .collect(toList()));
     fields.addAll(
         getColumnsOfSearchType(columnToSearchTypeMap, SearchType.STARTS_WITH)
             .map(sc -> new ColumnConditionMapping(table, sc, getPropertyName(sc), requiredFields.contains(sc)))
-            .map(it -> mapColumnConditionToField(it, getCommonConstraintProviders(it.isRequired), this::typeToString))
+            .map(it -> mapColumnConditionToField(it, getCommonConstraintProviders(it.isRequired), this::getFieldTypeForPartialSearch))
             .collect(toList()));
     fields.addAll(
         getColumnsOfSearchType(columnToSearchTypeMap, SearchType.STARTS_WITH_ARRAY)
@@ -180,6 +182,12 @@ public class SearchConditionScopeFactory extends AbstractEntityScopeFactory<Mode
     field.setType(clazz.getCanonicalName());
     field.setConstraints(emptyList());
     return field;
+  }
+
+  protected String getFieldTypeForPartialSearch(String clazzName, Column column) {
+    String type = column.getColumnDataType().getName();
+    return !enumProvider.findFor(type).isEmpty() ? String.class.getCanonicalName()
+        : typeToString(clazzName, column);
   }
 
   private List<ConstraintProvider> getCommonConstraintProviders(boolean isRequired) {

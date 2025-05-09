@@ -91,6 +91,7 @@ data:
         type: redis
         backend:
           redis:
+            username: ${REDIS_USERNAME}
             password: ${REDIS_PASSWORD}
             sentinel:
               master: mymaster
@@ -119,3 +120,10 @@ data:
             access-key: ${datafactory-file-ceph.access-key}
             secret-key: ${datafactory-file-ceph.secret-key}
             bucket: ${datafactory-file-ceph.bucket}
+    
+    {{- if $.Values.global.registry.restApi.logbook }}
+    logbook:
+    {{- with $.Values.global.registry.restApi.logbook }}
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- end }}

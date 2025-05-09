@@ -72,13 +72,14 @@ storage:
     type: redis
   backend:
     redis:
+      username: ${REDIS_USERNAME}
       password: ${REDIS_PASSWORD}
       sentinel:
         master: mymaster
         nodes: ${redis.endpoint}
 </#noparse>
 redis:
-  secretName: redis-auth
+  secretName: redis-bp-webservice-gateway-user-secret
 
 bpmsUrl: http://bpms:8080
 dsoURL: http://digital-signature-ops:8080
